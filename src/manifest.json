@@ -1,0 +1,12 @@
+{
+    "version": "0.1",
+    "requires": {
+        "cockpit": "137"
+    },
+
+    "tools": {
+        "index": {
+            "label": "subscription-manager"
+        }
+    }
+}

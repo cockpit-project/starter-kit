@@ -1,4 +1,7 @@
 *~
 *.retry
 node_modules/
-build/
+dist/
+/.vagrant
+lib/
+testlib/
