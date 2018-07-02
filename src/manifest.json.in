@@ -1,5 +1,5 @@
 {
-    "version": "163.x",
+    "version": "@VERSION@",
     "name": "session_recording",
 
     "requires": {

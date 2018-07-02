@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!--
+This file is part of Cockpit.
+
+Copyright (C) 2017 Red Hat, Inc.
+
+Cockpit is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or
+(at your option) any later version.
+
+Cockpit is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
+-->
+<html>
+
+<head>
+    <title translate>Journal</title>
+    <meta charset="utf-8">
+    <link href="../base1/patternfly.css" rel="stylesheet">
+    <link href="table.css" rel="stylesheet">
+    <script type="text/javascript" src="../base1/cockpit.js"></script>
+    <script src="../*/po.js"></script>
+</head>
+
+<body>
+<div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <ol class="breadcrumb">
+                    <li><a href="/cockpit/@localhost/session_recording/index.html">Session Recording</a></li>
+                    <li class="active">Configuration</li>
+                </ol>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-default" >
+                    <div class="panel-heading"><span>Configuration</span></div>
+                    <div class="panel-body" id="view"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript" src="config.js"></script>
+</body>
+
+</html>

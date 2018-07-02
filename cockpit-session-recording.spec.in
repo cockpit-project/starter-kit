@@ -1,19 +1,19 @@
-Name: cockpit-starter-kit
+Name: cockpit-session-recording
 Version: @VERSION@
 Release: 1%{?dist}
-Summary: Cockpit Starter Kit Example Module
+Summary: Cockpit Session Recording
 License: LGPLv2+
 
-Source: cockpit-starter-kit-%{version}.tar.gz
+Source: cockpit-session-recording-%{version}.tar.gz
 BuildArch: noarch
 
 %define debug_package %{nil}
 
 %description
-Cockpit Starter Kit Example Module
+Cockpit Session Recording
 
 %prep
-%setup -n cockpit-starter-kit
+%setup -n cockpit-session-recording
 
 %install
 %make_install
