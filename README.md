@@ -70,6 +70,20 @@ change:
     find -iname '*starter*'
     git grep -i starter
 
+# Automated release
+
+Once your cloned project is ready for a release, you should consider automating
+that.  [Cockpituous release](https://github.com/cockpit-project/cockpituous/tree/master/release)
+aims to fully automate project releases to GitHub, Fedora, Ubuntu, COPR, Docker
+Hub, and other places. The intention is that the only manual step for releasing
+a project is to create a signed tag for the version number; pushing the tag
+then triggers a GitHub webhook that calls a set of release scripts (on
+Cockpit's CI infrastructure).
+
+starter-kit includes an example [cockpitous release script](./cockpituous-release)
+that builds an upstream release tarball and source RPM. Please see the above
+cockpituous documentation for details.
+
 # Further reading
 
  * The [Starter Kit announcement](http://cockpit-project.org/blog/cockpit-starter-kit.html)
