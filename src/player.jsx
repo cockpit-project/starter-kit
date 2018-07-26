@@ -481,6 +481,19 @@
         }
     };
 
+    let InputPlayer = class extends React.Component {
+        constructor(props) {
+            super(props);
+        }
+
+        render() {
+            return(
+                <textarea name="input" id="input" cols="30" rows="10" disabled>{this.props.input}</textarea>
+            );
+        }
+
+    };
+
     let Player = class extends React.Component {
         constructor(props) {
             super(props);
@@ -506,6 +519,7 @@
             this.dragPanDisable = this.dragPanDisable.bind(this);
             this.zoom = this.zoom.bind(this);
             this.fastForwardToTS = this.fastForwardToTS.bind(this);
+            this.sendInput = this.sendInput.bind(this);
 
             this.state = {
                 cols:               80,
@@ -528,7 +542,8 @@
                 containerWidth: 630,
                 currentTsPost:  0,
                 scale:          1,
-                error:          null
+                error:          null,
+                input:          ""
             };
 
             this.containerHeight = 290;
@@ -670,6 +685,13 @@
             });
         }
 
+        sendInput(pkt) {
+            if (pkt) {
+                const current_input = this.state.input;
+                this.setState({input: current_input + pkt.io});
+            }
+        }
+
         /* Synchronize playback */
         sync() {
             let locDelay;
@@ -695,11 +717,6 @@
                         /* Call us when we get one */
                         this.awaitPacket();
                         return;
-                    }
-
-                    /* Skip packets we don't output */
-                    if (pkt.is_io && !pkt.is_output) {
-                        continue;
                     }
 
                     this.pkt = pkt;
@@ -749,7 +766,9 @@
                 }
 
                 /* Output the packet */
-                if (this.pkt.is_io) {
+                if (this.pkt.is_io && !this.pkt.is_output) {
+                    this.sendInput(this.pkt);
+                } else if (this.pkt.is_io) {
                     this.state.term.write(this.pkt.io);
                 } else {
                     this.state.term.resize(this.pkt.width, this.pkt.height);
@@ -995,71 +1014,74 @@
 
             // ensure react never reuses this div by keying it with the terminal widget
             return (
-                <div ref="wrapper" className="panel panel-default">
-                    <div className="panel-heading">
-                        <span>{this.state.title}</span>
-                    </div>
-                    <div className="panel-body">
-                        <div className={(this.state.drag_pan ? "dragnpan" : "")} style={scrollwrap} ref="scrollwrap">
-                            <div ref="term" className="console-ct" key={this.state.term} style={style} />
+                <div>
+                    <div ref="wrapper" className="panel panel-default">
+                        <div className="panel-heading">
+                            <span>{this.state.title}</span>
                         </div>
-                    </div>
-                    <div className="panel-footer">
-                        <button title="Play/Pause - Hotkey: p" type="button" ref="playbtn"
-                                className="btn btn-default btn-lg margin-right-btn play-btn"
-                                onClick={this.playPauseToggle}>
-                            <i className={"fa fa-" + (this.state.paused ? "play" : "pause")}
-                               aria-hidden="true" />
-                        </button>
-                        <button title="Skip Frame - Hotkey: ." type="button"
-                                className="btn btn-default btn-lg margin-right-btn"
-                                onClick={this.skipFrame}>
-                            <i className="fa fa-step-forward" aria-hidden="true" />
-                        </button>
-                        <button title="Restart Playback - Hotkey: Shift-R" type="button"
-                                className="btn btn-default btn-lg" onClick={this.rewindToStart}>
-                            <i className="fa fa-fast-backward" aria-hidden="true" />
-                        </button>
-                        <button title="Fast-forward to end - Hotkey: Shift-G" type="button"
-                                className="btn btn-default btn-lg margin-right-btn"
-                                onClick={this.fastForwardToEnd}>
-                            <i className="fa fa-fast-forward" aria-hidden="true" />
-                        </button>
-                        <button title="Speed /2 - Hotkey: {" type="button"
-                                className="btn btn-default btn-lg" onClick={this.speedDown}>
-                            /2
-                        </button>
-                        <button title="Reset Speed - Hotkey: Backspace" type="button"
-                                className="btn btn-default btn-lg" onClick={this.speedReset}>
-                            1:1
-                        </button>
-                        <button title="Speed x2 - Hotkey: }" type="button"
-                                className="btn btn-default btn-lg margin-right-btn"
-                                onClick={this.speedUp}>
-                            x2
-                        </button>
-                        <span>{speedStr}</span>
-                        <span style={to_right}>
-                            <button title="Drag'n'Pan" type="button" className="btn btn-default btn-lg"
-                                onClick={this.dragPan}>
-                                <i className={"fa fa-" + (this.state.drag_pan ? "hand-rock-o" : "hand-paper-o")}
-                                    aria-hidden="true" /></button>
-                            <button title="Zoom In - Hotkey: =" type="button" className="btn btn-default btn-lg"
-                                onClick={this.zoomIn} disabled={this.state.term_zoom_max}>
-                                <i className="fa fa-search-plus" aria-hidden="true" /></button>
-                            <button title="Fit To - Hotkey: Z" type="button" className="btn btn-default btn-lg"
-                                onClick={this.fitTo}><i className="fa fa-expand" aria-hidden="true" /></button>
-                            <button title="Zoom Out - Hotkey: -" type="button" className="btn btn-default btn-lg"
-                                onClick={this.zoomOut} disabled={this.state.term_zoom_min}>
-                                <i className="fa fa-search-minus" aria-hidden="true" /></button>
-                        </span>
-                        <div style={progressbar_style}>
-                            <ProgressBar length={this.buf.pos}
-                                mark={currentTsPost(this.state.currentTsPost, this.buf.pos)}
-                                fastForwardFunc={this.fastForwardToTS} />
+                        <div className="panel-body">
+                            <div className={(this.state.drag_pan ? "dragnpan" : "")} style={scrollwrap} ref="scrollwrap">
+                                <div ref="term" className="console-ct" key={this.state.term} style={style} />
+                            </div>
                         </div>
+                        <div className="panel-footer">
+                            <button title="Play/Pause - Hotkey: p" type="button" ref="playbtn"
+                                    className="btn btn-default btn-lg margin-right-btn play-btn"
+                                    onClick={this.playPauseToggle}>
+                                <i className={"fa fa-" + (this.state.paused ? "play" : "pause")}
+                                   aria-hidden="true" />
+                            </button>
+                            <button title="Skip Frame - Hotkey: ." type="button"
+                                    className="btn btn-default btn-lg margin-right-btn"
+                                    onClick={this.skipFrame}>
+                                <i className="fa fa-step-forward" aria-hidden="true" />
+                            </button>
+                            <button title="Restart Playback - Hotkey: Shift-R" type="button"
+                                    className="btn btn-default btn-lg" onClick={this.rewindToStart}>
+                                <i className="fa fa-fast-backward" aria-hidden="true" />
+                            </button>
+                            <button title="Fast-forward to end - Hotkey: Shift-G" type="button"
+                                    className="btn btn-default btn-lg margin-right-btn"
+                                    onClick={this.fastForwardToEnd}>
+                                <i className="fa fa-fast-forward" aria-hidden="true" />
+                            </button>
+                            <button title="Speed /2 - Hotkey: {" type="button"
+                                    className="btn btn-default btn-lg" onClick={this.speedDown}>
+                                /2
+                            </button>
+                            <button title="Reset Speed - Hotkey: Backspace" type="button"
+                                    className="btn btn-default btn-lg" onClick={this.speedReset}>
+                                1:1
+                            </button>
+                            <button title="Speed x2 - Hotkey: }" type="button"
+                                    className="btn btn-default btn-lg margin-right-btn"
+                                    onClick={this.speedUp}>
+                                x2
+                            </button>
+                            <span>{speedStr}</span>
+                            <span style={to_right}>
+                                <button title="Drag'n'Pan" type="button" className="btn btn-default btn-lg"
+                                    onClick={this.dragPan}>
+                                    <i className={"fa fa-" + (this.state.drag_pan ? "hand-rock-o" : "hand-paper-o")}
+                                        aria-hidden="true" /></button>
+                                <button title="Zoom In - Hotkey: =" type="button" className="btn btn-default btn-lg"
+                                    onClick={this.zoomIn} disabled={this.state.term_zoom_max}>
+                                    <i className="fa fa-search-plus" aria-hidden="true" /></button>
+                                <button title="Fit To - Hotkey: Z" type="button" className="btn btn-default btn-lg"
+                                    onClick={this.fitTo}><i className="fa fa-expand" aria-hidden="true" /></button>
+                                <button title="Zoom Out - Hotkey: -" type="button" className="btn btn-default btn-lg"
+                                    onClick={this.zoomOut} disabled={this.state.term_zoom_min}>
+                                    <i className="fa fa-search-minus" aria-hidden="true" /></button>
+                            </span>
+                            <div style={progressbar_style}>
+                                <ProgressBar length={this.buf.pos}
+                                    mark={currentTsPost(this.state.currentTsPost, this.buf.pos)}
+                                    fastForwardFunc={this.fastForwardToTS} />
+                            </div>
+                        </div>
+                        {error}
                     </div>
-                    {error}
+                    <InputPlayer input={this.state.input} />
                 </div>
             );
         }
