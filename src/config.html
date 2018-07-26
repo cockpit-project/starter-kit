@@ -32,7 +32,7 @@ along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 <div>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-12">
                 <ol class="breadcrumb">
                     <li><a href="/cockpit/@localhost/session_recording/index.html">Session Recording</a></li>
                     <li class="active">Configuration</li>
@@ -40,10 +40,18 @@ along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
-                <div class="panel panel-default" >
-                    <div class="panel-heading"><span>Configuration</span></div>
-                    <div class="panel-body" id="view"></div>
+            <div class="col-md-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><span>General Configuration</span></div>
+                    <div class="panel-body" id="sr_config"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><span>SSSD Configuration</span></div>
+                    <div class="panel-body" id="sssd_config"></div>
                 </div>
             </div>
         </div>
