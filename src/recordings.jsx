@@ -243,6 +243,184 @@
         }
     }
 
+    function LogElement(props) {
+        const entry = props.entry;
+        const start = props.start;
+        const end = props.end;
+        const entry_timestamp = entry.__REALTIME_TIMESTAMP / 1000;
+        let className = 'cockpit-logline';
+        if (start < entry_timestamp && end > entry_timestamp) {
+            className = 'cockpit-logline highlighted';
+        }
+        return (
+            <div className={className} data-cursor={entry.__CURSOR}>
+                <div className="cockpit-log-warning">
+                    <i className="fa fa-exclamation-triangle" />
+                </div>
+                <div className="logs-view-log-time">{formatDateTime(parseInt(entry.__REALTIME_TIMESTAMP / 1000))}</div>
+                <span className="cockpit-log-message">{entry.MESSAGE}</span>
+            </div>
+        );
+    }
+
+    function LogsView(props) {
+        const entries = props.entries;
+        const start = props.start;
+        const end = props.end;
+        const rows = entries.map((entry) =>
+            <LogElement entry={entry} start={start} end={end} />
+        );
+        return (
+            <div className="panel panel-default cockpit-log-panel" id="logs-view">
+                {rows}
+            </div>
+        );
+    }
+
+    let Logs = class extends React.Component {
+        constructor(props) {
+            super(props);
+            this.journalctlError = this.journalctlError.bind(this);
+            this.journalctlIngest = this.journalctlIngest.bind(this);
+            this.journalctlPrepend = this.journalctlPrepend.bind(this);
+            this.getLogs = this.getLogs.bind(this);
+            this.loadLater = this.loadLater.bind(this);
+            this.loadEarlier = this.loadEarlier.bind(this);
+            this.loadForTs = this.loadForTs.bind(this);
+            this.journalCtl = null;
+            this.entries = [];
+            this.start = null;
+            this.end = null;
+            this.earlier_than = null;
+            this.load_earlier = false;
+            this.state = {
+                cursor: null,
+                after: null,
+                entries: [],
+            };
+        }
+
+        scrollToTop() {
+            const logs_view = document.getElementById("logs-view");
+            logs_view.scrollTop = 0;
+        }
+
+        scrollToBottom() {
+            const logs_view = document.getElementById("logs-view");
+            logs_view.scrollTop = logs_view.scrollHeight;
+        }
+
+        journalctlError(error) {
+            console.warn(cockpit.message(error));
+        }
+
+        journalctlIngest(entryList) {
+            if (this.load_earlier === true) {
+                entryList.push(...this.entries);
+                this.entries = entryList;
+                this.setState({entries: this.entries});
+                this.load_earlier = false;
+                this.scrollToTop();
+            } else {
+                if (entryList.length > 0) {
+                    this.entries.push(...entryList);
+                    const after = this.entries[this.entries.length - 1].__CURSOR;
+                    this.setState({entries: this.entries, after: after});
+                    this.scrollToBottom();
+                }
+            }
+        }
+
+        journalctlPrepend(entryList) {
+            entryList.push(...this.entries);
+            this.setState({entries: this.entries});
+        }
+
+        getLogs() {
+            if (this.start != null && this.end != null) {
+                if (this.journalCtl != null) {
+                    this.journalCtl.stop();
+                    this.journalCtl = null;
+                }
+
+                let matches = [];
+
+                let options = {
+                    since: formatDateTime(this.start),
+                    until: formatDateTime(this.end),
+                    follow: false,
+                    count: "all",
+                };
+
+                if (this.load_earlier === true) {
+                    options["until"] = formatDateTime(this.earlier_than);
+                } else if (this.state.after != null) {
+                    options["after"] = this.state.after;
+                    delete options.since;
+                }
+
+                const self = this;
+                this.journalCtl = Journal.journalctl(matches, options)
+                    .fail(this.journalctlError)
+                    .done(function(data) {
+                        self.journalctlIngest(data);
+                    });
+            }
+        }
+
+        loadEarlier() {
+            this.load_earlier = true;
+            this.start = this.start - 3600;
+            this.getLogs();
+        }
+
+        loadLater() {
+            this.start = this.end;
+            this.end = this.end + 3600;
+            this.getLogs();
+        }
+
+        loadForTs(ts) {
+            this.end = this.start + ts;
+            this.getLogs();
+        }
+
+        componentDidUpdate() {
+            if (this.props.recording) {
+                if (this.start === null && this.end === null) {
+                    this.end = this.props.recording.start + 3600;
+                    this.start = this.props.recording.start;
+                    this.earlier_than = this.props.recording.start;
+                }
+                this.getLogs();
+            }
+            if (this.props.curTs) {
+                const ts = this.props.curTs;
+                this.loadForTs(ts);
+            }
+        }
+
+        render() {
+            if (this.props.recording) {
+                return (
+                    <div className="panel panel-default">
+                        <div className="panel-heading">
+                            <span>Logs</span>
+                            <button className="btn btn-default" style={{"float":"right"}} onClick={this.loadEarlier}>Load earlier entries</button>
+                        </div>
+                        <LogsView entries={this.state.entries} start={this.props.recording.start}
+                                  end={this.props.recording.end} />
+                        <div className="panel-heading">
+                            <button className="btn btn-default" onClick={this.loadLater}>Load later entries</button>
+                        </div>
+                    </div>
+                );
+            } else {
+                return (<div>Loading...</div>);
+            }
+        }
+    }
+
     /*
      * A component representing a single recording view.
      * Properties:
@@ -303,7 +481,8 @@
                 let player =
                     (<Player.Player
                         ref="player"
-                        matchList={this.props.recording.matchList} />);
+                        matchList={this.props.recording.matchList}
+                        onTsChange={this.props.onTsChange} />);
 
                 return (
                     <div className="container-fluid">
@@ -548,6 +727,7 @@
             this.handleDateUntilChange = this.handleDateUntilChange.bind(this);
             this.handleUsernameChange = this.handleUsernameChange.bind(this);
             this.handleHostnameChange = this.handleHostnameChange.bind(this);
+            this.handleTsChange = this.handleTsChange.bind(this);
             /* Journalctl instance */
             this.journalctl = null;
             /* Recording ID journalctl instance is invoked with */
@@ -570,6 +750,7 @@
                 hostname: cockpit.location.options.hostname || null,
                 error_tlog_uid: false,
                 diff_hosts: false,
+                curTs: null,
             }
         }
 
@@ -766,6 +947,10 @@
             cockpit.location.go([], $.extend(cockpit.location.options, { hostname: hostname }));
         }
 
+        handleTsChange(ts) {
+            this.setState({curTs: ts});
+        }
+
         componentDidMount() {
             let proc = cockpit.spawn(["getent", "passwd", "tlog"]);
 
@@ -842,7 +1027,16 @@
                 );
             } else {
                 return (
-                    <Recording recording={this.recordingMap[this.state.recordingID]} />
+                    <div>
+                        <Recording recording={this.recordingMap[this.state.recordingID]} onTsChange={this.handleTsChange} />
+                        <div className="container-fluid">
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <Logs recording={this.recordingMap[this.state.recordingID]} curTs={this.state.curTs} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 );
             }
         }

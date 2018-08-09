@@ -366,3 +366,19 @@ table.listing-ct > thead th:last-child, tr.listing-ct-item td:last-child {
     -ms-user-select: none;
     user-select: none;
 }
+
+.highlighted {
+    background-color: #ededed !important;
+}
+
+#logs-view {
+    height: 300px;
+    overflow-y: scroll;
+    margin-bottom: 0;
+}
+
+.logs-view-log-time {
+    display: inline-block;
+    width: 150px;
+    vertical-align: middle;
+}

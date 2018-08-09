@@ -765,6 +765,9 @@
                     }
                 }
 
+                /* Send packet ts to the top */
+                this.props.onTsChange(this.pkt.pos);
+
                 /* Output the packet */
                 if (this.pkt.is_io && !this.pkt.is_output) {
                     this.sendInput(this.pkt);
