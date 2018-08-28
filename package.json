@@ -10,11 +10,11 @@
     "build": "webpack"
   },
   "devDependencies": {
-    "babel-core": "^6.25.0",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^9.0.0",
-    "babel-loader": "^7.0.0",
-    "babel-plugin-transform-react-jsx": "^6.24.1",
-    "babel-preset-env": "^1.5.2",
+    "babel-loader": "^8.0.0",
     "chrome-remote-interface": "^0.25.5",
     "compression-webpack-plugin": "^1.1.11",
     "copy-webpack-plugin": "^4.5.2",
@@ -40,6 +40,7 @@
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.0.0",
     "node-sass": "^4.9.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2"
