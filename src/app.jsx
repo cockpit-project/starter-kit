@@ -27,9 +27,10 @@ export class Application extends React.Component {
     constructor() {
         super();
 
-        cockpit.file('/etc/hostname').read().done((content) => {
-            this.setState({ 'hostname': content.trim() });
-        });
+        cockpit.file('/etc/hostname').read()
+                .done((content) => {
+                    this.setState({ 'hostname': content.trim() });
+                });
     }
 
     render() {
