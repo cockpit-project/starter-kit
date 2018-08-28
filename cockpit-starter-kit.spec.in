@@ -2,7 +2,7 @@ Name: cockpit-starter-kit
 Version: @VERSION@
 Release: 1%{?dist}
 Summary: Cockpit Starter Kit Example Module
-License: LGPLv2.1+
+License: LGPLv2+
 
 Source: cockpit-starter-kit-%{version}.tar.gz
 BuildArch: noarch
