@@ -18,8 +18,9 @@
  */
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Application } from './app.jsx';
 
 document.addEventListener("DOMContentLoaded", function () {
-    React.render(React.createElement(Application, {}), document.getElementById('app'));
+    ReactDOM.render(React.createElement(Application, {}), document.getElementById('app'));
 });
