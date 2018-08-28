@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: starter-kit 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-19 17:07+0200\n"
+"POT-Creation-Date: 2018-08-29 00:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,10 +17,14 @@ msgstr ""
 msgid "Cockpit Starter Kit"
 msgstr "Cockpit Bausatz"
 
-#: src/app.jsx:40
+#: src/app.jsx:42
 msgid "Running on $0"
 msgstr "Läuft auf $0"
 
 #: src/manifest.json
 msgid "Starter Kit"
 msgstr "Bausatz"
+
+#: src/app.jsx:29
+msgid "Unknown"
+msgstr "Unbekannt"

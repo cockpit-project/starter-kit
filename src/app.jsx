@@ -26,6 +26,7 @@ const _ = cockpit.gettext;
 export class Application extends React.Component {
     constructor() {
         super();
+        this.state = { 'hostname': _("Unknown") };
 
         cockpit.file('/etc/hostname').read()
                 .done((content) => {
