@@ -1,4 +1,5 @@
-PACKAGE_NAME := $(shell python3 -c "import json; print(json.load(open('package.json'))['name'])")
+# extract name from package.json
+PACKAGE_NAME := $(shell awk '/"name":/ {gsub(/[",]/, "", $$2); print $$2}' package.json)
 VERSION := $(shell git describe 2>/dev/null || echo 1)
 ifeq ($(TEST_OS),)
 TEST_OS = centos-7
