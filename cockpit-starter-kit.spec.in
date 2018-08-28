@@ -6,7 +6,6 @@ License: LGPLv2+
 
 Source: cockpit-starter-kit-%{version}.tar.gz
 BuildArch: noarch
-BuildRequires: /usr/bin/python3
 
 %define debug_package %{nil}
 
