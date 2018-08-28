@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "node-sass": "^4.9.0",
-    "react-lite": "0.15.30"
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
   }
 }

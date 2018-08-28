@@ -112,11 +112,6 @@ module.exports = {
     externals: externals,
     output: output,
     devtool: "source-map",
-    resolve: {
-        alias: {
-            "react$": path.resolve(nodedir, "react-lite/dist/react-lite.js")
-        }
-    },
     module: {
         rules: [
             {
