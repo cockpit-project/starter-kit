@@ -118,7 +118,8 @@ rpm: dist-gzip cockpit-$(PACKAGE_NAME).spec
 
 # build a VM with locally built rpm installed
 $(VM_IMAGE): rpm bots
-	bots/image-customize -v -r 'rpm -e cockpit-$(PACKAGE_NAME) || true' -i cockpit -i `pwd`/cockpit-$(PACKAGE_NAME)-*.noarch.rpm -s $(CURDIR)/test/vm.install $(TEST_OS)
+	rm -f $(VM_IMAGE)
+	bots/image-customize -v -i cockpit -i `pwd`/cockpit-$(PACKAGE_NAME)-*.noarch.rpm -s $(CURDIR)/test/vm.install $(TEST_OS)
 
 # convenience target for the above
 vm: $(VM_IMAGE)
