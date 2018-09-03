@@ -41,6 +41,7 @@ var info = {
         "terminal.jsx",
         "manifest.json",
         "timer.css",
+        "./pkg/lib/listing.less",
     ],
 };
 
@@ -159,7 +160,7 @@ module.exports = {
                 test: /\.scss$/
             },
             {
-                loader: extract.extract("css-loader"),
+                loader: extract.extract("css-loader?minimize=&root=" + libdir),
                 test: /\.css$/,
             }
         ]

@@ -1,0 +1,40 @@
+.plot-unit {
+    display:      inline-block;
+    width:        28px;
+    font-size:    smaller;
+    text-align:   right;
+    color:        #545454;
+    margin-right: 7px;
+}
+
+.plot-title {
+    color: black;
+}
+
+.flot-y-axis .flot-tick-label {
+    width: 28px;
+    margin-right: 7px;
+}
+
+.flot-x-axis .flot-tick-label {
+    margin-top: 3px;
+}
+
+.zoom-controls {
+    visibility: hidden;
+}
+
+.show-zoom-controls .zoom-controls {
+    visibility: visible;
+}
+
+.show-zoom-cursor .zoomable-plot {
+    cursor: ew-resize;
+}
+
+.standard-zoom-controls {
+    text-align:    right;       /* on the right */
+    margin-bottom: -15px;       /* overlapping with the title */
+    z-index:       1;           /* but on top of it */
+    position:      relative;
+}
