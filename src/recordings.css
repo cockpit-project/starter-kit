@@ -377,8 +377,26 @@ table.listing-ct > thead th:last-child, tr.listing-ct-item td:last-child {
     margin-bottom: 0;
 }
 
+#recording-wrap {
+    height: 100%;
+}
+
+#input-textarea {
+    width: 100%;
+    heigth: 100%;
+    font-family: monospace;
+}
+
+#input-player-wrap {
+    height: 100%;
+}
+
 .logs-view-log-time {
     display: inline-block;
     width: 150px;
     vertical-align: middle;
+}
+
+#input-player textarea{
+    resize: none;
 }

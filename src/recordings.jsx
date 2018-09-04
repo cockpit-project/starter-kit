@@ -495,7 +495,7 @@
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-md-6">
+                            <div className="col-md-3">
                                 <div className="panel panel-default">
                                     <div className="panel-heading">
                                         <span>{_("Recording")}</span>
@@ -539,9 +539,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-md-6 player-wrap">
-                                {player}
-                            </div>
+                            {player}
                         </div>
                     </div>
                 );
