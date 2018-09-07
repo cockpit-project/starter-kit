@@ -694,7 +694,7 @@
                                     <label className="control-label" htmlFor="config">Configuration</label>
                                 </td>
                                 <td className="top">
-                                    <a href="/cockpit/@localhost/session_recording/config.html" className="btn btn-default" data-toggle="modal">
+                                    <a href="/cockpit/@localhost/session-recording/config.html" className="btn btn-default" data-toggle="modal">
                                         <i className="fa fa-cog" aria-hidden="true" /></a>
                                 </td>
                             </th>
