@@ -30,6 +30,7 @@ var info = {
         "config": [
             "./config.jsx",
             "./recordings.css",
+            "./table.css",
         ]
     },
     files: [
@@ -38,6 +39,7 @@ var info = {
         "player.jsx",
         "recordings.jsx",
         "recordings.css",
+        "table.css",
         "terminal.jsx",
         "manifest.json",
         "timer.css",
