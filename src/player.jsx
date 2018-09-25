@@ -608,32 +608,6 @@ export class Player extends React.Component {
         this.awaitPacket(0);
     }
 
-    componentWillMount() {
-        let term = new Term({
-            cols: this.state.cols,
-            rows: this.state.rows,
-            screenKeys: true,
-            useStyle: true
-        });
-
-        term.on('title', this.handleTitleChange);
-
-        this.setState({ term: term });
-
-        window.addEventListener("keydown", this.handleKeyDown, false);
-    }
-
-    componentDidMount() {
-        if (this.refs.wrapper.offsetWidth) {
-            this.setState({containerWidth: this.refs.wrapper.offsetWidth});
-        }
-        /* Open the terminal */
-        this.state.term.open(this.refs.term);
-        window.setInterval(this.sync, 100);
-        /* Reset playback */
-        this.reset();
-    }
-
     /* Subscribe for a packet at specified index */
     awaitPacket(idx) {
         this.buf.awaitPacket(idx).done(this.handlePacket)
@@ -952,6 +926,33 @@ export class Player extends React.Component {
             term_scroll: "hidden",
         });
         this._transform();
+    }
+
+    componentWillMount() {
+        let term = new Term({
+            cols: this.state.cols,
+            rows: this.state.rows,
+            screenKeys: true,
+            useStyle: true
+        });
+
+        term.on('title', this.handleTitleChange);
+
+        this.setState({ term: term });
+
+        window.addEventListener("keydown", this.handleKeyDown, false);
+    }
+
+    componentDidMount() {
+        if (this.refs.wrapper.offsetWidth) {
+            this.setState({containerWidth: this.refs.wrapper.offsetWidth});
+        }
+        /* Open the terminal */
+        this.state.term.open(this.refs.term);
+        window.setInterval(this.sync, 100);
+        /* Reset playback */
+        this.reset();
+        this.fastForwardToTS(0);
     }
 
     componentWillUpdate(nextProps, nextState) {
