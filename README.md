@@ -33,6 +33,23 @@ ln -s `pwd`/dist ~/.local/share/cockpit/starter-kit
 After changing the code and running `make` again, reload the Cockpit page in
 your browser.
 
+# Running eslint
+
+Cockpit Starter Kit uses [ESLint](https://eslint.org/) to automatically check
+JavaScript code style in `.jsx` and `.es6` files.
+
+The linter is executed within every build as a webpack preloader.
+
+For developer convenience, the ESLint can be started explicitly by:
+
+    $ npm run eslint
+
+Violations of some rules can be fixed automatically by:
+
+    $ npm run eslint:fix
+
+Rules configuration can be found in the `.eslintrc.json` file.
+
 # Automated Testing
 
 Run `make check` to build an RPM, install it into a standard Cockpit test VM
