@@ -130,14 +130,13 @@ class Datetimepicker extends React.Component {
     }
 
     componentDidMount() {
-        let funcDate = this.handleDateChange;
         let datepicker = $(this.refs.datepicker).datetimepicker({
             format: 'yyyy-mm-dd hh:ii:00',
             autoclose: true,
             todayBtn: true,
         });
-        datepicker.on('changeDate', function(e) {
-            funcDate(e);
+        datepicker.on('changeDate', (e) => {
+            this.handleDateChange(e);
         });
         $(this.refs.datepicker_input).datetimepicker('remove');
         this.markDateField();
@@ -420,10 +419,10 @@ class Logs extends React.Component {
                 this.earlier_than = this.props.recording.start;
             }
             this.getLogs();
-        }
-        if (this.props.curTs) {
-            const ts = this.props.curTs;
-            this.loadForTs(ts);
+            if (this.props.curTs) {
+                const ts = this.props.curTs;
+                this.loadForTs(ts);
+            }
         }
     }
 
