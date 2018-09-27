@@ -445,7 +445,10 @@ let PacketBuffer = class {
      */
     handleDone() {
         this.done = true;
-        this.journalctl.stop();
+        if (this.journalctl !== null) {
+            this.journalctl.stop();
+            this.journalctl = null;
+        }
         /* Continue with the "following" run  */
         this.journalctl = Journal.journalctl(
             this.matchList,
