@@ -198,60 +198,6 @@ class Datetimepicker extends React.Component {
     }
 }
 
-/*
- * A component representing a username input text field.
- * TODO make as a select / drop-down with list of exisiting users.
-*/
-class UserPicker extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleUsernameChange = this.handleUsernameChange.bind(this);
-        this.state = {
-            username: cockpit.location.options.username || "",
-        };
-    }
-
-    handleUsernameChange(e) {
-        const value = e.target.value;
-        this.setState({username: value});
-        this.props.onUsernameChange(value);
-    }
-
-    render() {
-        return (
-            <div className="input-group">
-                <input type="text" className="form-control" value={this.state.username}
-                    onChange={this.handleUsernameChange} />
-            </div>
-        );
-    }
-}
-
-let HostnamePicker = class extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleHostnameChange = this.handleHostnameChange.bind(this);
-        this.state = {
-            hostname: cockpit.location.options.hostname || "",
-        };
-    }
-
-    handleHostnameChange(e) {
-        const value = e.target.value;
-        this.setState({hostname: value});
-        this.props.onHostnameChange(value);
-    }
-
-    render() {
-        return (
-            <div className="input-group">
-                <input type="text" className="form-control" value={this.state.hostname}
-                   onChange={this.handleHostnameChange} />
-            </div>
-        );
-    }
-};
-
 function LogElement(props) {
     const entry = props.entry;
     const start = props.start;
@@ -688,56 +634,12 @@ class RecordingList extends React.Component {
                         navigateToItem={this.navigateToRecording.bind(this, r)} />);
         }
         return (
-            <div>
-                <div className="content-header-extra">
-                    <table className="form-table-ct">
-                        <thead>
-                            <tr>
-                                <td className="top">
-                                    <label className="control-label" htmlFor="dateSince">Since</label>
-                                </td>
-                                <td>
-                                    <Datetimepicker onDateChange={this.props.onDateSinceChange}
-                                        date={this.props.dateSince} />
-                                </td>
-                                <td className="top">
-                                    <label className="control-label" htmlFor="dateUntil">Until</label>
-                                </td>
-                                <td>
-                                    <Datetimepicker onDateChange={this.props.onDateUntilChange}
-                                        date={this.props.dateUntil} />
-                                </td>
-                                <td className="top">
-                                    <label className="control-label" htmlFor="username">Username</label>
-                                </td>
-                                <td>
-                                    <UserPicker onUsernameChange={this.props.onUsernameChange} />
-                                </td>
-                                <td className="top">
-                                    <label className="control-label" htmlFor="hostname">Hostname</label>
-                                </td>
-                                <td>
-                                    <HostnamePicker onHostnameChange={this.props.onHostnameChange}
-                                                    hostname={this.props.hostname} />
-                                </td>
-                                <td className="top">
-                                    <label className="control-label" htmlFor="config">Configuration</label>
-                                </td>
-                                <td className="top">
-                                    <a href="/cockpit/@localhost/session-recording/config.html" className="btn btn-default" data-toggle="modal">
-                                        <i className="fa fa-cog" aria-hidden="true" /></a>
-                                </td>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-                <Listing.Listing title={_("Sessions")}
-                                 columnTitles={columnTitles}
-                                 emptyCaption={_("No recorded sessions")}
-                                 fullWidth={false}>
-                    {rows}
-                </Listing.Listing>
-            </div>
+            <Listing.Listing title={_("Sessions")}
+                             columnTitles={columnTitles}
+                             emptyCaption={_("No recorded sessions")}
+                             fullWidth={false}>
+                {rows}
+            </Listing.Listing>
         );
     }
 }
@@ -754,8 +656,7 @@ class View extends React.Component {
         this.journalctlIngest = this.journalctlIngest.bind(this);
         this.handleDateSinceChange = this.handleDateSinceChange.bind(this);
         this.handleDateUntilChange = this.handleDateUntilChange.bind(this);
-        this.handleUsernameChange = this.handleUsernameChange.bind(this);
-        this.handleHostnameChange = this.handleHostnameChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
         this.handleTsChange = this.handleTsChange.bind(this);
         this.handleLogTsChange = this.handleLogTsChange.bind(this);
         /* Journalctl instance */
@@ -970,12 +871,13 @@ class View extends React.Component {
         cockpit.location.go([], $.extend(cockpit.location.options, { dateUntil: date }));
     }
 
-    handleUsernameChange(username) {
-        cockpit.location.go([], $.extend(cockpit.location.options, { username: username }));
-    }
-
-    handleHostnameChange(hostname) {
-        cockpit.location.go([], $.extend(cockpit.location.options, { hostname: hostname }));
+    handleInputChange(event) {
+        const name = event.target.name;
+        const value = event.target.value;
+        let state = {};
+        state[name] = value;
+        this.setState(state);
+        cockpit.location.go([], $.extend(cockpit.location.options, state));
     }
 
     handleTsChange(ts) {
@@ -1053,12 +955,61 @@ class View extends React.Component {
         }
         if (this.state.recordingID === null) {
             return (
-                <RecordingList
-                    onDateSinceChange={this.handleDateSinceChange} dateSince={this.state.dateSince}
-                    onDateUntilChange={this.handleDateUntilChange} dateUntil={this.state.dateUntil}
-                    onUsernameChange={this.handleUsernameChange} username={this.state.username}
-                    onHostnameChange={this.handleHostnameChange} hostname={this.state.hostname}
-                    list={this.state.recordingList} diff_hosts={this.state.diff_hosts} />
+                <div>
+                    <div className="content-header-extra">
+                        <table className="form-table-ct">
+                            <thead>
+                                <tr>
+                                    <td className="top">
+                                        <label className="control-label" htmlFor="dateSince">Since</label>
+                                    </td>
+                                    <td>
+                                        <Datetimepicker onDateChange={this.handleDateSinceChange}
+                                                        date={this.state.dateSince} />
+                                    </td>
+                                    <td className="top">
+                                        <label className="control-label" htmlFor="dateUntil">Until</label>
+                                    </td>
+                                    <td>
+                                        <Datetimepicker onDateChange={this.handleDateUntilChange}
+                                                        date={this.state.dateUntil} />
+                                    </td>
+                                    <td className="top">
+                                        <label className="control-label" htmlFor="username">Username</label>
+                                    </td>
+                                    <td>
+                                        <div className="input-group">
+                                            <input type="text" className="form-control" name="username" value={this.state.username}
+                                                   onChange={this.handleInputChange} />
+                                        </div>
+                                    </td>
+                                    <td className="top">
+                                        <label className="control-label" htmlFor="hostname">Hostname</label>
+                                    </td>
+                                    <td>
+                                        <div className="input-group">
+                                            <input type="text" className="form-control" name="hostname" value={this.state.hostname}
+                                                   onChange={this.handleInputChange} />
+                                        </div>
+                                    </td>
+                                    <td className="top">
+                                        <label className="control-label" htmlFor="config">Configuration</label>
+                                    </td>
+                                    <td className="top">
+                                        <a href="/cockpit/@localhost/session-recording/config.html" className="btn btn-default" data-toggle="modal">
+                                            <i className="fa fa-cog" aria-hidden="true" /></a>
+                                    </td>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <RecordingList
+                        onDateSinceChange={this.handleDateSinceChange} dateSince={this.state.dateSince}
+                        onDateUntilChange={this.handleDateUntilChange} dateUntil={this.state.dateUntil}
+                        onUsernameChange={this.handleUsernameChange} username={this.state.username}
+                        onHostnameChange={this.handleHostnameChange} hostname={this.state.hostname}
+                        list={this.state.recordingList} diff_hosts={this.state.diff_hosts} />
+                </div>
             );
         } else {
             return (
