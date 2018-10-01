@@ -957,15 +957,19 @@ class View extends React.Component {
                                                    onChange={this.handleInputChange} />
                                         </div>
                                     </td>
+                                    {this.state.diff_hosts === true &&
                                     <td className="top">
                                         <label className="control-label" htmlFor="hostname">Hostname</label>
                                     </td>
+                                    }
+                                    {this.state.diff_hosts === true &&
                                     <td>
                                         <div className="input-group">
                                             <input type="text" className="form-control" name="hostname" value={this.state.hostname}
                                                    onChange={this.handleInputChange} />
                                         </div>
                                     </td>
+                                    }
                                     <td className="top">
                                         <label className="control-label" htmlFor="config">Configuration</label>
                                     </td>
