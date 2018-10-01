@@ -198,6 +198,8 @@ class Datetimepicker extends React.Component {
     }
 }
 
+console.log(Datetimepicker);
+
 function LogElement(props) {
     const entry = props.entry;
     const start = props.start;
@@ -654,8 +656,6 @@ class View extends React.Component {
         super(props);
         this.onLocationChanged = this.onLocationChanged.bind(this);
         this.journalctlIngest = this.journalctlIngest.bind(this);
-        this.handleDateSinceChange = this.handleDateSinceChange.bind(this);
-        this.handleDateUntilChange = this.handleDateUntilChange.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleTsChange = this.handleTsChange.bind(this);
         this.handleLogTsChange = this.handleLogTsChange.bind(this);
@@ -672,13 +672,12 @@ class View extends React.Component {
             recordingList: [],
             /* ID of the recording to display, or null for all */
             recordingID: cockpit.location.path[0] || null,
-            dateSince: cockpit.location.options.dateSince || null,
-            dateSinceLastValid: null,
-            dateUntil: cockpit.location.options.dateUntil || null,
-            dateUntilLastValid: null,
-            /* value to filter recordings by username */
+            /* filter values start */
+            date_since: cockpit.location.options.date_since || "",
+            date_until: cockpit.location.options.date_until || "",
             username: cockpit.location.options.username || "",
             hostname: cockpit.location.options.hostname || "",
+            /* filter values end */
             error_tlog_uid: false,
             diff_hosts: false,
             curTs: null,
@@ -700,10 +699,10 @@ class View extends React.Component {
     onLocationChanged() {
         this.setState({
             recordingID: cockpit.location.path[0] || null,
-            dateSince: cockpit.location.options.dateSince || null,
-            dateUntil: cockpit.location.options.dateUntil || null,
-            username: cockpit.location.options.username || null,
-            hostname: cockpit.location.options.hostname || null,
+            date_since: cockpit.location.options.date_since || "",
+            date_until: cockpit.location.options.date_until || "",
+            username: cockpit.location.options.username || "",
+            hostname: cockpit.location.options.hostname || "",
         });
     }
 
@@ -739,7 +738,7 @@ class View extends React.Component {
             /* If no recording found */
             if (r === undefined) {
                 /* Create new recording */
-                if (hostname != e["_HOSTNAME"]) {
+                if (hostname !== e["_HOSTNAME"]) {
                     this.setState({diff_hosts: true});
                 }
 
@@ -797,22 +796,21 @@ class View extends React.Component {
      */
     journalctlStart() {
         let matches = ["_UID=" + this.uid];
-        if (this.state.username) {
+        if (this.state.username && this.state.username !== "") {
             matches.push("TLOG_USER=" + this.state.username);
         }
-        if (this.state.hostname && this.state.hostname != null &&
-            this.state.hostname != "") {
+        if (this.state.hostname && this.state.hostname !== "") {
             matches.push("_HOSTNAME=" + this.state.hostname);
         }
 
         let options = {follow: true, count: "all"};
 
-        if (this.state.dateSinceLastValid) {
-            options['since'] = this.state.dateSinceLastValid;
+        if (this.state.date_since && this.state.date_since !== "") {
+            options['since'] = this.state.date_since;
         }
 
-        if (this.state.dateUntil) {
-            options['until'] = this.state.dateUntilLastValid;
+        if (this.state.date_until && this.state.date_until !== "") {
+            options['until'] = this.state.date_until;
         }
 
         if (this.state.recordingID !== null) {
@@ -861,16 +859,6 @@ class View extends React.Component {
         this.setState({recordingList: []});
     }
 
-    handleDateSinceChange(date, last_valid) {
-        this.setState({dateSinceLastValid: last_valid});
-        cockpit.location.go([], $.extend(cockpit.location.options, { dateSince: date }));
-    }
-
-    handleDateUntilChange(date, last_valid) {
-        this.setState({dateUntilLastValid: last_valid});
-        cockpit.location.go([], $.extend(cockpit.location.options, { dateUntil: date }));
-    }
-
     handleInputChange(event) {
         const name = event.target.name;
         const value = event.target.value;
@@ -901,18 +889,6 @@ class View extends React.Component {
             this.setState({error_tlog_uid: true});
         });
 
-        let dateSince = parseDate(this.state.dateSince);
-
-        if (dateSince && dateSince != true) {
-            this.setState({dateSinceLastValid: dateSince});
-        }
-
-        let dateUntil = parseDate(this.state.dateUntil);
-
-        if (dateUntil && dateUntil != true) {
-            this.setState({dateUntilLastValid: dateUntil});
-        }
-
         cockpit.addEventListener("locationchanged",
                                  this.onLocationChanged);
     }
@@ -929,16 +905,16 @@ class View extends React.Component {
          * and recording ID has changed
          */
         if (this.journalctlRecordingID !== null &&
-            this.state.recordingID != prevState.recordingID) {
+            this.state.recordingID !== prevState.recordingID) {
             if (this.journalctlIsRunning()) {
                 this.journalctlStop();
             }
             this.journalctlStart();
         }
-        if (this.state.dateSinceLastValid != prevState.dateSinceLastValid ||
-            this.state.dateUntilLastValid != prevState.dateUntilLastValid ||
-            this.state.username != prevState.username ||
-            this.state.hostname != prevState.hostname
+        if (this.state.date_since !== prevState.date_since ||
+            this.state.date_until !== prevState.date_until ||
+            this.state.username !== prevState.username ||
+            this.state.hostname !== prevState.hostname
         ) {
             this.clearRecordings();
             this.journalctlRestart();
@@ -961,18 +937,16 @@ class View extends React.Component {
                             <thead>
                                 <tr>
                                     <td className="top">
-                                        <label className="control-label" htmlFor="dateSince">Since</label>
+                                        <label className="control-label" htmlFor="date_since">Since</label>
                                     </td>
                                     <td>
-                                        <Datetimepicker onDateChange={this.handleDateSinceChange}
-                                                        date={this.state.dateSince} />
+                                        <input type="text" className="form-control" name="date_since" value={this.state.date_since} onChange={this.handleInputChange} />
                                     </td>
                                     <td className="top">
-                                        <label className="control-label" htmlFor="dateUntil">Until</label>
+                                        <label className="control-label" htmlFor="date_until">Until</label>
                                     </td>
                                     <td>
-                                        <Datetimepicker onDateChange={this.handleDateUntilChange}
-                                                        date={this.state.dateUntil} />
+                                        <input type="text" className="form-control" name="date_until" value={this.state.date_until} onChange={this.handleInputChange} />
                                     </td>
                                     <td className="top">
                                         <label className="control-label" htmlFor="username">Username</label>
@@ -1004,11 +978,12 @@ class View extends React.Component {
                         </table>
                     </div>
                     <RecordingList
-                        onDateSinceChange={this.handleDateSinceChange} dateSince={this.state.dateSince}
-                        onDateUntilChange={this.handleDateUntilChange} dateUntil={this.state.dateUntil}
-                        onUsernameChange={this.handleUsernameChange} username={this.state.username}
-                        onHostnameChange={this.handleHostnameChange} hostname={this.state.hostname}
-                        list={this.state.recordingList} diff_hosts={this.state.diff_hosts} />
+                        date_since={this.state.date_since}
+                        date_until={this.state.date_until}
+                        username={this.state.username}
+                        hostname={this.state.hostname}
+                        list={this.state.recordingList}
+                        diff_hosts={this.state.diff_hosts} />
                 </div>
             );
         } else {
