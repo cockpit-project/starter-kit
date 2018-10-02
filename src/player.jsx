@@ -480,32 +480,26 @@ let ProgressBar = class extends React.Component {
         };
 
         return (
-            <div className="progress" onClick={this.jumpTo}>
+            <div id="progress_bar" className="progress" onClick={this.jumpTo}>
                 <div className="progress-bar" role="progressbar" style={progress} />
             </div>
         );
     }
 };
 
-let InputPlayer = class extends React.Component {
+class InputPlayer extends React.Component {
     render() {
+        const input = String(this.props.input).replace(/(?:\r\n|\r|\n)/g, " ");
+
         return (
-            <div id="input-player" className="panel panel-default">
-                <div className="panel-heading">
-                    <span>Input</span>
-                </div>
-                <div className="panel-body">
-                    <textarea name="input" id="input-textarea" cols="30" rows="10" value={this.props.input} readOnly disabled />
-                </div>
-            </div>
+            <textarea name="input" id="input-textarea" cols="30" rows="1" value={input} readOnly disabled />
         );
     }
-};
+}
 
 export class Player extends React.Component {
     constructor(props) {
         super(props);
-
         this.handleTimeout = this.handleTimeout.bind(this);
         this.handlePacket = this.handlePacket.bind(this);
         this.handleError = this.handleError.bind(this);
@@ -1042,9 +1036,6 @@ export class Player extends React.Component {
         // ensure react never reuses this div by keying it with the terminal widget
         return (
             <div id="recording-wrap">
-                <div id="input-player-wrap" className="col-md-3">
-                    <InputPlayer input={this.state.input} />
-                </div>
                 <div className="col-md-6 player-wrap">
                     <div ref="wrapper" className="panel panel-default">
                         <div className="panel-heading">
@@ -1108,6 +1099,9 @@ export class Player extends React.Component {
                                 <ProgressBar length={this.buf.pos}
                                     mark={currentTsPost(this.state.currentTsPost, this.buf.pos)}
                                     fastForwardFunc={this.fastForwardToTS} />
+                            </div>
+                            <div id="input-player-wrap">
+                                <InputPlayer input={this.state.input} />
                             </div>
                         </div>
                         {error}
