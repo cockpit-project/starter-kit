@@ -113,75 +113,51 @@ let parseDate = function(date) {
  * A component representing a date & time picker based on bootstrap-datetime-picker.
  * Requires jQuery, bootstrap-datetime-picker, moment.js
  * Properties:
- * - onDateChange: function to call on date change event of datepicker.
- * - date: variable to pass which will be used as initial value.
+ * - onChange: function to call on date change event of datepicker.
+ * - value: variable to pass which will be used as initial value.
  */
 class Datetimepicker extends React.Component {
     constructor(props) {
         super(props);
         this.handleDateChange = this.handleDateChange.bind(this);
         this.clearField = this.clearField.bind(this);
-        this.markDateField = this.markDateField.bind(this);
         this.state = {
             invalid: false,
-            date: this.props.date,
-            dateLastValid: null,
+            date: this.props.value,
         };
     }
 
     componentDidMount() {
-        let datepicker = $(this.refs.datepicker).datetimepicker({
+        $(this.refs.datepicker).datetimepicker({
             format: 'yyyy-mm-dd hh:ii:00',
             autoclose: true,
             todayBtn: true,
-        });
-        datepicker.on('changeDate', (e) => {
-            this.handleDateChange(e);
-        });
+        })
+                .on('changeDate', this.handleDateChange);
+        // remove datepicker from input, so it only works by button press
         $(this.refs.datepicker_input).datetimepicker('remove');
-        this.markDateField();
     }
 
     componentWillUnmount() {
-        $(this.textInput).datetimepicker('remove');
+        $(this.refs.datepicker).datetimepicker('remove');
     }
 
-    handleDateChange(e) {
-        if (e.type === "changeDate") {
-            let event = new Event('input', { bubbles: true });
-            e.currentTarget.firstChild.dispatchEvent(event);
-        }
-
-        if (e.type === "input") {
-            this.setState({date: e.target.value});
-            if (parseDate(e.target.value)) {
-                this.setState({dateLastValid: e.target.value});
-                this.setState({invalid: false});
-                this.props.onDateChange(e.target.value, e.target.value.trim());
-            } else {
-                this.setState({invalid: true});
-                this.props.onDateChange(e.target.value, this.state.dateLastValid.trim());
-            }
+    handleDateChange() {
+        const date = $(this.refs.datepicker_input).val()
+                .trim();
+        this.setState({invalid: false, date: date});
+        if (!parseDate(date)) {
+            this.setState({invalid: true});
+        } else {
+            this.props.onChange(date);
         }
     }
 
     clearField() {
+        const date = "";
+        this.props.onChange(date);
+        this.setState({date: date, invalid: false});
         $(this.refs.datepicker_input).val("");
-        let event = new Event('input', { bubbles: true });
-        this.refs.datepicker_input.dispatchEvent(event);
-        this.handleDateChange(event);
-        this.setState({invalid: false});
-    }
-
-    markDateField() {
-        let date = $(this.refs.datepicker_input).val()
-                .trim();
-        if (!parseDate(date)) {
-            this.setState({invalid: true});
-        } else {
-            this.setState({dateLastValid: date});
-            this.setState({invalid: false});
-        }
     }
 
     render() {
@@ -189,7 +165,7 @@ class Datetimepicker extends React.Component {
             <div ref="datepicker" className="input-group date input-append date form_datetime">
                 <input ref="datepicker_input" type="text" size="16"
                     className={"form-control bootstrap-datepicker " + (this.state.invalid ? "invalid" : "valid")}
-                    readOnly value={this.state.date} onChange={this.handleDateChange} />
+                    value={this.state.date} onChange={this.handleDateChange} />
                 <span className="input-group-addon add-on"><i className="fa fa-calendar" /></span>
                 <span className="input-group-addon add-on" onClick={this.clearField}>
                     <i className="fa fa-remove" /></span>
@@ -197,8 +173,6 @@ class Datetimepicker extends React.Component {
         );
     }
 }
-
-console.log(Datetimepicker);
 
 function LogElement(props) {
     const entry = props.entry;
@@ -659,6 +633,7 @@ class View extends React.Component {
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleTsChange = this.handleTsChange.bind(this);
         this.handleLogTsChange = this.handleLogTsChange.bind(this);
+        this.handleDateSinceChange = this.handleDateSinceChange.bind(this);
         /* Journalctl instance */
         this.journalctl = null;
         /* Recording ID journalctl instance is invoked with */
@@ -868,6 +843,14 @@ class View extends React.Component {
         cockpit.location.go([], $.extend(cockpit.location.options, state));
     }
 
+    handleDateSinceChange(date) {
+        cockpit.location.go([], $.extend(cockpit.location.options, {date_since: date}));
+    }
+
+    handleDateUntilChange(date) {
+        cockpit.location.go([], $.extend(cockpit.location.options, {date_until: date}));
+    }
+
     handleTsChange(ts) {
         this.setState({curTs: ts});
     }
@@ -940,13 +923,13 @@ class View extends React.Component {
                                         <label className="control-label" htmlFor="date_since">Since</label>
                                     </td>
                                     <td>
-                                        <input type="text" className="form-control" name="date_since" value={this.state.date_since} onChange={this.handleInputChange} />
+                                        <Datetimepicker value={this.state.date_since} onChange={this.handleDateSinceChange} />
                                     </td>
                                     <td className="top">
                                         <label className="control-label" htmlFor="date_until">Until</label>
                                     </td>
                                     <td>
-                                        <input type="text" className="form-control" name="date_until" value={this.state.date_until} onChange={this.handleInputChange} />
+                                        <Datetimepicker value={this.state.date_until} onChange={this.handleDateUntilChange} />
                                     </td>
                                     <td className="top">
                                         <label className="control-label" htmlFor="username">Username</label>
