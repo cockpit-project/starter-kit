@@ -379,9 +379,6 @@ class Recording extends React.Component {
     constructor(props) {
         super(props);
         this.goBackToList = this.goBackToList.bind(this);
-        this.getHostname = this.getHostname.bind(this);
-        this.Hostname = this.Hostname.bind(this);
-        this.hostname = null;
     }
 
     goBackToList() {
@@ -390,35 +387,6 @@ class Recording extends React.Component {
         } else {
             cockpit.location.go('/');
         }
-    }
-
-    getHostname() {
-        cockpit.spawn(["hostname"], { err: "ignore" })
-                .done(function(output) {
-                    this.hostname = $.trim(output);
-                })
-                .fail(function(ex) {
-                    console.log(ex);
-                });
-    }
-
-    Hostname(props) {
-        let style = {
-            display: "none"
-        };
-        if (this.hostname != null && this.hostname != props.hostname) {
-            style = {};
-        }
-        return (
-            <tr style={style}>
-                <td>{_("Hostname")}</td>
-                <td>{props.hostname}</td>
-            </tr>
-        );
-    }
-
-    componentWillMount() {
-        this.getHostname();
     }
 
     render() {
@@ -456,7 +424,10 @@ class Recording extends React.Component {
                                                 <td>{_("ID")}</td>
                                                 <td>{r.id}</td>
                                             </tr>
-                                            <this.Hostname hostname={r.hostname} />
+                                            <tr>
+                                                <td>{_("Hostname")}</td>
+                                                <td>{r.hostname}</td>
+                                            </tr>
                                             <tr>
                                                 <td>{_("Boot ID")}</td>
                                                 <td>{r.boot_id}</td>
@@ -520,7 +491,7 @@ class RecordingList extends React.Component {
     drawSortDir() {
         $('#sort_arrow').remove();
         let type = this.state.sorting_asc ? "asc" : "desc";
-        let arrow = '<i id="sort_arrow" class="fa fa-sort-' + type + '" aria-hidden="true"></i>';
+        let arrow = '<i id="sort_arrow" class="fa fa-sort-' + type + '" aria-hidden="true" />';
         $(this.refs[this.state.sorting_field]).append(arrow);
     }
 
@@ -727,6 +698,7 @@ class View extends React.Component {
                      start:         ts,
                      /* FIXME Should be start + message duration */
                      end:       ts,
+                     hostname:  e["_HOSTNAME"],
                      duration:  0};
                 /* Map the recording */
                 this.recordingMap[id] = r;
