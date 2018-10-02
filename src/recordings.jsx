@@ -605,6 +605,7 @@ class View extends React.Component {
         this.handleTsChange = this.handleTsChange.bind(this);
         this.handleLogTsChange = this.handleLogTsChange.bind(this);
         this.handleDateSinceChange = this.handleDateSinceChange.bind(this);
+        this.openConfig = this.openConfig.bind(this);
         /* Journalctl instance */
         this.journalctl = null;
         /* Recording ID journalctl instance is invoked with */
@@ -831,6 +832,10 @@ class View extends React.Component {
         this.setState({logsTs: ts});
     }
 
+    openConfig() {
+        cockpit.jump(['session-recording/config']);
+    }
+
     componentDidMount() {
         let proc = cockpit.spawn(["getent", "passwd", "tlog"]);
 
@@ -929,8 +934,7 @@ class View extends React.Component {
                                         <label className="control-label" htmlFor="config">Configuration</label>
                                     </td>
                                     <td className="top">
-                                        <a href="/cockpit/@localhost/session-recording/config.html" className="btn btn-default" data-toggle="modal">
-                                            <i className="fa fa-cog" aria-hidden="true" /></a>
+                                        <button className="btn btn-default" onClick={this.openConfig}><i className="fa fa-cog" aria-hidden="true" /></button>
                                     </td>
                                 </tr>
                             </thead>
