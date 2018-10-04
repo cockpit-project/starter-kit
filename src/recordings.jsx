@@ -424,7 +424,8 @@ class Recording extends React.Component {
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-md-3">
+                        {player}
+                        <div className="col-md-6">
                             <div className="panel panel-default">
                                 <div className="panel-heading">
                                     <span>{_("Recording")}</span>
@@ -473,7 +474,6 @@ class Recording extends React.Component {
                                 </div>
                             </div>
                         </div>
-                        {player}
                     </div>
                 </div>
             );

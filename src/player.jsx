@@ -24,6 +24,7 @@ let Term = require("term.js-cockpit");
 let Journal = require("journal");
 let $ = require("jquery");
 require("console.css");
+require("bootstrap-slider");
 
 /*
  * Get an object field, verifying its presence and type.
@@ -460,32 +461,57 @@ let PacketBuffer = class {
     }
 };
 
-let ProgressBar = class extends React.Component {
+class Slider extends React.Component {
     constructor(props) {
         super(props);
-        this.jumpTo = this.jumpTo.bind(this);
+        this.slideStart = this.slideStart.bind(this);
+        this.slideStop = this.slideStop.bind(this);
+        this.slider = null;
+        this.state = {
+            paused: false,
+        };
     }
 
-    jumpTo(e) {
+    slideStart(e) {
+        this.setState({paused: this.props.paused});
+        this.props.pause();
+    }
+
+    slideStop(e) {
         if (this.props.fastForwardFunc) {
-            let percent = parseInt((e.nativeEvent.offsetX * 100) / e.currentTarget.clientWidth);
-            let ts = parseInt((this.props.length * percent) / 100);
-            this.props.fastForwardFunc(ts);
+            this.props.fastForwardFunc(e);
+            if (this.state.paused === false) {
+                this.props.play();
+            }
         }
     }
 
-    render() {
-        let progress = {
-            "width": parseInt((this.props.mark * 100) / this.props.length) + "%"
-        };
+    componentDidMount() {
+        this.slider = $("#slider").slider({
+            value: 0,
+            tooltip: "hide",
+            enabled: false,
+        });
+        this.slider.slider('on', 'slideStart', this.slideStart);
+        this.slider.slider('on', 'slideStop', this.slideStop);
+    }
 
+    componentDidUpdate() {
+        if (this.props.length) {
+            this.slider.slider('enable');
+            this.slider.slider('setAttribute', 'max', this.props.length);
+        }
+        if (this.props.mark) {
+            this.slider.slider('setValue', this.props.mark);
+        }
+    }
+
+    render () {
         return (
-            <div id="progress_bar" className="progress" onClick={this.jumpTo}>
-                <div className="progress-bar" role="progressbar" style={progress} />
-            </div>
+            <input id="slider" type="text" />
         );
     }
-};
+}
 
 class InputPlayer extends React.Component {
     render() {
@@ -506,6 +532,8 @@ export class Player extends React.Component {
         this.handleTitleChange = this.handleTitleChange.bind(this);
         this.rewindToStart = this.rewindToStart.bind(this);
         this.playPauseToggle = this.playPauseToggle.bind(this);
+        this.play = this.play.bind(this);
+        this.pause = this.pause.bind(this);
         this.speedUp = this.speedUp.bind(this);
         this.speedDown = this.speedDown.bind(this);
         this.speedReset = this.speedReset.bind(this);
@@ -769,6 +797,14 @@ export class Player extends React.Component {
         this.setState({paused: !this.state.paused});
     }
 
+    play() {
+        this.setState({paused: false});
+    }
+
+    pause() {
+        this.setState({paused: true});
+    }
+
     speedUp() {
         let speedExp = this.state.speedExp;
         if (speedExp < 4) {
@@ -1010,17 +1046,6 @@ export class Player extends React.Component {
             "float": "right",
         };
 
-        const progressbar_style = {
-            'marginTop': '10px',
-        };
-
-        const currentTsPost = function(currentTS, bufLength) {
-            if (currentTS > bufLength) {
-                return bufLength;
-            }
-            return currentTS;
-        };
-
         let error = "";
         if (this.state.error) {
             error = (
@@ -1047,6 +1072,7 @@ export class Player extends React.Component {
                             </div>
                         </div>
                         <div className="panel-footer">
+                            <Slider length={this.buf.pos} mark={this.state.currentTsPost} fastForwardFunc={this.fastForwardToTS} play={this.play} pause={this.pause} paused={this.state.paused} />
                             <button title="Play/Pause - Hotkey: p" type="button" ref="playbtn"
                                     className="btn btn-default btn-lg margin-right-btn play-btn"
                                     onClick={this.playPauseToggle}>
@@ -1095,11 +1121,6 @@ export class Player extends React.Component {
                                     onClick={this.zoomOut} disabled={this.state.term_zoom_min}>
                                     <i className="fa fa-search-minus" aria-hidden="true" /></button>
                             </span>
-                            <div style={progressbar_style}>
-                                <ProgressBar length={this.buf.pos}
-                                    mark={currentTsPost(this.state.currentTsPost, this.buf.pos)}
-                                    fastForwardFunc={this.fastForwardToTS} />
-                            </div>
                             <div id="input-player-wrap">
                                 <InputPlayer input={this.state.input} />
                             </div>

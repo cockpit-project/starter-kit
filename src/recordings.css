@@ -394,6 +394,10 @@ table.listing-ct > thead th:last-child, tr.listing-ct-item td:last-child {
     resize: none;
 }
 
-#progress_bar {
-    margin-bottom: 10px;
+#input-player-wrap {
+    margin-top: 5px;
+}
+
+.panel-footer {
+    padding: 5px 15px;
 }
