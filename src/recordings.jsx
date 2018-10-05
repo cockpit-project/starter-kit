@@ -903,7 +903,7 @@ class View extends React.Component {
         }
         if (this.state.recordingID === null) {
             return (
-                <div>
+                <React.Fragment>
                     <div className="content-header-extra">
                         <table className="form-table-ct">
                             <thead>
@@ -959,11 +959,11 @@ class View extends React.Component {
                         hostname={this.state.hostname}
                         list={this.state.recordingList}
                         diff_hosts={this.state.diff_hosts} />
-                </div>
+                </React.Fragment>
             );
         } else {
             return (
-                <div>
+                <React.Fragment>
                     <Recording recording={this.recordingMap[this.state.recordingID]} onTsChange={this.handleTsChange} logsTs={this.state.logsTs} />
                     <div className="container-fluid">
                         <div className="row">
@@ -973,7 +973,7 @@ class View extends React.Component {
                             </div>
                         </div>
                     </div>
-                </div>
+                </React.Fragment>
             );
         }
     }
