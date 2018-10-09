@@ -350,6 +350,7 @@ class SssdConfig extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.setConfig = this.setConfig.bind(this);
+        this.confSave = this.confSave.bind(this);
         this.file = null;
         this.state = {
             scope: "",
@@ -357,6 +358,19 @@ class SssdConfig extends React.Component {
             groups: "",
             submitting: "none",
         };
+    }
+
+    confSave(obj) {
+        this.setState({submitting:"block"});
+        this.file.replace(obj).done(() => {
+            cockpit.spawn(["chmod", "600", "/etc/sssd/conf.d/sssd-session-recording.conf"], { "superuser": "require" }).done(() => {
+                cockpit.spawn(["systemctl", "restart", "sssd"], { "superuser": "require" }).done(() => {
+                    this.setState({submitting:"none"});
+                })
+                        .fail((data) => console.log(data));
+            })
+                    .fail((data) => console.log(data));
+        });
     }
 
     handleInputChange(e) {
@@ -368,8 +382,15 @@ class SssdConfig extends React.Component {
     }
 
     setConfig(data) {
-        const config = {...data['session_recording']};
-        this.setState(config);
+        if (data === null) {
+            const obj = {};
+            obj.session_recording = {};
+            obj.session_recording.scope = "none";
+            this.confSave(obj);
+        } else {
+            const config = {...data['session_recording']};
+            this.setState(config);
+        }
     }
 
     componentWillMount() {
@@ -385,7 +406,7 @@ class SssdConfig extends React.Component {
 
         let promise = this.file.read();
 
-        promise.done(this.setConfig);
+        promise.done(() => this.file.watch(this.setConfig));
 
         promise.fail(function(error) {
             console.log(error);
@@ -393,20 +414,12 @@ class SssdConfig extends React.Component {
     }
 
     handleSubmit(e) {
-        this.setState({submitting:"block"});
         const obj = {};
         obj.session_recording = {};
         obj.session_recording.scope = this.state.scope;
         obj.session_recording.users = this.state.users;
         obj.session_recording.groups = this.state.groups;
-
-        let _this = this;
-        this.file.replace(obj).done(function() {
-            _this.setState({submitting:"none"});
-        })
-                .fail(function(error) {
-                    console.log(error);
-                });
+        this.confSave(obj);
         e.preventDefault();
     }
 
