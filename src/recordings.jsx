@@ -233,14 +233,12 @@ class Logs extends React.Component {
         this.journalctlPrepend = this.journalctlPrepend.bind(this);
         this.getLogs = this.getLogs.bind(this);
         this.loadLater = this.loadLater.bind(this);
-        this.loadEarlier = this.loadEarlier.bind(this);
         this.loadForTs = this.loadForTs.bind(this);
         this.journalCtl = null;
         this.entries = [];
         this.start = null;
         this.end = null;
         this.earlier_than = null;
-        this.load_earlier = false;
         this.state = {
             cursor: null,
             after: null,
@@ -263,19 +261,11 @@ class Logs extends React.Component {
     }
 
     journalctlIngest(entryList) {
-        if (this.load_earlier === true) {
-            entryList.push(...this.entries);
-            this.entries = entryList;
-            this.setState({entries: this.entries});
-            this.load_earlier = false;
-            this.scrollToTop();
-        } else {
-            if (entryList.length > 0) {
-                this.entries.push(...entryList);
-                const after = this.entries[this.entries.length - 1].__CURSOR;
-                this.setState({entries: this.entries, after: after});
-                this.scrollToBottom();
-            }
+        if (entryList.length > 0) {
+            this.entries.push(...entryList);
+            const after = this.entries[this.entries.length - 1].__CURSOR;
+            this.setState({entries: this.entries, after: after});
+            this.scrollToBottom();
         }
     }
 
@@ -300,9 +290,7 @@ class Logs extends React.Component {
                 count: "all",
             };
 
-            if (this.load_earlier === true) {
-                options["until"] = formatDateTime(this.earlier_than);
-            } else if (this.state.after != null) {
+            if (this.state.after != null) {
                 options["after"] = this.state.after;
                 delete options.since;
             }
@@ -314,12 +302,6 @@ class Logs extends React.Component {
                         self.journalctlIngest(data);
                     });
         }
-    }
-
-    loadEarlier() {
-        this.load_earlier = true;
-        this.start = this.start - 3600;
-        this.getLogs();
     }
 
     loadLater() {
@@ -368,13 +350,11 @@ class Logs extends React.Component {
                 <div className="panel panel-default">
                     <div className="panel-heading">
                         <span>Logs</span>
-                        <button className="btn btn-default" style={{"float":"right"}} onClick={this.loadEarlier}>Load earlier entries</button>
+                        <button className="btn btn-default" style={{"float":"right"}} onClick={this.loadLater}>Load later entries</button>
                     </div>
                     <LogsView entries={this.state.entries} start={this.props.recording.start}
                               end={this.props.recording.end} jumpToTs={this.props.jumpToTs} />
-                    <div className="panel-heading">
-                        <button className="btn btn-default" onClick={this.loadLater}>Load later entries</button>
-                    </div>
+                    <div className="panel-heading" />
                 </div>
             );
         }
