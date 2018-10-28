@@ -126,8 +126,8 @@ vm: $(VM_IMAGE)
 	echo $(VM_IMAGE)
 
 # run the browser integration tests; skip check for SELinux denials
-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
-	TEST_AUDIT_NO_SELINUX=1 test/check-application
+check: $(NODE_MODULES_TEST) $(VM_IMAGE)
+	npm run cypress
 
 # checkout Cockpit's bots/ directory for standard test VM images and API to launch them
 # must be from cockpit's master, as only that has current and existing images; but testvm.py API is stable
@@ -135,13 +135,6 @@ bots:
 	git fetch --depth=1 https://github.com/cockpit-project/cockpit.git
 	git checkout --force FETCH_HEAD -- bots/
 	git reset bots
-
-# checkout Cockpit's test API; this has no API stability guarantee, so check out a stable tag
-# when you start a new project, use the latest relese, and update it from time to time
-test/common:
-	git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 176
-	git checkout --force FETCH_HEAD -- test/common
-	git reset test/common
 
 $(NODE_MODULES_TEST): package.json
 	npm install

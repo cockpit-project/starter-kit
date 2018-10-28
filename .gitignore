@@ -4,12 +4,11 @@
 *.rpm
 node_modules/
 dist/
+cypress/support
 /*.spec
 /.vagrant
 package-lock.json
-Test*FAIL*
 bots/
-test/common/
 test/images/
 *.pot
 POTFILES*
