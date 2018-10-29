@@ -17,7 +17,7 @@
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^9.0.0",
     "babel-loader": "^8.0.0",
-    "chrome-remote-interface": "^0.25.5",
+    "chrome-remote-interface": "^0.26.1",
     "compression-webpack-plugin": "^1.1.11",
     "copy-webpack-plugin": "^4.5.2",
     "css-loader": "^0.28.11",
@@ -44,7 +44,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "node-sass": "^4.9.0",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2"
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0"
   }
 }
