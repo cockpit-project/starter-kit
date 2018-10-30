@@ -12,40 +12,50 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 import testlib
 
-
+# Test with pre-recorded journal with tlog UID 981
 class TestApplication(testlib.MachineCase):
-    def testBasic(self):
+    def testPlay(self):
         b = self.browser
         m = self.machine
+        m.execute("cp /root/1.journal /var/log/journal/")
+        self.login_and_go("/session-recording")
+        b.wait_present(".content-header-extra")
+        b.wait_present("#user")
+        b.click(".listing-ct-item")
+        b.wait_present("button.margin-right-btn:nth-child(3)")
+        b.click("button.margin-right-btn:nth-child(3)")
+        b.wait_timeout(15000)
+        b.wait_present(".fa-pause")
+        b.click("button.margin-right-btn:nth-child(3)")
+        b.snapshot('play-default')
+        m.execute("rm -rf /var/log/journal/1.journal")
 
-        self.login_and_go("/starter-kit")
-        # verify expected heading
-        b.wait_present(".container-fluid h2")
-        b.wait_text(".container-fluid h2", "Starter Kit")
-
-        # verify expected host name
-        hostname = m.execute("hostname").strip()
-        b.wait_present(".container-fluid p")
-        b.wait_text(".container-fluid p", "Running on " + hostname)
-
-        # change language to German
-        b.switch_to_top()
-        b.click("#content-user-name")
-        b.click(".display-language-menu a")
-        b.wait_popup('display-language')
-        b.set_val("#display-language select", "de-de")
-        b.click("#display-language-select-button")
-        b.expect_load()
-        # HACK: work around language switching in Chrome not working in current session (Cockpit issue #8160)
-        b.reload(ignore_cache=True)
-        b.wait_present("#content")
-        # menu label (from manifest) should be translated
-        b.wait_text("#host-apps a[href='/starter-kit']", "Bausatz")
-
-        b.go("/starter-kit")
-        b.enter_page("/starter-kit")
-        # page label (from js) should be translated
-        b.wait_in_text(".container-fluid p", "Läuft auf")
+    def testSkip(self):
+        b = self.browser
+        m = self.machine
+        m.execute("cp /root/1.journal /var/log/journal/")
+        self.login_and_go("/session-recording")
+        b.wait_present(".content-header-extra")
+        b.wait_present("#user")
+        b.click(".listing-ct-item")
+        b.wait_present("button.margin-right-btn:nth-child(3)")
+        b.wait_present("button.margin-right-btn:nth-child(4)")
+        b.click("button.margin-right-btn:nth-child(4)")
+        b.wait_timeout(1000)
+        b.wait_present("button.margin-right-btn:nth-child(4)")
+        b.click("button.margin-right-btn:nth-child(4)")
+        b.wait_timeout(1000)
+        b.wait_present("button.margin-right-btn:nth-child(4)")
+        b.click("button.margin-right-btn:nth-child(4)")
+        b.wait_timeout(1000)
+        b.wait_present("button.margin-right-btn:nth-child(4)")
+        b.click("button.margin-right-btn:nth-child(4)")
+        b.wait_timeout(1000)
+        b.wait_present("button.margin-right-btn:nth-child(4)")
+        b.click("button.margin-right-btn:nth-child(4)")
+        b.wait_timeout(1000)
+        b.snapshot('play-default')
+        m.execute("rm -rf /var/log/journal/1.journal")
 
 if __name__ == '__main__':
     testlib.test_main()
