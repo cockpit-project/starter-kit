@@ -120,7 +120,8 @@ rpm: dist-gzip cockpit-$(PACKAGE_NAME).spec
 $(VM_IMAGE): rpm bots
 	rm -f $(VM_IMAGE) $(VM_IMAGE).qcow2
 	bots/image-customize -v -i cockpit -i `pwd`/cockpit-$(PACKAGE_NAME)-*.noarch.rpm -s $(CURDIR)/test/vm.install $(TEST_OS)
-	bots/image-customize -v -u ./test/files/1.journal:/root/1.journal $(TEST_OS)
+	bots/image-customize -v -r "useradd tlog && usermod -u 981 tlog" $(TEST_OS)
+	bots/image-customize -v -u ./test/files/1.journal:/var/log/journal/1.journal $(TEST_OS)
 
 # convenience target for the above
 vm: $(VM_IMAGE)

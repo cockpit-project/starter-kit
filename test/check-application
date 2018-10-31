@@ -15,47 +15,129 @@ import testlib
 # Test with pre-recorded journal with tlog UID 981
 class TestApplication(testlib.MachineCase):
     def testPlay(self):
+        term_first_line = "#recording-wrap > div > div > div.panel-body > div > div > div > div:nth-child(1)"
+        play_btn = "button.margin-right-btn:nth-child(3)"
         b = self.browser
         m = self.machine
-        m.execute("cp /root/1.journal /var/log/journal/")
         self.login_and_go("/session-recording")
         b.wait_present(".content-header-extra")
         b.wait_present("#user")
         b.click(".listing-ct-item")
-        b.wait_present("button.margin-right-btn:nth-child(3)")
-        b.click("button.margin-right-btn:nth-child(3)")
-        b.wait_timeout(15000)
-        b.wait_present(".fa-pause")
-        b.click("button.margin-right-btn:nth-child(3)")
-        b.snapshot('play-default')
-        m.execute("rm -rf /var/log/journal/1.journal")
+        b.wait_present(play_btn)
+        b.click(play_btn)
+        b.wait_timeout(30000)
+        b.wait_in_text(term_first_line, "localhost")
 
-    def testSkip(self):
+    def testFastforwardControls(self):
+        fast_forward_btn = "button.btn:nth-child(6)"
+        restart_btn = "button.btn:nth-child(5)"
+        slider = "div.slider-handle:nth-child(5)"
+        term_line = "#recording-wrap > div > div > div.panel-body > div > div > div > div:nth-child(26)"
         b = self.browser
         m = self.machine
-        m.execute("cp /root/1.journal /var/log/journal/")
         self.login_and_go("/session-recording")
         b.wait_present(".content-header-extra")
         b.wait_present("#user")
         b.click(".listing-ct-item")
-        b.wait_present("button.margin-right-btn:nth-child(3)")
-        b.wait_present("button.margin-right-btn:nth-child(4)")
-        b.click("button.margin-right-btn:nth-child(4)")
-        b.wait_timeout(1000)
-        b.wait_present("button.margin-right-btn:nth-child(4)")
-        b.click("button.margin-right-btn:nth-child(4)")
-        b.wait_timeout(1000)
-        b.wait_present("button.margin-right-btn:nth-child(4)")
-        b.click("button.margin-right-btn:nth-child(4)")
-        b.wait_timeout(1000)
-        b.wait_present("button.margin-right-btn:nth-child(4)")
-        b.click("button.margin-right-btn:nth-child(4)")
-        b.wait_timeout(1000)
-        b.wait_present("button.margin-right-btn:nth-child(4)")
-        b.click("button.margin-right-btn:nth-child(4)")
-        b.wait_timeout(1000)
-        b.snapshot('play-default')
-        m.execute("rm -rf /var/log/journal/1.journal")
+        b.wait_present(fast_forward_btn)
+        b.click(fast_forward_btn)
+        b.wait_present(slider)
+        b.wait_attr(slider, "style", "left: 100%;")
+        b.wait_in_text(term_line, "logout")
+        # test restart playback
+        b.wait_present(restart_btn)
+        b.click(restart_btn)
+        b.wait_text(".terminal-cursor", " ")
+        b.wait_attr(slider, "style", "left: 100%;")
+
+    def testSpeedControls(self):
+        speed_up_btn = "button.btn:nth-child(9)"
+        speed_down_btn = "button.btn:nth-child(7)"
+        speed_restore_btn = "button.btn:nth-child(8)"
+        speed_val = ".panel-footer > span:nth-child(10)"
+        b = self.browser
+        m = self.machine
+        self.login_and_go("/session-recording")
+        b.wait_present(".content-header-extra")
+        b.wait_present("#user")
+        b.click(".listing-ct-item")
+        # increase speed
+        b.wait_present(speed_up_btn)
+        b.click(speed_up_btn)
+        b.wait_present(speed_val)
+        b.wait_text(speed_val, "x2")
+        b.click(speed_up_btn)
+        b.wait_text(speed_val, "x4")
+        b.click(speed_up_btn)
+        b.wait_text(speed_val, "x8")
+        b.click(speed_up_btn)
+        b.wait_text(speed_val, "x16")
+        # decrease speed
+        b.click(speed_down_btn)
+        b.wait_text(speed_val, "x8")
+        b.click(speed_down_btn)
+        b.wait_text(speed_val, "x4")
+        b.click(speed_down_btn)
+        b.wait_text(speed_val, "x2")
+        b.click(speed_down_btn)
+        b.wait_text(speed_val, "")
+        b.click(speed_down_btn)
+        b.wait_text(speed_val, "/2")
+        b.click(speed_down_btn)
+        b.wait_text(speed_val, "/4")
+        b.click(speed_down_btn)
+        b.wait_text(speed_val, "/8")
+        b.click(speed_down_btn)
+        b.wait_text(speed_val, "/16")
+        # restore speed
+        b.click(speed_restore_btn)
+        b.wait_text(speed_val, "")
+
+    def testZoomControls(self):
+        skip_frame_btn = "#recording-wrap > div > div > div.panel-footer > button:nth-child(4)"
+        zoom_in_btn = "button.btn-lg:nth-child(2)"
+        zoom_out_btn = "#recording-wrap > div > div > div.panel-footer > span:nth-child(11) > button:nth-child(4)"
+        zoom_restore_btn = "#recording-wrap > div > div > div.panel-footer > span:nth-child(11) > button:nth-child(3)"
+        term = "#recording-wrap > div > div > div.panel-body > div > div"
+        b = self.browser
+        m = self.machine
+        self.login_and_go("/session-recording")
+        b.wait_present(".content-header-extra")
+        b.wait_present("#user")
+        b.click(".listing-ct-item")
+        b.wait_attr(term, "style", "transform: scale(1) translate(-50%, -50%); transform-origin: left top 0px; display: inline-block; margin: 0px auto; position: absolute; top: 50%; left: 50%;")
+        b.wait_present(skip_frame_btn)
+        b.click(skip_frame_btn)
+        # zoom in
+        b.wait_attr(term, "style", "transform: scale(0.763158) translate(-50%, -50%); transform-origin: left top 0px; display: inline-block; margin: 0px auto; position: absolute; top: 50%; left: 50%;")
+        b.click(zoom_in_btn)
+        b.wait_attr(term, "style", "transform: scale(0.863158) translate(0px, 0px); transform-origin: left top 0px; display: inline-block; margin: 0px auto; position: absolute; top: 0px; left: 0px;")
+        b.click(zoom_in_btn)
+        b.wait_attr(term, "style", "transform: scale(0.963158) translate(0px, 0px); transform-origin: left top 0px; display: inline-block; margin: 0px auto; position: absolute; top: 0px; left: 0px;")
+        b.click(zoom_in_btn)
+        b.wait_attr(term, "style", "transform: scale(1.06316) translate(0px, 0px); transform-origin: left top 0px; display: inline-block; margin: 0px auto; position: absolute; top: 0px; left: 0px;")
+        b.click(zoom_restore_btn)
+        b.wait_attr(term, "style", "transform: scale(0.763158) translate(-50%, -50%); transform-origin: left top 0px; display: inline-block; margin: 0px auto; position: absolute; top: 50%; left: 50%;")
+        b.click(zoom_out_btn)
+        b.wait_attr(term, "style", "transform: scale(0.663158) translate(0px, 0px); transform-origin: left top 0px; display: inline-block; margin: 0px auto; position: absolute; top: 0px; left: 0px;")
+
+    def testSkipFrame(self):
+        skip_frame_btn = "#recording-wrap > div > div > div.panel-footer > button:nth-child(4)"
+        term_first_line = "#recording-wrap > div > div > div.panel-body > div > div > div > div:nth-child(1)"
+        b = self.browser
+        m = self.machine
+        self.login_and_go("/session-recording")
+        b.wait_present(".content-header-extra")
+        b.wait_present("#user")
+        b.click(".listing-ct-item")
+        b.wait_present(skip_frame_btn)
+        b.click(skip_frame_btn)
+        b.click(skip_frame_btn)
+        b.click(skip_frame_btn)
+        b.click(skip_frame_btn)
+        b.click(skip_frame_btn)
+        b.wait_timeout(5000)
+        b.wait_in_text(term_first_line, "localhost")
 
 if __name__ == '__main__':
     testlib.test_main()
