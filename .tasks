@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Open issues for things that need doing on a regular basis
+bots/npm-trigger
+
+# Find those issues and propose to do them
+bots/issue-scan
