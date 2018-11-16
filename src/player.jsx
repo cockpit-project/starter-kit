@@ -105,7 +105,7 @@ let PacketBuffer = class {
         /* The journalctl reading the recording */
         this.journalctl = Journal.journalctl(
             this.matchList,
-            {count: "all", follow: false});
+            {count: "all", follow: false, merge: true});
         this.journalctl.fail(this.handleError);
         this.journalctl.stream(this.handleStream);
         this.journalctl.done(this.handleDone);
@@ -454,7 +454,7 @@ let PacketBuffer = class {
         this.journalctl = Journal.journalctl(
             this.matchList,
             {cursor: this.cursor,
-             follow: true, count: "all"});
+             follow: true, merge: true, count: "all"});
         this.journalctl.fail(this.handleError);
         this.journalctl.stream(this.handleStream);
         /* NOTE: no "done" handler on purpose */
