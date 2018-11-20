@@ -50,15 +50,12 @@ let padInt = function (n, w) {
  * Format date and time for a number of milliseconds since Epoch.
  */
 let formatDateTime = function (ms) {
-    let d = new Date(ms);
-    return (
-        padInt(d.getFullYear(), 4) + '-' +
-        padInt(d.getMonth() + 1, 2) + '-' +
-        padInt(d.getDate(), 2) + ' ' +
-        padInt(d.getHours(), 2) + ':' +
-        padInt(d.getMinutes(), 2) + ':' +
-        padInt(d.getSeconds(), 2)
-    );
+    return moment(ms).format("YYYY-MM-DD HH:mm:ss");
+};
+
+let formatDateTimeOffset = function (ms, offset) {
+    return moment(ms).utcOffset(offset)
+            .format("YYYY-MM-DD HH:mm:ss");
 };
 
 /*
@@ -234,6 +231,7 @@ class Logs extends React.Component {
         this.getLogs = this.getLogs.bind(this);
         this.loadLater = this.loadLater.bind(this);
         this.loadForTs = this.loadForTs.bind(this);
+        this.getServerTimeOffset = this.getServerTimeOffset.bind(this);
         this.journalCtl = null;
         this.entries = [];
         this.start = null;
@@ -241,10 +239,21 @@ class Logs extends React.Component {
         this.hostname = null;
         this.earlier_than = null;
         this.state = {
+            serverTimeOffset: null,
             cursor: null,
             after: null,
             entries: [],
         };
+    }
+
+    getServerTimeOffset() {
+        cockpit.spawn(["date", "+%s:%:z"], { err: "message" })
+                .done((data) => {
+                    this.setState({serverTimeOffset: data.slice(data.indexOf(":") + 1)});
+                })
+                .fail((ex) => {
+                    console.log("Couldn't calculate server time offset: " + cockpit.message(ex));
+                });
     }
 
     scrollToTop() {
@@ -287,9 +296,20 @@ class Logs extends React.Component {
                 matches.push("_HOSTNAME=" + this.hostname);
             }
 
+            let start = null;
+            let end = null;
+
+            if (this.state.serverTimeOffset != null) {
+                start = formatDateTimeOffset(this.start, this.state.serverTimeOffset);
+                end = formatDateTimeOffset(this.end, this.state.serverTimeOffset);
+            } else {
+                start = formatDateTime(this.start);
+                end = formatDateTime(this.end);
+            }
+
             let options = {
-                since: formatDateTime(this.start),
-                until: formatDateTime(this.end),
+                since: start,
+                until: end,
                 follow: false,
                 count: "all",
                 merge: true,
@@ -318,6 +338,10 @@ class Logs extends React.Component {
     loadForTs(ts) {
         this.end = this.start + ts;
         this.getLogs();
+    }
+
+    componentWillMount() {
+        this.getServerTimeOffset();
     }
 
     componentDidMount() {
