@@ -119,6 +119,8 @@
             cmd.push("--after=" + options.after);
         if (options.merge)
             cmd.push("-m");
+        if (options.grep)
+            cmd.push("--grep=" + options.grep);
 
         /* journalctl doesn't allow reverse and follow together */
         if (options.reverse)

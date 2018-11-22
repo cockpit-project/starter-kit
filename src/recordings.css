@@ -401,3 +401,24 @@ table.listing-ct > thead th:last-child, tr.listing-ct-item td:last-child {
 .panel-footer {
     padding: 5px 15px;
 }
+
+.search-result {
+    margin-left: 5px;
+    float: left;
+}
+
+.search-results {
+    float: left;
+    min-height: 25px;
+}
+
+.search-component {
+    float: left;
+    width: 33%;
+}
+
+.search-wrap {
+    min-height: 25px;
+    display:block;
+    clear:both;
+}

@@ -20,11 +20,52 @@
 import React from 'react';
 let cockpit = require("cockpit");
 let _ = cockpit.gettext;
+let moment = require("moment");
 let Term = require("term.js-cockpit");
 let Journal = require("journal");
 let $ = require("jquery");
 require("console.css");
 require("bootstrap-slider");
+
+let padInt = function (n, w) {
+    let i = Math.floor(n);
+    let a = Math.abs(i);
+    let s = a.toString();
+    for (w -= s.length; w > 0; w--) {
+        s = '0' + s;
+    }
+    return ((i < 0) ? '-' : '') + s;
+};
+
+let formatDateTime = function (ms) {
+    return moment(ms).format("YYYY-MM-DD HH:mm:ss");
+};
+
+/*
+ * Format a time interval from a number of milliseconds.
+ */
+let formatDuration = function (ms) {
+    let v = Math.floor(ms / 1000);
+    let s = Math.floor(v % 60);
+    v = Math.floor(v / 60);
+    let m = Math.floor(v % 60);
+    v = Math.floor(v / 60);
+    let h = Math.floor(v % 24);
+    let d = Math.floor(v / 24);
+    let str = '';
+
+    if (d > 0) {
+        str += d + ' ' + _("days") + ' ';
+    }
+
+    if (h > 0 || str.length > 0) {
+        str += padInt(h, 2) + ':';
+    }
+
+    str += padInt(m, 2) + ':' + padInt(s, 2);
+
+    return (ms < 0 ? '-' : '') + str;
+};
 
 let scrollToBottom = function(id) {
     const el = document.getElementById(id);
@@ -564,6 +605,88 @@ class Slider extends React.Component {
     }
 }
 
+function SearchEntry(props) {
+    return (
+        <span className="search-result"><a onClick={(e) => props.fastForwardToTS(props.pos, e)}>{formatDuration(props.pos)}</a></span>
+    );
+}
+
+class Search extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleStream = this.handleStream.bind(this);
+        this.handleError = this.handleError.bind(this);
+        this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+        this.clearSearchResults = this.clearSearchResults.bind(this);
+        this.state = {
+            search: cockpit.location.options.search_rec || cockpit.location.options.search || "",
+        };
+    }
+
+    handleInputChange(event) {
+        event.preventDefault();
+        const name = event.target.name;
+        const value = event.target.value;
+        let state = {};
+        state[name] = value;
+        this.setState(state);
+        cockpit.location.go(cockpit.location.path[0], $.extend(cockpit.location.options, {search_rec: value}));
+    }
+
+    handleSearchSubmit() {
+        this.journalctl = Journal.journalctl(
+            this.props.matchList,
+            {count: "all", follow: false, merge: true, grep: this.state.search});
+        this.journalctl.fail(this.handleError);
+        this.journalctl.stream(this.handleStream);
+    }
+
+    handleStream(data) {
+        let items = data.map(item => {
+            return JSON.parse(item.MESSAGE);
+        });
+        items = items.map(item => {
+            return <SearchEntry key={item.id} fastForwardToTS={this.props.fastForwardToTS} pos={item.pos} />;
+        });
+        this.setState({items: items});
+    }
+
+    handleError(data) {
+        this.props.errorService.addMessage(data);
+    }
+
+    clearSearchResults() {
+        delete cockpit.location.options.search;
+        cockpit.location.go(cockpit.location.path[0], cockpit.location.options);
+        this.setState({search: ""});
+        this.handleStream([]);
+    }
+
+    componentDidMount() {
+        if (this.state.search) {
+            this.handleSearchSubmit();
+        }
+    }
+
+    render() {
+        return (
+            <div className="search-wrap">
+                <div className="input-group search-component">
+                    <input type="text" className="form-control" name="search" value={this.state.search} onChange={this.handleInputChange} />
+                    <span className="input-group-btn">
+                        <button className="btn btn-default" onClick={this.handleSearchSubmit}><span className="glyphicon glyphicon-search" /></button>
+                        <button className="btn btn-default" onClick={this.clearSearchResults}><span className="glyphicon glyphicon-remove" /></button>
+                    </span>
+                </div>
+                <div className="search-results">
+                    {this.state.items}
+                </div>
+            </div>
+        );
+    }
+}
+
 class InputPlayer extends React.Component {
     render() {
         const input = String(this.props.input).replace(/(?:\r\n|\r|\n)/g, " ");
@@ -905,7 +1028,7 @@ export class Player extends React.Component {
 
     handleKeyDown(event) {
         let keyCodesFuncs = {
-            "p": this.playPauseToggle,
+            "P": this.playPauseToggle,
             "}": this.speedUp,
             "{": this.speedDown,
             "Backspace": this.speedReset,
@@ -917,8 +1040,10 @@ export class Player extends React.Component {
             "-": this.zoomOut,
             "Z": this.fitIn,
         };
-        if (keyCodesFuncs[event.key]) {
-            (keyCodesFuncs[event.key](event));
+        if (event.target.nodeName.toLowerCase() !== 'input') {
+            if (keyCodesFuncs[event.key]) {
+                (keyCodesFuncs[event.key](event));
+            }
         }
     }
 
@@ -1064,6 +1189,8 @@ export class Player extends React.Component {
     }
 
     render() {
+        let r = this.props.recording;
+
         let speedExp = this.state.speedExp;
         let speedFactor = Math.pow(2, Math.abs(speedExp));
         let speedStr;
@@ -1100,75 +1227,132 @@ export class Player extends React.Component {
 
         // ensure react never reuses this div by keying it with the terminal widget
         return (
-            <div id="recording-wrap">
-                <div className="col-md-6 player-wrap">
-                    <div ref="wrapper" className="panel panel-default">
-                        <div className="panel-heading">
-                            <span>{this.state.title}</span>
-                        </div>
-                        <div className="panel-body">
-                            <div className={(this.state.drag_pan ? "dragnpan" : "")} style={scrollwrap} ref="scrollwrap">
-                                <div ref="term" className="console-ct" key={this.state.term} style={style} />
+            <React.Fragment>
+                <div className="row">
+                    <div id="recording-wrap">
+                        <div className="col-md-6 player-wrap">
+                            <div ref="wrapper" className="panel panel-default">
+                                <div className="panel-heading">
+                                    <span>{this.state.title}</span>
+                                </div>
+                                <div className="panel-body">
+                                    <div className={(this.state.drag_pan ? "dragnpan" : "")} style={scrollwrap} ref="scrollwrap">
+                                        <div ref="term" className="console-ct" key={this.state.term} style={style} />
+                                    </div>
+                                </div>
+                                <div className="panel-footer">
+                                    <Slider length={this.buf.pos} mark={this.state.currentTsPost} fastForwardFunc={this.fastForwardToTS} play={this.play} pause={this.pause} paused={this.state.paused} />
+                                    <button title="Play/Pause - Hotkey: p" type="button" ref="playbtn"
+                                            className="btn btn-default btn-lg margin-right-btn play-btn"
+                                            onClick={this.playPauseToggle}>
+                                        <i className={"fa fa-" + (this.state.paused ? "play" : "pause")}
+                                           aria-hidden="true" />
+                                    </button>
+                                    <button title="Skip Frame - Hotkey: ." type="button"
+                                            className="btn btn-default btn-lg margin-right-btn"
+                                            onClick={this.skipFrame}>
+                                        <i className="fa fa-step-forward" aria-hidden="true" />
+                                    </button>
+                                    <button title="Restart Playback - Hotkey: Shift-R" type="button"
+                                            className="btn btn-default btn-lg" onClick={this.rewindToStart}>
+                                        <i className="fa fa-fast-backward" aria-hidden="true" />
+                                    </button>
+                                    <button title="Fast-forward to end - Hotkey: Shift-G" type="button"
+                                            className="btn btn-default btn-lg margin-right-btn"
+                                            onClick={this.fastForwardToEnd}>
+                                        <i className="fa fa-fast-forward" aria-hidden="true" />
+                                    </button>
+                                    <button title="Speed /2 - Hotkey: {" type="button"
+                                            className="btn btn-default btn-lg" onClick={this.speedDown}>
+                                        /2
+                                    </button>
+                                    <button title="Reset Speed - Hotkey: Backspace" type="button"
+                                            className="btn btn-default btn-lg" onClick={this.speedReset}>
+                                        1:1
+                                    </button>
+                                    <button title="Speed x2 - Hotkey: }" type="button"
+                                            className="btn btn-default btn-lg margin-right-btn"
+                                            onClick={this.speedUp}>
+                                        x2
+                                    </button>
+                                    <span>{speedStr}</span>
+                                    <span style={to_right}>
+                                        <button title="Drag'n'Pan" type="button" className="btn btn-default btn-lg"
+                                            onClick={this.dragPan}>
+                                            <i className={"fa fa-" + (this.state.drag_pan ? "hand-rock-o" : "hand-paper-o")}
+                                                aria-hidden="true" /></button>
+                                        <button title="Zoom In - Hotkey: =" type="button" className="btn btn-default btn-lg"
+                                            onClick={this.zoomIn} disabled={this.state.term_zoom_max}>
+                                            <i className="fa fa-search-plus" aria-hidden="true" /></button>
+                                        <button title="Fit To - Hotkey: Z" type="button" className="btn btn-default btn-lg"
+                                            onClick={this.fitTo}><i className="fa fa-expand" aria-hidden="true" /></button>
+                                        <button title="Zoom Out - Hotkey: -" type="button" className="btn btn-default btn-lg"
+                                            onClick={this.zoomOut} disabled={this.state.term_zoom_min}>
+                                            <i className="fa fa-search-minus" aria-hidden="true" /></button>
+                                    </span>
+                                    <div id="input-player-wrap">
+                                        <InputPlayer input={this.state.input} />
+                                    </div>
+                                    <div>
+                                        <Search matchList={this.props.matchList} fastForwardToTS={this.fastForwardToTS} play={this.play} pause={this.pause} paused={this.state.paused} errorService={this.error_service} />
+                                    </div>
+                                    <div className="clearfix" />
+                                    <ErrorList list={this.error_service.errors} />
+                                </div>
                             </div>
                         </div>
-                        <div className="panel-footer">
-                            <Slider length={this.buf.pos} mark={this.state.currentTsPost} fastForwardFunc={this.fastForwardToTS} play={this.play} pause={this.pause} paused={this.state.paused} />
-                            <button title={_("Play/Pause - Hotkey: p")} type="button" ref="playbtn"
-                                    className="btn btn-default btn-lg margin-right-btn play-btn"
-                                    onClick={this.playPauseToggle}>
-                                <i className={"fa fa-" + (this.state.paused ? "play" : "pause")}
-                                   aria-hidden="true" />
-                            </button>
-                            <button title={_("Skip Frame - Hotkey: .")} type="button"
-                                    className="btn btn-default btn-lg margin-right-btn"
-                                    onClick={this.skipFrame}>
-                                <i className="fa fa-step-forward" aria-hidden="true" />
-                            </button>
-                            <button title={_("Restart Playback - Hotkey: Shift-R")} type="button"
-                                    className="btn btn-default btn-lg" onClick={this.rewindToStart}>
-                                <i className="fa fa-fast-backward" aria-hidden="true" />
-                            </button>
-                            <button title={_("Fast-forward to end - Hotkey: Shift-G")} type="button"
-                                    className="btn btn-default btn-lg margin-right-btn"
-                                    onClick={this.fastForwardToEnd}>
-                                <i className="fa fa-fast-forward" aria-hidden="true" />
-                            </button>
-                            <button title={_("Speed /2 - Hotkey: {")} type="button"
-                                    className="btn btn-default btn-lg" onClick={this.speedDown}>
-                                /2
-                            </button>
-                            <button title={_("Reset Speed - Hotkey: Backspace")} type="button"
-                                    className="btn btn-default btn-lg" onClick={this.speedReset}>
-                                1:1
-                            </button>
-                            <button title={_("Speed x2 - Hotkey: }")} type="button"
-                                    className="btn btn-default btn-lg margin-right-btn"
-                                    onClick={this.speedUp}>
-                                x2
-                            </button>
-                            <span>{speedStr}</span>
-                            <span style={to_right}>
-                                <button title={_("Drag'n'Pan")} type="button" className="btn btn-default btn-lg"
-                                    onClick={this.dragPan}>
-                                    <i className={"fa fa-" + (this.state.drag_pan ? "hand-rock-o" : "hand-paper-o")}
-                                        aria-hidden="true" /></button>
-                                <button title={_("Zoom In - Hotkey: =")} type="button" className="btn btn-default btn-lg"
-                                    onClick={this.zoomIn} disabled={this.state.term_zoom_max}>
-                                    <i className="fa fa-search-plus" aria-hidden="true" /></button>
-                                <button title={_("Fit To - Hotkey: Z")} type="button" className="btn btn-default btn-lg"
-                                    onClick={this.fitTo}><i className="fa fa-expand" aria-hidden="true" /></button>
-                                <button title={_("Zoom Out - Hotkey: -")} type="button" className="btn btn-default btn-lg"
-                                    onClick={this.zoomOut} disabled={this.state.term_zoom_min}>
-                                    <i className="fa fa-search-minus" aria-hidden="true" /></button>
-                            </span>
-                            <div id="input-player-wrap">
-                                <InputPlayer input={this.state.input} />
+                    </div>
+                    <div className="col-md-6">
+                        <div className="panel panel-default">
+                            <div className="panel-heading">
+                                <span>{_("Recording")}</span>
                             </div>
-                            <ErrorList list={this.error_service.errors} />
+                            <div className="panel-body">
+                                <table className="form-table-ct">
+                                    <tbody>
+                                        <tr>
+                                            <td>{_("ID")}</td>
+                                            <td>{r.id}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{_("Hostname")}</td>
+                                            <td>{r.hostname}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{_("Boot ID")}</td>
+                                            <td>{r.boot_id}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{_("Session ID")}</td>
+                                            <td>{r.session_id}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{_("PID")}</td>
+                                            <td>{r.pid}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{_("Start")}</td>
+                                            <td>{formatDateTime(r.start)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{_("End")}</td>
+                                            <td>{formatDateTime(r.end)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{_("Duration")}</td>
+                                            <td>{formatDuration(r.end - r.start)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{_("User")}</td>
+                                            <td>{r.user}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </React.Fragment>
         );
     }
 
