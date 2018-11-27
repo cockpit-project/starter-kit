@@ -1073,51 +1073,51 @@ export class Player extends React.Component {
                         </div>
                         <div className="panel-footer">
                             <Slider length={this.buf.pos} mark={this.state.currentTsPost} fastForwardFunc={this.fastForwardToTS} play={this.play} pause={this.pause} paused={this.state.paused} />
-                            <button title="Play/Pause - Hotkey: p" type="button" ref="playbtn"
+                            <button title={_("Play/Pause - Hotkey: p")} type="button" ref="playbtn"
                                     className="btn btn-default btn-lg margin-right-btn play-btn"
                                     onClick={this.playPauseToggle}>
                                 <i className={"fa fa-" + (this.state.paused ? "play" : "pause")}
                                    aria-hidden="true" />
                             </button>
-                            <button title="Skip Frame - Hotkey: ." type="button"
+                            <button title={_("Skip Frame - Hotkey: .")} type="button"
                                     className="btn btn-default btn-lg margin-right-btn"
                                     onClick={this.skipFrame}>
                                 <i className="fa fa-step-forward" aria-hidden="true" />
                             </button>
-                            <button title="Restart Playback - Hotkey: Shift-R" type="button"
+                            <button title={_("Restart Playback - Hotkey: Shift-R")} type="button"
                                     className="btn btn-default btn-lg" onClick={this.rewindToStart}>
                                 <i className="fa fa-fast-backward" aria-hidden="true" />
                             </button>
-                            <button title="Fast-forward to end - Hotkey: Shift-G" type="button"
+                            <button title={_("Fast-forward to end - Hotkey: Shift-G")} type="button"
                                     className="btn btn-default btn-lg margin-right-btn"
                                     onClick={this.fastForwardToEnd}>
                                 <i className="fa fa-fast-forward" aria-hidden="true" />
                             </button>
-                            <button title="Speed /2 - Hotkey: {" type="button"
+                            <button title={_("Speed /2 - Hotkey: {")} type="button"
                                     className="btn btn-default btn-lg" onClick={this.speedDown}>
                                 /2
                             </button>
-                            <button title="Reset Speed - Hotkey: Backspace" type="button"
+                            <button title={_("Reset Speed - Hotkey: Backspace")} type="button"
                                     className="btn btn-default btn-lg" onClick={this.speedReset}>
                                 1:1
                             </button>
-                            <button title="Speed x2 - Hotkey: }" type="button"
+                            <button title={_("Speed x2 - Hotkey: }")} type="button"
                                     className="btn btn-default btn-lg margin-right-btn"
                                     onClick={this.speedUp}>
                                 x2
                             </button>
                             <span>{speedStr}</span>
                             <span style={to_right}>
-                                <button title="Drag'n'Pan" type="button" className="btn btn-default btn-lg"
+                                <button title={_("Drag'n'Pan")} type="button" className="btn btn-default btn-lg"
                                     onClick={this.dragPan}>
                                     <i className={"fa fa-" + (this.state.drag_pan ? "hand-rock-o" : "hand-paper-o")}
                                         aria-hidden="true" /></button>
-                                <button title="Zoom In - Hotkey: =" type="button" className="btn btn-default btn-lg"
+                                <button title={_("Zoom In - Hotkey: =")} type="button" className="btn btn-default btn-lg"
                                     onClick={this.zoomIn} disabled={this.state.term_zoom_max}>
                                     <i className="fa fa-search-plus" aria-hidden="true" /></button>
-                                <button title="Fit To - Hotkey: Z" type="button" className="btn btn-default btn-lg"
+                                <button title={_("Fit To - Hotkey: Z")} type="button" className="btn btn-default btn-lg"
                                     onClick={this.fitTo}><i className="fa fa-expand" aria-hidden="true" /></button>
-                                <button title="Zoom Out - Hotkey: -" type="button" className="btn btn-default btn-lg"
+                                <button title={_("Zoom Out - Hotkey: -")} type="button" className="btn btn-default btn-lg"
                                     onClick={this.zoomOut} disabled={this.state.term_zoom_min}>
                                     <i className="fa fa-search-minus" aria-hidden="true" /></button>
                             </span>

@@ -381,8 +381,8 @@ class Logs extends React.Component {
             return (
                 <div className="panel panel-default">
                     <div className="panel-heading">
-                        <span>Logs</span>
-                        <button className="btn btn-default" style={{"float":"right"}} onClick={this.loadLater}>Load later entries</button>
+                        <span>{_("Logs")}</span>
+                        <button className="btn btn-default" style={{"float":"right"}} onClick={this.loadLater}>{_("Load later entries")}</button>
                     </div>
                     <LogsView entries={this.state.entries} start={this.props.recording.start}
                               end={this.props.recording.end} jumpToTs={this.props.jumpToTs} />
@@ -430,8 +430,8 @@ class Recording extends React.Component {
                     <div className="row">
                         <div className="col-md-12">
                             <ol className="breadcrumb">
-                                <li><a onClick={this.goBackToList}>Session Recording</a></li>
-                                <li className="active">Session</li>
+                                <li><a onClick={this.goBackToList}>{_("Session Recording")}</a></li>
+                                <li className="active">{_("Session")}</li>
                             </ol>
                         </div>
                     </div>
@@ -920,19 +920,19 @@ class View extends React.Component {
                             <thead>
                                 <tr>
                                     <td className="top">
-                                        <label className="control-label" htmlFor="date_since">Since</label>
+                                        <label className="control-label" htmlFor="date_since">{_("Since")}</label>
                                     </td>
                                     <td>
                                         <Datetimepicker value={this.state.date_since} onChange={this.handleDateSinceChange} />
                                     </td>
                                     <td className="top">
-                                        <label className="control-label" htmlFor="date_until">Until</label>
+                                        <label className="control-label" htmlFor="date_until">{_("Until")}</label>
                                     </td>
                                     <td>
                                         <Datetimepicker value={this.state.date_until} onChange={this.handleDateUntilChange} />
                                     </td>
                                     <td className="top">
-                                        <label className="control-label" htmlFor="username">Username</label>
+                                        <label className="control-label" htmlFor="username">{_("Username")}</label>
                                     </td>
                                     <td>
                                         <div className="input-group">
@@ -942,7 +942,7 @@ class View extends React.Component {
                                     </td>
                                     {this.state.diff_hosts === true &&
                                     <td className="top">
-                                        <label className="control-label" htmlFor="hostname">Hostname</label>
+                                        <label className="control-label" htmlFor="hostname">{_("Hostname")}</label>
                                     </td>
                                     }
                                     {this.state.diff_hosts === true &&
@@ -954,7 +954,7 @@ class View extends React.Component {
                                     </td>
                                     }
                                     <td className="top">
-                                        <label className="control-label" htmlFor="config">Configuration</label>
+                                        <label className="control-label" htmlFor="config">{_("Configuration")}</label>
                                     </td>
                                     <td className="top">
                                         <button className="btn btn-default" onClick={this.openConfig}><i className="fa fa-cog" aria-hidden="true" /></button>
