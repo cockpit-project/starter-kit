@@ -7,6 +7,7 @@ License: LGPLv2+
 Source: cockpit-session-recording-%{version}.tar.gz
 BuildArch: noarch
 
+Requires: cockpit-system
 Requires: tlog
 BuildRequires: libappstream-glib
 
