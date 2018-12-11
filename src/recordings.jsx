@@ -237,7 +237,6 @@ class Logs extends React.Component {
         this.start = null;
         this.end = null;
         this.hostname = null;
-        this.earlier_than = null;
         this.state = {
             serverTimeOffset: null,
             cursor: null,
@@ -344,26 +343,14 @@ class Logs extends React.Component {
         this.getServerTimeOffset();
     }
 
-    componentDidMount() {
-        if (this.props.recording) {
-            if (this.start === null && this.end === null) {
-                this.end = this.props.recording.start + 3600;
-                this.start = this.props.recording.start;
-                this.earlier_than = this.props.recording.start;
-            }
-            if (this.props.recording.hostname) {
-                this.hostname = this.props.recording.hostname;
-            }
-            this.getLogs();
-        }
-    }
-
     componentDidUpdate() {
         if (this.props.recording) {
             if (this.start === null && this.end === null) {
                 this.end = this.props.recording.start + 3600;
                 this.start = this.props.recording.start;
-                this.earlier_than = this.props.recording.start;
+            }
+            if (this.props.recording.hostname) {
+                this.hostname = this.props.recording.hostname;
             }
             this.getLogs();
         }
@@ -371,6 +358,16 @@ class Logs extends React.Component {
             const ts = this.props.curTs;
             this.loadForTs(ts);
         }
+    }
+
+    componentWillUnmount() {
+        this.journalCtl.stop();
+        this.setState({
+            serverTimeOffset: null,
+            cursor: null,
+            after: null,
+            entries: [],
+        });
     }
 
     render() {
