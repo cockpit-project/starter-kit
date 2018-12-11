@@ -422,3 +422,7 @@ table.listing-ct > thead th:last-child, tr.listing-ct-item td:last-child {
     display:block;
     clear:both;
 }
+
+.session_time {
+    margin-right:5px;
+}

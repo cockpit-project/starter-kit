@@ -1277,6 +1277,7 @@ export class Player extends React.Component {
                                     </button>
                                     <span>{speedStr}</span>
                                     <span style={to_right}>
+                                        <span className="session_time">{formatDuration(this.state.currentTsPost)} / {formatDuration(this.buf.pos)}</span>
                                         <button title="Drag'n'Pan" type="button" className="btn btn-default btn-lg"
                                             onClick={this.dragPan}>
                                             <i className={"fa fa-" + (this.state.drag_pan ? "hand-rock-o" : "hand-paper-o")}
