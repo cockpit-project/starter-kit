@@ -45,6 +45,6 @@
     "@babel/polyfill": "7.0.0",
     "node-sass": "4.11.0",
     "react": "16.6.3",
-    "react-dom": "16.6.3"
+    "react-dom": "16.7.0"
   }
 }
