@@ -8,6 +8,7 @@ Source: cockpit-session-recording-%{version}.tar.gz
 BuildArch: noarch
 
 Requires: tlog
+BuildRequires: libappstream-glib
 
 %define debug_package %{nil}
 
