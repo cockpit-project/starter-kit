@@ -1,0 +1,27 @@
+Name: cockpit-starter-kit
+Version: @VERSION@
+Release: 1%{?dist}
+Summary: Cockpit Starter Kit Example Module
+License: LGPLv2+
+
+Source: cockpit-starter-kit-%{version}.tar.gz
+BuildArch: noarch
+
+BuildRequires: libappstream-glib
+
+%define debug_package %{nil}
+
+%description
+Cockpit Starter Kit Example Module
+
+%prep
+%setup -n cockpit-starter-kit
+
+%install
+%make_install
+
+%files
+%{_datadir}/cockpit/*
+%{_datadir}/metainfo/*
+
+%changelog

@@ -96,12 +96,14 @@ dist-gzip: all cockpit-$(PACKAGE_NAME).spec
 	mv node_modules.release node_modules
 
 srpm: dist-gzip cockpit-$(PACKAGE_NAME).spec
+	appstream-util validate-relax --nonet *.metainfo.xml
 	rpmbuild -bs \
 	  --define "_sourcedir `pwd`" \
 	  --define "_srcrpmdir `pwd`" \
 	  cockpit-$(PACKAGE_NAME).spec
 
 rpm: dist-gzip cockpit-$(PACKAGE_NAME).spec
+	appstream-util validate-relax --nonet ./*.metainfo.xml
 	mkdir -p "`pwd`/output"
 	mkdir -p "`pwd`/rpmbuild"
 	rpmbuild -bb \
