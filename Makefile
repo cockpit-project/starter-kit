@@ -88,6 +88,7 @@ devel-install: $(WEBPACK_TEST)
 # ship a stub node_modules/ so that `make` works without re-running `npm install`
 dist-gzip: NODE_ENV=production
 dist-gzip: all cockpit-$(PACKAGE_NAME).spec
+	if type appstream-util >/dev/null 2>&1; then appstream-util validate-relax --nonet *.metainfo.xml; fi
 	mv node_modules node_modules.release
 	mkdir -p $(NODE_MODULES_TEST)
 	touch -r package.json $(NODE_MODULES_TEST)
