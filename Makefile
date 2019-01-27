@@ -66,6 +66,9 @@ dist/po.%.js: po/%.po $(NODE_MODULES_TEST)
 $(WEBPACK_TEST): $(NODE_MODULES_TEST) $(shell find src/ -type f) package.json webpack.config.js $(patsubst %,dist/po.%.js,$(LINGUAS))
 	NODE_ENV=$(NODE_ENV) npm run build
 
+watch:
+	NODE_ENV=$(NODE_ENV) npm run watch
+
 clean:
 	rm -rf dist/
 	[ ! -e cockpit-$(PACKAGE_NAME).spec.in ] || rm -f cockpit-$(PACKAGE_NAME).spec
