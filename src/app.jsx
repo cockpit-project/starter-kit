@@ -28,10 +28,9 @@ export class Application extends React.Component {
         super();
         this.state = { 'hostname': _("Unknown") };
 
-        cockpit.file('/etc/hostname').read()
-                .done((content) => {
-                    this.setState({ 'hostname': content.trim() });
-                });
+        cockpit.file('/etc/hostname').watch(content => {
+            this.setState({ 'hostname': content.trim() });
+        });
     }
 
     render() {
