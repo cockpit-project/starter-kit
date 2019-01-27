@@ -33,6 +33,14 @@ ln -s `pwd`/dist ~/.local/share/cockpit/starter-kit
 After changing the code and running `make` again, reload the Cockpit page in
 your browser.
 
+You can enable the watching via:
+
+    $ npm run watch
+
+or
+
+    $ make watch
+
 # Running eslint
 
 Cockpit Starter Kit uses [ESLint](https://eslint.org/) to automatically check
