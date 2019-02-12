@@ -6,6 +6,7 @@ License: LGPLv2+
 
 Source: cockpit-starter-kit-%{version}.tar.gz
 BuildArch: noarch
+BuildRequires:  libappstream-glib
 
 Requires: cockpit-system
 
@@ -19,6 +20,7 @@ Cockpit Starter Kit Example Module
 
 %install
 %make_install
+appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/*
 
 %files
 %{_datadir}/cockpit/*
