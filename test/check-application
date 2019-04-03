@@ -20,12 +20,10 @@ class TestApplication(testlib.MachineCase):
 
         self.login_and_go("/starter-kit")
         # verify expected heading
-        b.wait_present(".container-fluid h2")
         b.wait_text(".container-fluid h2", "Starter Kit")
 
         # verify expected host name
         hostname = m.execute("hostname").strip()
-        b.wait_present(".container-fluid p")
         b.wait_text(".container-fluid p", "Running on " + hostname)
 
         # change current hostname
