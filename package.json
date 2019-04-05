@@ -43,7 +43,7 @@
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
-    "@babel/polyfill": "7.4.0",
+    "@babel/polyfill": "7.4.3",
     "node-sass": "4.11.0",
     "react": "16.8.6",
     "react-dom": "16.8.6"
