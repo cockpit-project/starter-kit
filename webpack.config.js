@@ -22,7 +22,7 @@ var production = process.env.NODE_ENV === 'production';
 var info = {
     entries: {
         "index": [
-            "./index.es6"
+            "./index.js"
         ]
     },
     files: [
@@ -125,28 +125,12 @@ module.exports = {
                 enforce: 'pre',
                 exclude: /node_modules/,
                 loader: 'eslint-loader',
-                test: /\.jsx$/
-            },
-            {
-                enforce: 'pre',
-                exclude: /node_modules/,
-                loader: 'eslint-loader',
-                test: /\.es6$/
+                test: /\.(js|jsx)$/
             },
             {
                 exclude: /node_modules/,
                 use: babel_loader,
-                test: /\.js$/
-            },
-            {
-                exclude: /node_modules/,
-                use: babel_loader,
-                test: /\.jsx$/
-            },
-            {
-                exclude: /node_modules/,
-                use: babel_loader,
-                test: /\.es6$/
+                test: /\.(js|jsx)$/
             },
             {
                 exclude: /node_modules/,

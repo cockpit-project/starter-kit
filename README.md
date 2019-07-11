@@ -46,7 +46,7 @@ or
 # Running eslint
 
 Cockpit Starter Kit uses [ESLint](https://eslint.org/) to automatically check
-JavaScript code style in `.jsx` and `.es6` files.
+JavaScript code style in `.js` and `.jsx` files.
 
 The linter is executed within every build as a webpack preloader.
 
