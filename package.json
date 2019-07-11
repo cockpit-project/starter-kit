@@ -21,7 +21,7 @@
     "chrome-remote-interface": "^0.26.1",
     "compression-webpack-plugin": "^1.1.11",
     "copy-webpack-plugin": "^4.5.2",
-    "css-loader": "^0.28.11",
+    "css-loader": "^3.0.0",
     "eslint": "^6.0.1",
     "eslint-config-standard": "^13.0.0",
     "eslint-config-standard-react": "^7.0.2",
