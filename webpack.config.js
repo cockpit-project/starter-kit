@@ -95,6 +95,24 @@ if (production) {
     }));
 }
 
+var babel_loader = {
+    loader: "babel-loader",
+    options: {
+        presets: [
+            ["@babel/env", {
+                "targets": {
+                    "chrome": "57",
+                    "firefox": "52",
+                    "safari": "10.3",
+                    "edge": "16",
+                    "opera": "44"
+                }
+            }],
+            "@babel/preset-react"
+        ]
+    }
+}
+
 module.exports = {
     mode: production ? 'production' : 'development',
     entry: info.entries,
@@ -117,17 +135,17 @@ module.exports = {
             },
             {
                 exclude: /node_modules/,
-                loader: 'babel-loader',
+                use: babel_loader,
                 test: /\.js$/
             },
             {
                 exclude: /node_modules/,
-                loader: 'babel-loader',
+                use: babel_loader,
                 test: /\.jsx$/
             },
             {
                 exclude: /node_modules/,
-                loader: 'babel-loader',
+                use: babel_loader,
                 test: /\.es6$/
             },
             {
