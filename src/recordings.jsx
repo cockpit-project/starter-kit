@@ -893,6 +893,8 @@ class View extends React.Component {
                                     <td>
                                         <Datetimepicker value={this.state.date_until} onChange={this.handleDateUntilChange} />
                                     </td>
+                                </tr>
+                                <tr>
                                     <td className="top">
                                         <label className="control-label" htmlFor="search">Search</label>
                                     </td>

@@ -288,13 +288,29 @@ a.disabled {
     border-bottom: 1px solid #ddd;
     padding: 10px 20px;
     width: 100%;
-    position: fixed;
     z-index: 900;
     top: 0;
 }
 
 .content-header-extra .btn-group:not(:first-child) {
     padding-left: 20px;
+}
+
+/* Override cockpit */
+.form-table-ct {
+    width: 80%;
+}
+
+.form-table-ct td.top {
+    color: #151515;
+	text-align: left;
+}
+
+/* Align table caption/title */
+table.listing.listing-ct > caption {
+  padding: 5px 10px 10px !important;
+  font-weight: 300;
+  margin-top: 0;
 }
 
 #motd {
@@ -329,6 +345,11 @@ a.disabled {
 .sort-icon {
     width:7px;
     display:inline-block;
+}
+
+/* Align table title */
+table.listing-ct -> caption {
+    padding-left: 10px !important;
 }
 
 table.listing-ct > thead th:last-child, tr.listing-ct-item td:last-child {
