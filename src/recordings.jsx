@@ -719,7 +719,10 @@ class View extends React.Component {
      * Assumes journalctl is not running.
      */
     journalctlStart() {
-        let matches = ["_EXE=/usr/bin/tlog-rec-session", "_EXE=/usr/bin/tlog-rec"];
+        let matches = ["_EXE=/usr/bin/tlog-rec-session",
+            "_EXE=/usr/bin/tlog-rec", "+",
+            "_COMM=tlog-rec", "+",
+            "_COMM=tlog-rec-session"];
         if (this.state.username && this.state.username !== "") {
             matches.push("TLOG_USER=" + this.state.username);
         }
@@ -727,7 +730,7 @@ class View extends React.Component {
             matches.push("_HOSTNAME=" + this.state.hostname);
         }
 
-        let options = {follow: true, count: "all", merge: true};
+        let options = {follow: false, count: "all", merge: true};
 
         if (this.state.date_since && this.state.date_since !== "") {
             options['since'] = this.state.date_since;
