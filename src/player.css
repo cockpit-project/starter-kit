@@ -1,0 +1,76 @@
+@import "~xterm/lib/xterm.css";
+
+.player-wrap {
+    min-width: 672px;
+    height: auto;
+    overflow: hidden;
+}
+
+.player-wrap .panel-body, .player-wrap .console-ct > .terminal {
+    padding: 0;
+}
+
+.dragnpan {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#logs-view {
+    height: 300px;
+    overflow-y: scroll;
+    margin-bottom: 0;
+}
+
+#recording-wrap {
+    height: 100%;
+}
+
+.logs-view-log-time {
+    display: inline-block;
+    width: 150px;
+    vertical-align: middle;
+}
+
+#input-textarea {
+    width: 100%;
+    heigth: 100%;
+    font-family: monospace;
+    resize: none;
+}
+
+#input-player-wrap {
+    margin-top: 5px;
+}
+
+.panel-footer {
+    padding: 5px 15px;
+}
+
+.search-result {
+    margin-left: 5px;
+    float: left;
+}
+
+.search-results {
+    float: left;
+    min-height: 25px;
+}
+
+.search-component {
+    float: left;
+    width: 33%;
+}
+
+.search-wrap {
+    min-height: 25px;
+    display:block;
+    clear:both;
+}
+
+.session_time {
+    margin-right:5px;
+}

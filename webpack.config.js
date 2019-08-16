@@ -37,7 +37,7 @@ var info = {
         "index.html",
         "config.html",
         "player.jsx",
-        "console.css",
+        "player.css",
         "recordings.jsx",
         "recordings.css",
         "table.css",

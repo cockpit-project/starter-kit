@@ -18,7 +18,7 @@
 */
 "use strict";
 import React from 'react';
-import './console.css';
+import './player.css';
 import { Terminal as Term } from 'xterm';
 let cockpit = require("cockpit");
 let _ = cockpit.gettext;
@@ -734,7 +734,6 @@ export class Player extends React.Component {
             paused:             true,
             /* Speed exponent */
             speedExp:           0,
-            container_width:    630,
             scale_initial:      1,
             scale_lock:         false,
             term_top_style:     "50%",
@@ -744,14 +743,14 @@ export class Player extends React.Component {
             term_zoom_max:      false,
             term_zoom_min:      false,
             drag_pan:           false,
-            containerWidth: 630,
+            containerWidth: 800,
             currentTsPost:  0,
             scale:          1,
             input:          "",
             mark:           0,
         };
 
-        this.containerHeight = 290;
+        this.containerHeight = 400;
 
         /* Auto-loading buffer of recording's packets */
         this.error_service = new ErrorService();
@@ -1232,7 +1231,7 @@ export class Player extends React.Component {
             <React.Fragment>
                 <div className="row">
                     <div id="recording-wrap">
-                        <div className="col-md-6 player-wrap">
+                        <div className="col-md-7 player-wrap">
                             <div ref="wrapper" className="panel panel-default">
                                 <div className="panel-heading">
                                     <span>{this.state.title}</span>
@@ -1305,7 +1304,7 @@ export class Player extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-5">
                         <div className="panel panel-default">
                             <div className="panel-heading">
                                 <span>{_("Recording")}</span>
