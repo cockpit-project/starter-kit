@@ -15,45 +15,35 @@ import testlib
 # Test with pre-recorded journal with tlog UID 981
 class TestApplication(testlib.MachineCase):
     def testPlay(self):
-        term_first_line = "#recording-wrap > div > div > div.panel-body > div > div > div > div:nth-child(1)"
-        play_btn = "button.margin-right-btn:nth-child(3)"
+        term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
         b = self.browser
         m = self.machine
         self.login_and_go("/session-recording")
         b.wait_present(".content-header-extra")
         b.wait_present("#user")
         b.click(".listing-ct-item")
-        b.wait_present(play_btn)
-        b.click(play_btn)
+        b.click("#player-play-pause")
         b.wait_timeout(30000)
         b.wait_in_text(term_first_line, "localhost")
 
     def testFastforwardControls(self):
-        fast_forward_btn = "button.btn:nth-child(6)"
-        restart_btn = "#recording-wrap > div > div > div.panel-footer > button:nth-child(5)"
-        slider = "div.slider-handle:nth-child(5)"
-        term_line = "#recording-wrap > div > div > div.panel-body > div > div > div > div:nth-child(26)"
+        last_term_line = ".xterm-accessibility-tree > div:nth-child(26)"
+        slider = ".slider > .min-slider-handle"
         b = self.browser
         m = self.machine
         self.login_and_go("/session-recording")
         b.wait_present(".content-header-extra")
         b.wait_present("#user")
         b.click(".listing-ct-item")
-        b.wait_present(fast_forward_btn)
-        b.click(fast_forward_btn)
-        b.wait_present(slider)
+        b.click("#player-fast-forward")
+        b.wait_in_text(last_term_line, "logout")
         b.wait_attr(slider, "style", "left: 100%;")
-        b.wait_in_text(term_line, "logout")
         # test restart playback
-        b.wait_present(restart_btn)
-        b.click(restart_btn)
-        b.wait_text(".terminal-cursor", " ")
+        b.click("#player-restart")
+        b.wait_text(".xterm-accessibility-tree > div:nth-child(1)", "Blank line")
         b.wait_attr(slider, "style", "left: 100%;")
 
     def testSpeedControls(self):
-        speed_up_btn = "button.btn:nth-child(9)"
-        speed_down_btn = "button.btn:nth-child(7)"
-        speed_restore_btn = "button.btn:nth-child(8)"
         speed_val = ".panel-footer > span:nth-child(10)"
         b = self.browser
         m = self.machine
@@ -62,48 +52,49 @@ class TestApplication(testlib.MachineCase):
         b.wait_present("#user")
         b.click(".listing-ct-item")
         # increase speed
-        b.wait_present(speed_up_btn)
-        b.click(speed_up_btn)
+        b.wait_present("#player-speed-up")
+        b.click("#player-speed-up")
         b.wait_present(speed_val)
         b.wait_text(speed_val, "x2")
-        b.click(speed_up_btn)
+        b.click("#player-speed-up")
         b.wait_text(speed_val, "x4")
-        b.click(speed_up_btn)
+        b.click("#player-speed-up")
         b.wait_text(speed_val, "x8")
-        b.click(speed_up_btn)
+        b.click("#player-speed-up")
         b.wait_text(speed_val, "x16")
         # decrease speed
-        b.click(speed_down_btn)
+        b.click("#player-speed-down")
         b.wait_text(speed_val, "x8")
-        b.click(speed_down_btn)
+        b.click("#player-speed-down")
         b.wait_text(speed_val, "x4")
-        b.click(speed_down_btn)
+        b.click("#player-speed-down")
         b.wait_text(speed_val, "x2")
-        b.click(speed_down_btn)
+        b.click("#player-speed-down")
         b.wait_text(speed_val, "")
-        b.click(speed_down_btn)
+        b.click("#player-speed-down")
         b.wait_text(speed_val, "/2")
-        b.click(speed_down_btn)
+        b.click("#player-speed-down")
         b.wait_text(speed_val, "/4")
-        b.click(speed_down_btn)
+        b.click("#player-speed-down")
         b.wait_text(speed_val, "/8")
-        b.click(speed_down_btn)
+        b.click("#player-speed-down")
         b.wait_text(speed_val, "/16")
         # restore speed
-        b.click(speed_restore_btn)
+        b.click("#player-speed-reset")
         b.wait_text(speed_val, "")
 
     def testZoomControls(self):
-        zoom_in_btn = "#recording-wrap > div > div > div.panel-footer > span:nth-child(11) > button:nth-child(3)"
-        zoom_out_btn = "#recording-wrap > div > div > div.panel-footer > span:nth-child(11) > button:nth-child(5)"
-        zoom_reset_btn = "#recording-wrap > div > div > div.panel-footer > span:nth-child(11) > button:nth-child(4)"
         default_scale_sel = '.console-ct[style^="transform: scale(1)"]'
         zoom_one_scale_sel = '.console-ct[style^="transform: scale(1.1)"]'
         zoom_two_scale_sel = '.console-ct[style^="transform: scale(1.2)"]'
         zoom_three_scale_sel = '.console-ct[style^="transform: scale(1.3)"]'
-        zoom_reset_scale_sel = '.console-ct[style^="transform: scale(0.823864)"]'
         b = self.browser
         m = self.machine
+        if m.image in ["fedora-29"] or m.image in ["rhel-8.0"] or m.image in ["rhel-8.1"]:
+            zoom_reset_scale_sel = '.console-ct[style*="transform: scale(0.8"]'
+        else:
+            zoom_reset_scale_sel = '.console-ct[style*="transform: scale(0.9"]'
+
         self.login_and_go("/session-recording")
         b.wait_present(".content-header-extra")
         b.wait_present("#user")
@@ -111,34 +102,32 @@ class TestApplication(testlib.MachineCase):
         # Wait for terminal with scale(1)
         b.wait_present(default_scale_sel)
         # Zoom in x3
-        b.click(zoom_in_btn)
+        b.click("#player-zoom-in")
         b.wait_present(zoom_one_scale_sel)
-        b.click(zoom_in_btn)
+        b.click("#player-zoom-in")
         b.wait_present(zoom_two_scale_sel)
-        b.click(zoom_in_btn)
+        b.click("#player-zoom-in")
         b.wait_present(zoom_three_scale_sel)
         # Zoom Out
-        b.click(zoom_out_btn)
+        b.click("#player-zoom-out")
         b.wait_present(zoom_two_scale_sel)
         # Reset Zoom
-        b.click(zoom_reset_btn)
+        b.click("#player-fit-to")
         b.wait_present(zoom_reset_scale_sel)
 
     def testSkipFrame(self):
-        skip_frame_btn = "#recording-wrap > div > div > div.panel-footer > button:nth-child(4)"
-        term_first_line = "#recording-wrap > div > div > div.panel-body > div > div > div > div:nth-child(1)"
+        term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
         b = self.browser
         m = self.machine
         self.login_and_go("/session-recording")
         b.wait_present(".content-header-extra")
         b.wait_present("#user")
         b.click(".listing-ct-item")
-        b.wait_present(skip_frame_btn)
-        b.click(skip_frame_btn)
-        b.click(skip_frame_btn)
-        b.click(skip_frame_btn)
-        b.click(skip_frame_btn)
-        b.click(skip_frame_btn)
+        b.click("#player-skip-frame")
+        b.click("#player-skip-frame")
+        b.click("#player-skip-frame")
+        b.click("#player-skip-frame")
+        b.click("#player-skip-frame")
         b.wait_timeout(20)
         b.wait_in_text(term_first_line, "localhost")
 

@@ -63,6 +63,6 @@
     "raw-loader": "^0.5.1",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
-    "term.js-cockpit": "0.0.10"
+    "xterm": "^3.14.5"
   }
 }

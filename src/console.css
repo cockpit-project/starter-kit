@@ -1,3 +1,4 @@
+@import "~xterm/lib/xterm.css";
 @import "term.css";
 
 /* Our terminal or logs */
