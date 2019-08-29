@@ -476,7 +476,7 @@ class RecordingList extends React.Component {
         } else {
             this.setState({
                 sorting_field: event.currentTarget.id,
-                sorting_asc: 'asc'
+                sorting_asc: true,
             });
         }
     }
@@ -485,17 +485,20 @@ class RecordingList extends React.Component {
         let field = this.state.sorting_field;
         let asc = this.state.sorting_asc;
         let list = this.props.list.slice();
+        let isNumeric;
 
-        if (this.state.sorting_field != null) {
-            if (asc) {
-                list.sort(function(a, b) {
-                    return a[field] > b[field];
-                });
-            } else {
-                list.sort(function(a, b) {
-                    return a[field] < b[field];
-                });
-            }
+        if (field === "start" || field === "end" || field === "duration") {
+            isNumeric = true;
+        }
+
+        if (isNumeric) {
+            list.sort((a, b) => a[field] - b[field]);
+        } else {
+            list.sort((a, b) => (a[field] > b[field]) ? 1 : -1);
+        }
+
+        if (!asc) {
+            list.reverse();
         }
 
         return list;
