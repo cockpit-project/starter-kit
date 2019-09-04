@@ -722,10 +722,11 @@ class View extends React.Component {
      * Assumes journalctl is not running.
      */
     journalctlStart() {
-        let matches = ["_EXE=/usr/bin/tlog-rec-session",
-            "_EXE=/usr/bin/tlog-rec", "+",
-            "_COMM=tlog-rec", "+",
-            "_COMM=tlog-rec-session"];
+        let matches = ["_COMM=tlog-rec",
+            /* Strings longer than TASK_COMM_LEN (16) characters
+             * are truncated (man proc) */
+            "_COMM=tlog-rec-sessio"];
+
         if (this.state.username && this.state.username !== "") {
             matches.push("TLOG_USER=" + this.state.username);
         }
