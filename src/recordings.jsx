@@ -400,6 +400,20 @@ class Recording extends React.Component {
     constructor(props) {
         super(props);
         this.goBackToList = this.goBackToList.bind(this);
+        this.handleTsChange = this.handleTsChange.bind(this);
+        this.handleLogTsChange = this.handleLogTsChange.bind(this);
+        this.state = {
+            curTs: null,
+            logsTs: null,
+        };
+    }
+
+    handleTsChange(ts) {
+        this.setState({curTs: ts});
+    }
+
+    handleLogTsChange(ts) {
+        this.setState({logsTs: ts});
     }
 
     goBackToList() {
@@ -422,23 +436,33 @@ class Recording extends React.Component {
                 (<Player.Player
                     ref="player"
                     matchList={this.props.recording.matchList}
-                    logsTs={this.props.logsTs}
+                    logsTs={this.logsTs}
                     search={this.props.search}
-                    onTsChange={this.props.onTsChange}
+                    onTsChange={this.handleTsChange}
                     recording={r} />);
 
             return (
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-md-12">
-                            <ol className="breadcrumb">
-                                <li><a onClick={this.goBackToList}>{_("Session Recording")}</a></li>
-                                <li className="active">{_("Session")}</li>
-                            </ol>
+                <React.Fragment>
+                    <div className="container-fluid">
+                        <div className="row">
+                            <div className="col-md-12">
+                                <ol className="breadcrumb">
+                                    <li><a onClick={this.goBackToList}>{_("Session Recording")}</a></li>
+                                    <li className="active">{_("Session")}</li>
+                                </ol>
+                            </div>
+                        </div>
+                        {player}
+                    </div>
+                    <div className="container-fluid">
+                        <div className="row">
+                            <div className="col-md-12">
+                                <Logs recording={this.props.recording} curTs={this.state.curTs}
+                                        jumpToTs={this.handleLogTsChange} />
+                            </div>
                         </div>
                     </div>
-                    {player}
-                </div>
+                </React.Fragment>
             );
         }
     }
@@ -580,8 +604,6 @@ class View extends React.Component {
         this.onLocationChanged = this.onLocationChanged.bind(this);
         this.journalctlIngest = this.journalctlIngest.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleTsChange = this.handleTsChange.bind(this);
-        this.handleLogTsChange = this.handleLogTsChange.bind(this);
         this.handleDateSinceChange = this.handleDateSinceChange.bind(this);
         this.openConfig = this.openConfig.bind(this);
         /* Journalctl instance */
@@ -606,8 +628,6 @@ class View extends React.Component {
             /* filter values end */
             error_tlog_uid: false,
             diff_hosts: false,
-            curTs: null,
-            logsTs: null,
         };
     }
 
@@ -812,14 +832,6 @@ class View extends React.Component {
         cockpit.location.go([], $.extend(cockpit.location.options, {date_until: date}));
     }
 
-    handleTsChange(ts) {
-        this.setState({curTs: ts});
-    }
-
-    handleLogTsChange(ts) {
-        this.setState({logsTs: ts});
-    }
-
     openConfig() {
         cockpit.jump(['session-recording/config']);
     }
@@ -952,15 +964,7 @@ class View extends React.Component {
         } else {
             return (
                 <React.Fragment>
-                    <Recording recording={this.recordingMap[this.state.recordingID]} onTsChange={this.handleTsChange} logsTs={this.state.logsTs} search={this.state.search} />
-                    <div className="container-fluid">
-                        <div className="row">
-                            <div className="col-md-12">
-                                <Logs recording={this.recordingMap[this.state.recordingID]} curTs={this.state.curTs}
-                                      jumpToTs={this.handleLogTsChange} />
-                            </div>
-                        </div>
-                    </div>
+                    <Recording recording={this.recordingMap[this.state.recordingID]} search={this.state.search} />
                 </React.Fragment>
             );
         }
