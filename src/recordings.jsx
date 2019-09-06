@@ -402,9 +402,11 @@ class Recording extends React.Component {
         this.goBackToList = this.goBackToList.bind(this);
         this.handleTsChange = this.handleTsChange.bind(this);
         this.handleLogTsChange = this.handleLogTsChange.bind(this);
+        this.handleLogsClick = this.handleLogsClick.bind(this);
         this.state = {
             curTs: null,
             logsTs: null,
+            logsEnabled: false,
         };
     }
 
@@ -414,6 +416,10 @@ class Recording extends React.Component {
 
     handleLogTsChange(ts) {
         this.setState({logsTs: ts});
+    }
+
+    handleLogsClick() {
+        this.setState({logsEnabled: !this.state.logsEnabled});
     }
 
     goBackToList() {
@@ -439,7 +445,8 @@ class Recording extends React.Component {
                     logsTs={this.logsTs}
                     search={this.props.search}
                     onTsChange={this.handleTsChange}
-                    recording={r} />);
+                    recording={r}
+                    logsEnabled={this.state.logsEnabled} />);
 
             return (
                 <React.Fragment>
@@ -451,16 +458,20 @@ class Recording extends React.Component {
                                     <li className="active">{_("Session")}</li>
                                 </ol>
                             </div>
+                            {player}
                         </div>
-                        {player}
-                    </div>
-                    <div className="container-fluid">
                         <div className="row">
                             <div className="col-md-12">
-                                <Logs recording={this.props.recording} curTs={this.state.curTs}
-                                        jumpToTs={this.handleLogTsChange} />
+                                <button className="btn btn-default" style={{"float":"left"}} onClick={this.handleLogsClick}>{_("Logs View")}</button>
                             </div>
                         </div>
+                        {this.state.logsEnabled === true &&
+                        <div className="row">
+                            <div className="col-md-12">
+                                <Logs recording={this.props.recording} curTs={this.state.curTs} jumpToTs={this.handleLogTsChange} />
+                            </div>
+                        </div>
+                        }
                     </div>
                 </React.Fragment>
             );

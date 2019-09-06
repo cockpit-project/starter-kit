@@ -947,7 +947,9 @@ export class Player extends React.Component {
             }
 
             /* Send packet ts to the top */
-            this.props.onTsChange(this.pkt.pos);
+            if (this.props.logsEnabled) {
+                this.props.onTsChange(this.pkt.pos);
+            }
             this.setState({currentTsPost: parseInt(this.pkt.pos)});
 
             /* Output the packet */
