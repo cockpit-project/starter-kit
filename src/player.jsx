@@ -553,58 +553,6 @@ let PacketBuffer = class {
     }
 };
 
-class Slider extends React.Component {
-    constructor(props) {
-        super(props);
-        this.slideStart = this.slideStart.bind(this);
-        this.slideStop = this.slideStop.bind(this);
-        this.slider = null;
-        this.state = {
-            paused: false,
-        };
-    }
-
-    slideStart(e) {
-        this.setState({paused: this.props.paused});
-        this.props.pause();
-    }
-
-    slideStop(e) {
-        if (this.props.fastForwardFunc) {
-            this.props.fastForwardFunc(e);
-            if (this.state.paused === false) {
-                this.props.play();
-            }
-        }
-    }
-
-    componentDidMount() {
-        this.slider = $("#slider").slider({
-            value: 0,
-            tooltip: "hide",
-            enabled: false,
-        });
-        this.slider.slider('on', 'slideStart', this.slideStart);
-        this.slider.slider('on', 'slideStop', this.slideStop);
-    }
-
-    componentDidUpdate() {
-        if (this.props.length) {
-            this.slider.slider('enable');
-            this.slider.slider('setAttribute', 'max', this.props.length);
-        }
-        if (this.props.mark) {
-            this.slider.slider('setValue', this.props.mark);
-        }
-    }
-
-    render () {
-        return (
-            <input id="slider" type="text" />
-        );
-    }
-}
-
 function SearchEntry(props) {
     return (
         <span className="search-result"><a onClick={(e) => props.fastForwardToTS(props.pos, e)}>{formatDuration(props.pos)}</a></span>
@@ -697,6 +645,12 @@ class InputPlayer extends React.Component {
     }
 }
 
+function Slider(props) {
+    return (
+        <input id="slider" type="text" />
+    );
+}
+
 export class Player extends React.Component {
     constructor(props) {
         super(props);
@@ -713,6 +667,9 @@ export class Player extends React.Component {
         this.speedReset = this.speedReset.bind(this);
         this.fastForwardToEnd = this.fastForwardToEnd.bind(this);
         this.skipFrame = this.skipFrame.bind(this);
+        this.initSlider = this.initSlider.bind(this);
+        this.slideStart = this.slideStart.bind(this);
+        this.slideStop = this.slideStop.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.sync = this.sync.bind(this);
         this.zoomIn = this.zoomIn.bind(this);
@@ -744,7 +701,6 @@ export class Player extends React.Component {
             term_zoom_min:      false,
             drag_pan:           false,
             containerWidth: 800,
-            currentTsPost:  0,
             scale:          1,
             input:          "",
             mark:           0,
@@ -756,6 +712,9 @@ export class Player extends React.Component {
         this.error_service = new ErrorService();
         this.reportError = this.error_service.addMessage;
         this.buf = new PacketBuffer(this.props.matchList, this.reportError);
+
+        /* Slider component */
+        this.slider = null;
 
         /* Current recording time, ms */
         this.recTS = 0;
@@ -769,6 +728,8 @@ export class Player extends React.Component {
         /* Timeout ID of the current packet, null if none */
         this.timeout = null;
 
+        this.currentTsPost = 0;
+
         /* True if the next packet should be output without delay */
         this.skip = false;
         /* Playback speed */
@@ -778,6 +739,9 @@ export class Player extends React.Component {
          * Recording time, ms, or null if not fast-forwarding.
          */
         this.fastForwardTo = null;
+
+        /* Track paused state prior to slider movement */
+        this.pausedBeforeSlide = true;
     }
 
     reset() {
@@ -799,7 +763,7 @@ export class Player extends React.Component {
 
         /* Move to beginning of recording */
         this.recTS = 0;
-        this.setState({currentTsPost: parseInt(this.recTS)});
+        this.currentTsPost = parseInt(this.recTS);
         /* Start the playback time */
         this.locTS = performance.now();
 
@@ -916,6 +880,7 @@ export class Player extends React.Component {
             /* Sync to the local time */
             this.locTS = nowLocTS;
 
+            this.slider.slider('setAttribute', 'max', this.buf.pos);
             /* If we are skipping one packet's delay */
             if (this.skip) {
                 this.skip = false;
@@ -937,7 +902,8 @@ export class Player extends React.Component {
                 this.recTS += locDelay * this.speed;
                 let pktRecDelay = this.pkt.pos - this.recTS;
                 let pktLocDelay = pktRecDelay / this.speed;
-                this.setState({currentTsPost: parseInt(this.recTS)});
+                this.currentTsPost = parseInt(this.recTS);
+                this.slider.slider('setValue', this.currentTsPost);
                 /* If we're more than 5 ms early for this packet */
                 if (pktLocDelay > 5) {
                     /* Call us again on time, later */
@@ -950,7 +916,8 @@ export class Player extends React.Component {
             if (this.props.logsEnabled) {
                 this.props.onTsChange(this.pkt.pos);
             }
-            this.setState({currentTsPost: parseInt(this.pkt.pos)});
+            this.currentTsPost = parseInt(this.pkt.pos);
+            this.slider.slider('setValue', this.currentTsPost);
 
             /* Output the packet */
             if (this.pkt.is_io && !this.pkt.is_output) {
@@ -1025,6 +992,36 @@ export class Player extends React.Component {
     skipFrame() {
         this.skip = true;
         this.sync();
+    }
+
+    initSlider() {
+        this.slider = $("#slider").slider({
+            value: 0,
+            tooltip: "hide",
+            enabled: false,
+        });
+        this.slider.slider('on', 'slideStart', this.slideStart);
+        this.slider.slider('on', 'slideStop', this.slideStop);
+        this.slider.slider('enable');
+    }
+
+    slideStart(e) {
+        /*
+         * Necessary because moving the slider position updates state.paused,
+         * which won't represent the actual paused state after this event is
+         * triggered
+         */
+        this.pausedBeforeSlide = this.state.paused;
+        this.pause();
+    }
+
+    slideStop(e) {
+        if (this.fastForwardToTS) {
+            this.fastForwardToTS(e);
+            if (this.pausedBeforeSlide === false) {
+                this.play();
+            }
+        }
     }
 
     handleKeyDown(event) {
@@ -1166,6 +1163,7 @@ export class Player extends React.Component {
         /* Reset playback */
         this.reset();
         this.fastForwardToTS(0);
+        this.initSlider();
     }
 
     componentWillUpdate(nextProps, nextState) {
@@ -1244,7 +1242,7 @@ export class Player extends React.Component {
                                     </div>
                                 </div>
                                 <div className="panel-footer">
-                                    <Slider length={this.buf.pos} mark={this.state.currentTsPost} fastForwardFunc={this.fastForwardToTS} play={this.play} pause={this.pause} paused={this.state.paused} />
+                                    <Slider />
                                     <button id="player-play-pause" title="Play/Pause - Hotkey: p" type="button" ref="playbtn"
                                             className="btn btn-default btn-lg margin-right-btn play-btn"
                                             onClick={this.playPauseToggle}>
@@ -1280,7 +1278,7 @@ export class Player extends React.Component {
                                     </button>
                                     <span>{speedStr}</span>
                                     <span style={to_right}>
-                                        <span className="session_time">{formatDuration(this.state.currentTsPost)} / {formatDuration(this.buf.pos)}</span>
+                                        <span className="session_time">{formatDuration(this.currentTsPost)} / {formatDuration(this.buf.pos)}</span>
                                         <button id="player-drag-pan" title="Drag'n'Pan" type="button" className="btn btn-default btn-lg"
                                             onClick={this.dragPan}>
                                             <i className={"fa fa-" + (this.state.drag_pan ? "hand-rock-o" : "hand-paper-o")}
