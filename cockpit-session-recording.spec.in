@@ -1,5 +1,5 @@
 Name: cockpit-session-recording
-Version: 1
+Version: @VERSION@
 Release: 1%{?dist}
 Summary: Cockpit Session Recording
 License: LGPLv2+
