@@ -148,6 +148,9 @@ test/common:
 	git reset test/common
 
 $(NODE_MODULES_TEST): package.json
+	# if it exists already, npm install won't update it; force that so that we always get up-to-date packages
+	rm -f package-lock.json
 	npm install
+	npm prune
 
 .PHONY: all clean install devel-install dist-gzip srpm rpm check vm update-po
