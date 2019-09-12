@@ -6,8 +6,8 @@ TEST_OS = centos-7
 endif
 export TEST_OS
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
-# one example directory from `npm install` to check if that already ran
-NODE_MODULES_TEST=node_modules/po2json
+# stamp file to check if/when npm install ran
+NODE_MODULES_TEST=package-lock.json
 # one example file in dist/ from webpack to check if that already ran
 WEBPACK_TEST=dist/index.html
 
@@ -85,18 +85,18 @@ devel-install: $(WEBPACK_TEST)
 	ln -s `pwd`/dist ~/.local/share/cockpit/$(PACKAGE_NAME)
 
 # when building a distribution tarball, call webpack with a 'production' environment
-# ship a stub node_modules/ so that `make` works without re-running `npm install`
+# we don't ship node_modules for license and compactness reasons; we ship a
+# pre-built dist/ (so it's not necessary) and ship packge-lock.json (so that
+# node_modules/ can be reconstructed if necessary)
 dist-gzip: NODE_ENV=production
 dist-gzip: all cockpit-$(PACKAGE_NAME).spec
 	if type appstream-util >/dev/null 2>&1; then appstream-util validate-relax --nonet *.metainfo.xml; fi
 	mv node_modules node_modules.release
-	mkdir -p $(NODE_MODULES_TEST)
 	touch -r package.json $(NODE_MODULES_TEST)
 	touch dist/*
 	tar czf cockpit-$(PACKAGE_NAME)-$(VERSION).tar.gz --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
 		--exclude cockpit-$(PACKAGE_NAME).spec.in \
-		$$(git ls-files) cockpit-$(PACKAGE_NAME).spec dist/ node_modules
-	rm -rf node_modules
+		$$(git ls-files) package-lock.json cockpit-$(PACKAGE_NAME).spec dist/
 	mv node_modules.release node_modules
 
 srpm: dist-gzip cockpit-$(PACKAGE_NAME).spec
