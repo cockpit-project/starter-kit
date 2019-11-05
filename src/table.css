@@ -69,9 +69,12 @@
     line-height: 26px;
 }
 
+/* Match the form-table-ct CSS equivalent */
 .info-table-ct > tr > td:first-child,
 .info-table-ct > tbody > tr > td:first-child {
-    text-align: right;
+    text-align: left;
+    white-space: nowrap;
+    width: 5px;
     color: #888888;
 }
 

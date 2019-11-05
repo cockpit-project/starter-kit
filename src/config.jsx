@@ -491,7 +491,7 @@ class ConfigView extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-3">
+                    <div className="col-md-6">
                         <div className="panel panel-default">
                             <div className="panel-heading"><span>General Configuration</span></div>
                             <div className="panel-body" id="sr_config">
@@ -501,7 +501,7 @@ class ConfigView extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                         <div className="panel panel-default">
                             <div className="panel-heading"><span>SSSD Configuration</span></div>
                             <div className="panel-body" id="sssd_config">
