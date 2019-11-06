@@ -974,6 +974,9 @@ export class Player extends React.Component {
         this.clearInputPlayer();
         this.reset();
         this.sync();
+        if (this.props.logsEnabled) {
+            this.props.onRewindStart();
+        }
     }
 
     fastForwardToEnd() {

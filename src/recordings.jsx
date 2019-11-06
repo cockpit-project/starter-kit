@@ -403,6 +403,7 @@ class Recording extends React.Component {
         this.handleTsChange = this.handleTsChange.bind(this);
         this.handleLogTsChange = this.handleLogTsChange.bind(this);
         this.handleLogsClick = this.handleLogsClick.bind(this);
+        this.handleLogsReset = this.handleLogsReset.bind(this);
         this.state = {
             curTs: null,
             logsTs: null,
@@ -420,6 +421,12 @@ class Recording extends React.Component {
 
     handleLogsClick() {
         this.setState({logsEnabled: !this.state.logsEnabled});
+    }
+
+    handleLogsReset() {
+        this.setState({logsEnabled: false}, () => {
+            this.setState({logsEnabled: true});
+        });
     }
 
     goBackToList() {
@@ -446,7 +453,8 @@ class Recording extends React.Component {
                     search={this.props.search}
                     onTsChange={this.handleTsChange}
                     recording={r}
-                    logsEnabled={this.state.logsEnabled} />);
+                    logsEnabled={this.state.logsEnabled}
+                    onRewindStart={this.handleLogsReset} />);
 
             return (
                 <React.Fragment>
