@@ -18,31 +18,20 @@
  */
 
 import cockpit from "cockpit";
-import React from "react";
-import "./app.scss";
 
-// import { Accordion, AccordionItem, AccordionContent, AccordionToggle } from "@patternfly/react-core";
+function dbusCall(objectPath, iface, method, args) {
+    const clientCertmonger = cockpit.dbus("org.fedorahosted.certmonger",
+                                          { superuser: "try" });
 
-import CertificateList from "./certificateList.jsx";
+    return clientCertmonger.call(objectPath, iface, method, args);
+}
 
-const _ = cockpit.gettext;
+export function getRequest(path) {
+    return dbusCall(path, "org.freedesktop.DBus.Properties", "GetAll",
+                    ["org.fedorahosted.certmonger.request"]);
+}
 
-export class Application extends React.Component {
-    constructor() {
-        super();
-        this.state = { hostname: _("Unknown") };
-
-        cockpit.file("/etc/hostname").watch(content => {
-            this.setState({ hostname: content.trim() });
-        });
-    }
-
-    render() {
-        return (
-            <div className="container-fluid">
-                <h2>Certificates</h2>
-                <CertificateList />
-            </div>
-        );
-    }
+export function getRequests() {
+    return dbusCall("/org/fedorahosted/certmonger", "org.fedorahosted.certmonger",
+                    "get_requests", []);
 }
