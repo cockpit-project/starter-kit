@@ -1,9 +1,9 @@
 {
-  "name": "starter-kit",
+  "name": "certificates",
   "version": "0.1.0",
   "description": "Scaffolding for a cockpit module",
   "main": "index.js",
-  "repository": "git@github.com:cockpit/starter-kit.git",
+  "repository": "git@github.com:skobyda/certificates.git",
   "author": "",
   "license": "LGPL-2.1",
   "scripts": {

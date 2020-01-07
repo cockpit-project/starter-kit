@@ -1,8 +1,8 @@
-# starter-kit German translations
+# certificates German translations
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: starter-kit 1.0\n"
+"Project-Id-Version: certificates 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-08-29 00:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/index.html:20
-msgid "Cockpit Starter Kit"
+msgid "Cockpit Certificates"
 msgstr "Cockpit Bausatz"
 
 #: src/app.jsx:42
@@ -22,7 +22,7 @@ msgid "Running on $0"
 msgstr "Läuft auf $0"
 
 #: src/manifest.json
-msgid "Starter Kit"
+msgid "Certificates"
 msgstr "Bausatz"
 
 #: src/app.jsx:29
