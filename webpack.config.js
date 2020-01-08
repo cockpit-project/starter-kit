@@ -133,8 +133,7 @@ module.exports = {
                 test: /\.(js|jsx)$/
             },
             {
-                exclude: /node_modules/,
-                test: /\.scss$/,
+                test: /\.(scss|css)$/,
                 use: [
                     extract.loader,
                     {
@@ -145,7 +144,19 @@ module.exports = {
                         loader: 'sass-loader',
                     }
                 ]
-            }
+            },
+            {
+                test: /\.less$/,
+                use: [
+                    extract.loader,
+                    {
+                        loader: 'css-loader'
+                    },
+                    {
+                        loader: "less-loader"
+                    }
+                ]
+            },
         ]
     },
     plugins: plugins
