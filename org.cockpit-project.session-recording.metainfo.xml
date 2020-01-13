@@ -12,6 +12,6 @@
       Allows to play them in a player with various controls. Shows correlated logs which happened during session.
     </p>
   </description>
-  <extends>cockpit.desktop</extends>
+  <extends>org.cockpit_project.cockpit</extends>
   <launchable type="cockpit-manifest">cockpit-session-recording</launchable>
 </component>
