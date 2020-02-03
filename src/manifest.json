@@ -10,6 +10,12 @@
         "index": {
             "label": "Session Recording",
             "order": 110,
+            "docs": [
+                {
+                    "label": "Recording sessions",
+                    "url": "https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/recording_sessions/index"
+                }
+            ],
             "keywords": [
                 {
                     "matches": ["tlog", "sssd"]
