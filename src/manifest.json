@@ -9,7 +9,12 @@
     "menu": {
         "index": {
             "label": "Session Recording",
-            "order": 110
+            "order": 110,
+            "keywords": [
+                {
+                    "matches": ["tlog", "sssd"]
+                }
+            ]
         }
     }
 }
