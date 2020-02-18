@@ -39,9 +39,6 @@ automatically update the webpack on every code change with
 
     $ npm run watch
 
-or
-
-    $ make watch
 
 # Running eslint
 
