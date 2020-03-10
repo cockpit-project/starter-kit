@@ -1,5 +1,5 @@
 Name: cockpit-starter-kit
-Version: @VERSION@
+Version: %{VERSION}
 Release: 1%{?dist}
 Summary: Cockpit Starter Kit Example Module
 License: LGPLv2+
