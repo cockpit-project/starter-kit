@@ -439,10 +439,10 @@ let PacketBuffer = class {
             }
         }
 
-        if (in_txt_pos < in_txt.length) {
+        if (in_txt_pos < [...in_txt].length) {
             this.reportError(_("extra input present"));
         }
-        if (out_txt_pos < out_txt.length) {
+        if (out_txt_pos < [...out_txt].length) {
             this.reportError(_("extra output present"));
         }
 
@@ -525,7 +525,17 @@ let PacketBuffer = class {
             }
             /* Parse the entry message */
             try {
-                this.parseMessage(JSON.parse(e['MESSAGE']));
+                let utf8decoder = new TextDecoder();
+
+                /* Journalctl stores fields with non-printable characters
+                 * in an array of raw bytes formatted as unsigned
+                 * integers */
+                if (Array.isArray(e['MESSAGE'])) {
+                    let u8arr = new Uint8Array(e['MESSAGE']);
+                    this.parseMessage(JSON.parse(utf8decoder.decode(u8arr)));
+                } else {
+                    this.parseMessage(JSON.parse(e['MESSAGE']));
+                }
             } catch (error) {
                 this.handleError(error);
                 return;
