@@ -10,11 +10,12 @@ import sys
 TEST_DIR = os.path.dirname(__file__)
 sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
-import testlib
+from testlib import *
 
 # Test with pre-recorded journal with tlog UID 981
-class TestApplication(testlib.MachineCase):
+class TestApplication(MachineCase):
     def testPlay(self):
+        self.allow_authorize_journal_messages()
         term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
         b = self.browser
         m = self.machine
@@ -27,6 +28,7 @@ class TestApplication(testlib.MachineCase):
         b.wait_in_text(term_first_line, "localhost")
 
     def testFastforwardControls(self):
+        self.allow_authorize_journal_messages()
         last_term_line = ".xterm-accessibility-tree > div:nth-child(26)"
         slider = ".slider > .min-slider-handle"
         b = self.browser
@@ -44,6 +46,7 @@ class TestApplication(testlib.MachineCase):
         b.wait_attr(slider, "style", "left: 100%;")
 
     def testSpeedControls(self):
+        self.allow_authorize_journal_messages()
         speed_val = ".panel-footer > span:nth-child(10)"
         b = self.browser
         m = self.machine
@@ -70,7 +73,7 @@ class TestApplication(testlib.MachineCase):
         b.click("#player-speed-down")
         b.wait_text(speed_val, "x2")
         b.click("#player-speed-down")
-        b.wait_text(speed_val, "")
+        b.wait_present(speed_val)
         b.click("#player-speed-down")
         b.wait_text(speed_val, "/2")
         b.click("#player-speed-down")
@@ -81,16 +84,19 @@ class TestApplication(testlib.MachineCase):
         b.wait_text(speed_val, "/16")
         # restore speed
         b.click("#player-speed-reset")
-        b.wait_text(speed_val, "")
+        b.wait_present(speed_val)
+        b.click("#player-speed-down")
+        b.wait_text(speed_val, "/2")
 
     def testZoomControls(self):
+        self.allow_authorize_journal_messages()
         default_scale_sel = '.console-ct[style^="transform: scale(1)"]'
         zoom_one_scale_sel = '.console-ct[style^="transform: scale(1.1)"]'
         zoom_two_scale_sel = '.console-ct[style^="transform: scale(1.2)"]'
         zoom_three_scale_sel = '.console-ct[style^="transform: scale(1.3)"]'
         b = self.browser
         m = self.machine
-        if m.image in ["fedora-29"] or m.image in ["rhel-8.0"] or m.image in ["rhel-8.1"]:
+        if m.image in ["rhel-8-0", "rhel-8-1", "rhel-8-2", "rhel-8-3"]:
             zoom_reset_scale_sel = '.console-ct[style*="transform: scale(0.8"]'
         else:
             zoom_reset_scale_sel = '.console-ct[style*="transform: scale(0.9"]'
@@ -116,6 +122,7 @@ class TestApplication(testlib.MachineCase):
         b.wait_present(zoom_reset_scale_sel)
 
     def testSkipFrame(self):
+        self.allow_authorize_journal_messages()
         term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
         b = self.browser
         m = self.machine
@@ -132,4 +139,4 @@ class TestApplication(testlib.MachineCase):
         b.wait_in_text(term_first_line, "localhost")
 
 if __name__ == '__main__':
-    testlib.test_main()
+    test_main()
