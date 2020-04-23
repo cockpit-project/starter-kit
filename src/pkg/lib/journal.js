@@ -98,7 +98,7 @@
                 options.count = null;
         }
 
-        var cmd = [ "journalctl", "-q", "--output=json" ];
+        var cmd = [ "journalctl", "--all", "-q", "--output=json" ];
         if (!options.count)
             cmd.push("--no-tail");
         else
