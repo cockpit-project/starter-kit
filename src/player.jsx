@@ -1174,14 +1174,6 @@ export class Player extends React.Component {
         this.initSlider();
     }
 
-    componentWillUpdate(nextProps, nextState) {
-        /* If we changed pause state or speed exponent */
-        if (nextState.paused != this.state.paused ||
-            nextState.speedExp != this.state.speedExp) {
-            this.sync();
-        }
-    }
-
     componentDidUpdate(prevProps, prevState) {
         /* If we changed pause state or speed exponent */
         if (this.state.paused != prevState.paused ||
