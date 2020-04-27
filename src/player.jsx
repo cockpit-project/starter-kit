@@ -697,8 +697,16 @@ export class Player extends React.Component {
             cols:               80,
             rows:               25,
             title:              _("Player"),
-            term:               null,
             paused:             true,
+            /* Terminal */
+            term:               new Term({
+                cols: 80,
+                rows: 25,
+                screenKeys: true,
+                useStyle: true,
+                /* Exposes the xterm-accessibility-tree */
+                screenReaderMode: true,
+            }),
             /* Speed exponent */
             speedExp:           0,
             scale_initial:      1,
@@ -1149,24 +1157,11 @@ export class Player extends React.Component {
         this._transform();
     }
 
-    componentWillMount() {
-        let term = new Term({
-            cols: this.state.cols,
-            rows: this.state.rows,
-            screenKeys: true,
-            useStyle: true,
-            /* Exposes the xterm-accessibility-tree */
-            screenReaderMode: true,
-        });
-
-        term.on('title', this.handleTitleChange);
-
-        this.setState({ term: term });
+    componentDidMount() {
+        this.state.term.on('title', this.handleTitleChange);
 
         window.addEventListener("keydown", this.handleKeyDown, false);
-    }
 
-    componentDidMount() {
         if (this.refs.wrapper.offsetWidth) {
             this.setState({containerWidth: this.refs.wrapper.offsetWidth});
         }

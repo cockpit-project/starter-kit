@@ -181,7 +181,7 @@ class Config extends React.Component {
         this.setState({file_error: reason});
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.getConfig();
         this.readConfig();
     }
@@ -393,7 +393,7 @@ class SssdConfig extends React.Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         let syntax_object = {
             parse:     ini.parse,
             stringify: ini.stringify

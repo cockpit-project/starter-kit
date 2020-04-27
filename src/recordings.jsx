@@ -339,7 +339,7 @@ class Logs extends React.Component {
         this.getLogs();
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.getServerTimeOffset();
     }
 
