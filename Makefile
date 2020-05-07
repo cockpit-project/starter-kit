@@ -12,6 +12,7 @@ VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
 NODE_MODULES_TEST=package-lock.json
 # one example file in dist/ from webpack to check if that already ran
 WEBPACK_TEST=dist/index.html
+SASS=$(CURDIR)/node_modules/.bin/sass
 
 all: $(WEBPACK_TEST)
 
@@ -65,7 +66,7 @@ dist/po.%.js: po/%.po $(NODE_MODULES_TEST)
 %.spec: %.spec.in
 	sed -e 's/%{VERSION}/$(VERSION)/g' $< > $@
 
-$(WEBPACK_TEST): $(NODE_MODULES_TEST) $(shell find src/ -type f) package.json webpack.config.js $(patsubst %,dist/po.%.js,$(LINGUAS))
+$(WEBPACK_TEST): $(NODE_MODULES_TEST) $(shell find src/ -type f) package.json webpack.config.js dist/patternfly-4-cockpit.css $(patsubst %,dist/po.%.js,$(LINGUAS))
 	NODE_ENV=$(NODE_ENV) npm run build
 
 watch:
@@ -75,9 +76,11 @@ clean:
 	rm -rf dist/
 	[ ! -e cockpit-$(PACKAGE_NAME).spec.in ] || rm -f cockpit-$(PACKAGE_NAME).spec
 
+# patternfly-4-cockpit.css needs to be shipped in the release tarball to avoid rebuilding the webpack, but we don't need to install it
 install: $(WEBPACK_TEST)
 	mkdir -p $(DESTDIR)/usr/share/cockpit/$(PACKAGE_NAME)
 	cp -r dist/* $(DESTDIR)/usr/share/cockpit/$(PACKAGE_NAME)
+	rm $(DESTDIR)/usr/share/cockpit/$(PACKAGE_NAME)/patternfly-4-cockpit.css
 	mkdir -p $(DESTDIR)/usr/share/metainfo/
 	cp org.cockpit-project.$(PACKAGE_NAME).metainfo.xml $(DESTDIR)/usr/share/metainfo/
 
@@ -155,6 +158,10 @@ test/common:
 	git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 219
 	git checkout --force FETCH_HEAD -- test/common
 	git reset test/common
+
+dist/patternfly-4-cockpit.css: src/lib/patternfly-4-cockpit.scss $(NODE_MODULES_TEST)
+	$(SASS) $< $@ --source-map --source-map-urls absolute --style compressed --load-path node_modules && \
+	sed -i -f src/lib/patternfly.sed $@
 
 $(NODE_MODULES_TEST): package.json
 	# if it exists already, npm install won't update it; force that so that we always get up-to-date packages

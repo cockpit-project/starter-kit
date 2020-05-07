@@ -115,6 +115,9 @@ var babel_loader = {
 
 module.exports = {
     mode: production ? 'production' : 'development',
+    resolve: {
+        modules: [ nodedir ],
+    },
     entry: info.entries,
     externals: externals,
     output: output,
@@ -133,19 +136,25 @@ module.exports = {
                 test: /\.(js|jsx)$/
             },
             {
-                exclude: /node_modules/,
-                test: /\.scss$/,
+                test: /\.s?css$/,
                 use: [
                     extract.loader,
                     {
                         loader: 'css-loader',
-                        options: { url: false }
+                        options: {
+                            sourceMap: true,
+                            url: false
+                        }
                     },
                     {
                         loader: 'sass-loader',
-                    }
+                        options: {
+                            sourceMap: true,
+                            outputStyle: 'compressed',
+                        },
+                    },
                 ]
-            }
+            },
         ]
     },
     plugins: plugins

@@ -19,6 +19,7 @@
 
 import cockpit from 'cockpit';
 import React from 'react';
+import { Alert, Card, CardHead, CardHeader, CardHeadMain, Title } from '@patternfly/react-core';
 import './app.scss';
 
 const _ = cockpit.gettext;
@@ -35,12 +36,19 @@ export class Application extends React.Component {
 
     render() {
         return (
-            <div className="container-fluid">
-                <h2>Starter Kit</h2>
-                <p>
-                    { cockpit.format(_("Running on $0"), this.state.hostname) }
-                </p>
-            </div>
+            <Card>
+                <CardHead>
+                    <CardHeadMain>
+                        <Title headingLevel="h2" size="3xl">Starter Kit</Title>
+                    </CardHeadMain>
+                </CardHead>
+                <CardHeader>
+                    <Alert
+                        variant="default"
+                        title={ cockpit.format(_("Running on $0"), this.state.hostname) }
+                    />
+                </CardHeader>
+            </Card>
         );
     }
 }
