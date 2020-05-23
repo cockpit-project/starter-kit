@@ -10,3 +10,6 @@ if type firewall-cmd >/dev/null 2>&1; then
     firewall-cmd --add-service=cockpit --permanent
 fi
 systemctl enable cockpit.socket
+
+# HACK: See https://github.com/cockpit-project/cockpit/issues/14133
+mkdir -p /usr/share/cockpit/packagekit
