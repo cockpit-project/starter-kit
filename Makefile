@@ -121,7 +121,7 @@ rpm: dist-gzip cockpit-$(PACKAGE_NAME).spec
 # build a VM with locally built rpm installed
 $(VM_IMAGE): rpm bots
 	rm -f $(VM_IMAGE) $(VM_IMAGE).qcow2
-	bots/image-customize -v -i cockpit -i `pwd`/cockpit-$(PACKAGE_NAME)-*.noarch.rpm -s $(CURDIR)/test/vm.install $(TEST_OS)
+	bots/image-customize -v -i cockpit-ws -i `pwd`/cockpit-$(PACKAGE_NAME)-*.noarch.rpm -s $(CURDIR)/test/vm.install $(TEST_OS)
 	bots/image-customize -v -r "usermod -u 981 tlog || true" $(TEST_OS)
 	bots/image-customize -v -u ./test/files/1.journal:/var/log/journal/1.journal $(TEST_OS)
 
@@ -136,12 +136,15 @@ check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
 # checkout Cockpit's bots for standard test VM images and API to launch them
 # must be from master, as only that has current and existing images; but testvm.py API is stable
 bots:
-	[ -d bots ] || git clone --depth=1 https://github.com/cockpit-project/bots.git
+	sudo rm -rf bots
+	git clone --quiet --reference-if-able $${XDG_CACHE_HOME:-$$HOME/.cache}/cockpit-project/bots https://github.com/cockpit-project/bots.git
+	if [ -n "$$COCKPIT_BOTS_REF" ]; then git -C bots fetch --quiet --depth=1 origin "$$COCKPIT_BOTS_REF"; git -C bots checkout --quiet FETCH_HEAD; fi
+	@echo "checked out bots/ ref $$(git -C bots rev-parse HEAD)"
 
 # checkout Cockpit's test API; this has no API stability guarantee, so check out a stable tag
 # when you start a new project, use the latest relese, and update it from time to time
 test/common:
-	git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 199
+	git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 219
 	git checkout --force FETCH_HEAD -- test/common
 	git reset test/common
 

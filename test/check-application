@@ -15,7 +15,6 @@ from testlib import *
 # Test with pre-recorded journal with tlog UID 981
 class TestApplication(MachineCase):
     def testPlay(self):
-        self.allow_authorize_journal_messages()
         term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
         b = self.browser
         m = self.machine
@@ -28,7 +27,6 @@ class TestApplication(MachineCase):
         b.wait_in_text(term_first_line, "localhost")
 
     def testFastforwardControls(self):
-        self.allow_authorize_journal_messages()
         last_term_line = ".xterm-accessibility-tree > div:nth-child(26)"
         slider = ".slider > .min-slider-handle"
         b = self.browser
@@ -46,7 +44,6 @@ class TestApplication(MachineCase):
         b.wait_attr(slider, "style", "left: 100%;")
 
     def testSpeedControls(self):
-        self.allow_authorize_journal_messages()
         speed_val = ".panel-footer > span:nth-child(10)"
         b = self.browser
         m = self.machine
@@ -89,7 +86,6 @@ class TestApplication(MachineCase):
         b.wait_text(speed_val, "/2")
 
     def testZoomControls(self):
-        self.allow_authorize_journal_messages()
         default_scale_sel = '.console-ct[style^="transform: scale(1)"]'
         zoom_one_scale_sel = '.console-ct[style^="transform: scale(1.1)"]'
         zoom_two_scale_sel = '.console-ct[style^="transform: scale(1.2)"]'
@@ -122,7 +118,6 @@ class TestApplication(MachineCase):
         b.wait_present(zoom_reset_scale_sel)
 
     def testSkipFrame(self):
-        self.allow_authorize_journal_messages()
         term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
         b = self.browser
         m = self.machine
@@ -138,5 +133,6 @@ class TestApplication(MachineCase):
         b.wait_timeout(20)
         b.wait_in_text(term_first_line, "localhost")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_main()
