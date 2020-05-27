@@ -970,7 +970,7 @@ class View extends React.Component {
                                         <label className="control-label" htmlFor="config">{_("Configuration")}</label>
                                     </td>
                                     <td className="top">
-                                        <button className="btn btn-default" onClick={this.openConfig}><i className="fa fa-cog" aria-hidden="true" /></button>
+                                        <button id="btn-config" className="btn btn-default" onClick={this.openConfig}><i className="fa fa-cog" aria-hidden="true" /></button>
                                     </td>
                                 </tr>
                             </thead>

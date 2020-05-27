@@ -1276,7 +1276,7 @@ export class Player extends React.Component {
                                             onClick={this.speedUp}>
                                         x2
                                     </button>
-                                    <span>{speedStr}</span>
+                                    <span id="player-speed">{speedStr}</span>
                                     <span style={to_right}>
                                         <span className="session_time">{formatDuration(this.currentTsPost)} / {formatDuration(this.buf.pos)}</span>
                                         <button id="player-drag-pan" title="Drag'n'Pan" type="button" className="btn btn-default btn-lg"

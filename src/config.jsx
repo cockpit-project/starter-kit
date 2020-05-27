@@ -321,7 +321,7 @@ class Config extends React.Component {
                             </tr>
                             <tr>
                                 <td className="top">
-                                    <button className="btn btn-default" type="submit">Save</button>
+                                    <button id="btn-save-tlog-conf" className="btn btn-default" type="submit">Save</button>
                                 </td>
                                 <td>
                                     <span style={{display: this.state.submitting}}>Saving...</span>
@@ -461,7 +461,7 @@ class SssdConfig extends React.Component {
                         </tr>
                         }
                         <tr>
-                            <td><button className="btn btn-default" type="submit">Save</button></td>
+                            <td><button id="btn-save-sssd-conf" className="btn btn-default" type="submit">Save</button></td>
                             <td>
                                 <span style={{display: this.state.submitting}}>Saving...</span>
                             </td>

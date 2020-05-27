@@ -44,7 +44,7 @@ class TestApplication(MachineCase):
         b.wait_attr(slider, "style", "left: 100%;")
 
     def testSpeedControls(self):
-        speed_val = ".panel-footer > span:nth-child(10)"
+        speed_val = "#player-speed"
         b = self.browser
         m = self.machine
         self.login_and_go("/session-recording")
@@ -92,10 +92,11 @@ class TestApplication(MachineCase):
         zoom_three_scale_sel = '.console-ct[style^="transform: scale(1.3)"]'
         b = self.browser
         m = self.machine
-        if m.image in ["rhel-8-0", "rhel-8-1", "rhel-8-2", "rhel-8-3"]:
-            zoom_reset_scale_sel = '.console-ct[style*="transform: scale(0.8"]'
-        else:
-            zoom_reset_scale_sel = '.console-ct[style*="transform: scale(0.9"]'
+        zoom_fit_to = (
+            '.console-ct[style*="translate(-50%, -50%)"]'
+            '[style*="top: 50%"]'
+            '[style*="left: 50%"]'
+        )
 
         self.login_and_go("/session-recording")
         b.wait_present(".content-header-extra")
@@ -113,9 +114,9 @@ class TestApplication(MachineCase):
         # Zoom Out
         b.click("#player-zoom-out")
         b.wait_present(zoom_two_scale_sel)
-        # Reset Zoom
+        # Fit zoom to screen
         b.click("#player-fit-to")
-        b.wait_present(zoom_reset_scale_sel)
+        b.wait_present(zoom_fit_to)
 
     def testSkipFrame(self):
         term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
@@ -125,11 +126,10 @@ class TestApplication(MachineCase):
         b.wait_present(".content-header-extra")
         b.wait_present("#user")
         b.click(".listing-ct-item")
-        b.click("#player-skip-frame")
-        b.click("#player-skip-frame")
-        b.click("#player-skip-frame")
-        b.click("#player-skip-frame")
-        b.click("#player-skip-frame")
+        b.wait_present(term_first_line)
+        # loop until 3 valid frames have passed
+        while "localhost" not in b.text(term_first_line):
+            b.click("#player-skip-frame")
         b.wait_timeout(20)
         b.wait_in_text(term_first_line, "localhost")
 
