@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import "../dist/patternfly-4-cockpit.css";
+import "./lib/patternfly-4-cockpit.scss";
 
 import "core-js/stable";
 
