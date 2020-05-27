@@ -23,7 +23,6 @@ class TestApplication(MachineCase):
         b.wait_present("#user")
         b.click(".listing-ct-item")
         b.click("#player-play-pause")
-        b.wait_timeout(30000)
         b.wait_in_text(term_first_line, "localhost")
 
     def testFastforwardControls(self):
@@ -130,7 +129,6 @@ class TestApplication(MachineCase):
         # loop until 3 valid frames have passed
         while "localhost" not in b.text(term_first_line):
             b.click("#player-skip-frame")
-        b.wait_timeout(20)
         b.wait_in_text(term_first_line, "localhost")
 
 
