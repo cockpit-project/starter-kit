@@ -58,6 +58,11 @@ let formatDateTimeOffset = function (ms, offset) {
             .format("YYYY-MM-DD HH:mm:ss");
 };
 
+let formatUTC = function(date) {
+    return moment(date).utc()
+            .format("YYYY-MM-DD HH:mm:ss") + " UTC";
+};
+
 /*
  * Format a time interval from a number of milliseconds.
  */
@@ -776,11 +781,11 @@ class View extends React.Component {
         let options = {follow: false, count: "all", merge: true};
 
         if (this.state.date_since && this.state.date_since !== "") {
-            options['since'] = this.state.date_since;
+            options['since'] = formatUTC(this.state.date_since);
         }
 
         if (this.state.date_until && this.state.date_until !== "") {
-            options['until'] = this.state.date_until;
+            options['until'] = formatUTC(this.state.date_until);
         }
 
         if (this.state.search && this.state.search !== "" && this.state.recordingID === null) {
