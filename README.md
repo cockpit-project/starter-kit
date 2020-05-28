@@ -80,14 +80,6 @@ You can also run the test against a different Cockpit image, for example:
 
     TEST_OS=fedora-28 make check
 
-# Vagrant
-
-This directory contains a Vagrantfile that installs and starts cockpit on a
-Fedora 26 cloud image. Run `vagrant up` to start it and `vagrant rsync` to
-synchronize the `dist` directory to `/usr/local/share/cockit/starter-kit`. Use
-`vagrant rsync-auto` to automatically sync when contents of the `dist`
-directory change.
-
 # Customizing
 
 After cloning the Starter Kit you should rename the files, package names, and
