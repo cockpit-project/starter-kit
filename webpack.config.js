@@ -115,6 +115,9 @@ var babel_loader = {
 
 module.exports = {
     mode: production ? 'production' : 'development',
+    resolve: {
+        modules: [ nodedir ],
+    },
     entry: info.entries,
     externals: externals,
     output: output,
@@ -132,20 +135,63 @@ module.exports = {
                 use: babel_loader,
                 test: /\.(js|jsx)$/
             },
+            /* HACK: remove unwanted fonts from PatternFly's css */
             {
-                exclude: /node_modules/,
-                test: /\.scss$/,
+                test: /patternfly-4-cockpit.scss$/,
                 use: [
                     extract.loader,
                     {
                         loader: 'css-loader',
-                        options: { url: false }
+                        options: {
+                            sourceMap: true,
+                            url: false
+                        }
+                    },
+                    {
+                        loader: 'string-replace-loader',
+                        options: {
+                            multiple: [
+                                {
+                                    search: /src:url\("patternfly-icons-fake-path\/pficon[^}]*/g,
+                                    replace: "src:url('fonts/patternfly.woff')format('woff');",
+                                },
+                                {
+                                    search: /@font-face[^}]*patternfly-fonts-fake-path[^}]*}/g,
+                                    replace: '',
+                                },
+                            ]
+                        },
                     },
                     {
                         loader: 'sass-loader',
-                    }
+                        options: {
+                            sourceMap: true,
+                            outputStyle: 'compressed',
+                        },
+                    },
                 ]
-            }
+            },
+            {
+                test: /\.s?css$/,
+                exclude: /patternfly-4-cockpit.scss/,
+                use: [
+                    extract.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            sourceMap: true,
+                            url: false
+                        }
+                    },
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: true,
+                            outputStyle: 'compressed',
+                        },
+                    },
+                ]
+            },
         ]
     },
     plugins: plugins
