@@ -244,6 +244,30 @@ class TestApplication(MachineCase):
         conf.read_file(open(test_all_file, "r"))
         assert conf["session_recording"]["scope"] == "all"
 
+    def testDisplayDrag(self):
+        term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
+        b = self.browser
+        m = self.machine
+        self.login_and_go("/session-recording")
+        b.wait_present(".content-header-extra")
+        b.wait_present("#user")
+        b.click(".listing-ct-item")
+        # start playback and pause in middle
+        b.click("#player-play-pause")
+        b.wait_in_text(term_first_line, "localhost")
+        b.click("#player-play-pause")
+        # zoom in so that the whole screen is no longer visible
+        b.click("#player-zoom-in")
+        b.click("#player-zoom-in")
+        # select and ensure drag'n'pan mode
+        b.click("#player-drag-pan")
+        b.wait_present(".fa-hand-rock-o")
+        # scroll and check for screen movement
+        b.mouse(".dragnpan", "mousedown", 200, 200)
+        b.mouse(".dragnpan", "mousemove", 10, 10)
+        assert b.attr(".dragnpan", "scrollTop") != 0
+        assert b.attr(".dragnpan", "scrollLeft") != 0
+
 
 if __name__ == "__main__":
     test_main()
