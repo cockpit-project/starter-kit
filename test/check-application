@@ -261,6 +261,27 @@ class TestApplication(MachineCase):
         # check for extra log entries
         b.wait_present(".cockpit-log-message:contains('authentication failure')")
 
+    def testZoomSpeedControls(self):
+        default_scale_sel = '.console-ct[style^="transform: scale(1)"]'
+        play_scale_sel = '.console-ct[style^="transform: scale(0.4"]'
+        zoom_one_scale_sel = '.console-ct[style^="transform: scale(0.5"]'
+        b, _ = self._login()
+        self._sel_rec()
+        # set speed x16 and begin playing, expecting a size adjustment
+        for _ in range(4):
+            b.click("#player-speed-up")
+        b.wait_present(default_scale_sel)
+        b.click("#player-play-pause")
+        b.wait_present(play_scale_sel)
+        # wait until sleeping and zoom in
+        b.wait_in_text(self._term_line(8), "sleep")
+        b.click("#player-zoom-in")
+        b.wait_present(zoom_one_scale_sel)
+        # zoom out while typing fast
+        b.wait_in_text(self._term_line(9), "localhost")
+        b.click("#player-zoom-out")
+        b.wait_present(play_scale_sel)
+
 
 if __name__ == "__main__":
     test_main()

@@ -940,7 +940,7 @@ class View extends React.Component {
                                     </td>
                                     <td>
                                         <div className="input-group">
-                                            <input type="text" className="form-control" name="search" value={this.state.search}
+                                            <input type="text" id="recording-search" className="form-control" name="search" value={this.state.search}
                                                    onChange={this.handleInputChange} />
                                         </div>
                                     </td>
