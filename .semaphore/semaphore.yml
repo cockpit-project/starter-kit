@@ -1,0 +1,36 @@
+version: v1.0
+name: Cockpit Session Recording
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+
+blocks:
+  - name: "Run checks"
+    task:
+      prologue:
+        commands:
+          - checkout
+          - sudo apt install -y python3-libvirt
+          - docker build -t rpmbuilder .
+          - id=$(docker create rpmbuilder)
+          - docker cp $id:/cockpit-session-recording/ .
+          - cd cockpit-session-recording
+          - make test/common
+          - make bots
+      jobs:
+      - name: Check fedora-32
+        commands:
+          - export TEST_OS=fedora-32
+          - bots/image-customize -v -i cockpit-ws -i `pwd`/cockpit-session-recording*.noarch.rpm -s `pwd`/test/vm.install $TEST_OS
+          - bots/image-customize -v -r "usermod -u 981 tlog || true" $TEST_OS
+          - bots/image-customize -v -u ./test/files/1.journal:/var/log/journal/1.journal $TEST_OS
+          - test/check-application -v
+
+      - name: Check centos-8
+        commands:
+          - export TEST_OS=centos-8-stream
+          - bots/image-customize -v -i cockpit-ws -i `pwd`/cockpit-session-recording*.noarch.rpm -s `pwd`/test/vm.install $TEST_OS
+          - bots/image-customize -v -r "usermod -u 981 tlog || true" $TEST_OS
+          - bots/image-customize -v -u ./test/files/1.journal:/var/log/journal/1.journal $TEST_OS
+          - test/check-application -v
