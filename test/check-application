@@ -33,7 +33,7 @@ class TestApplication(testlib.MachineCase):
 
         # change language to German
         b.switch_to_top()
-        b.click("#content-user-name")
+        b.click("#navbar-dropdown")
         b.click(".display-language-menu a")
         b.wait_popup('display-language')
         b.set_val("#display-language select", "de-de")
