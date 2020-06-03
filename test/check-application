@@ -14,93 +14,90 @@ from testlib import *
 
 # Test with pre-recorded journal with tlog UID 981
 class TestApplication(MachineCase):
-    def testPlay(self):
-        term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
+    def _login(self):
+        self.login_and_go("/session-recording")
         b = self.browser
         m = self.machine
-        self.login_and_go("/session-recording")
         b.wait_present(".content-header-extra")
         b.wait_present("#user")
-        b.click(".listing-ct-item")
+        return b, m
+
+    def _sel_rec(self, cond=":first()"):
+        self.browser.click(f".listing-ct-item{cond}")
+
+    def _term_line(self, lineno):
+        return f".xterm-accessibility-tree div:nth-child({lineno})"
+
+    def testPlay(self):
+        b, _ = self._login()
+        self._sel_rec()
         b.click("#player-play-pause")
-        b.wait_in_text(term_first_line, "localhost")
+        b.wait_in_text(self._term_line(1), "localhost")
 
     def testFastforwardControls(self):
-        last_term_line = ".xterm-accessibility-tree > div:nth-child(26)"
         slider = ".slider > .min-slider-handle"
-        b = self.browser
-        m = self.machine
-        self.login_and_go("/session-recording")
-        b.wait_present(".content-header-extra")
-        b.wait_present("#user")
-        b.click(".listing-ct-item")
+
+        b, _ = self._login()
+        self._sel_rec()
+        # fast forward
         b.click("#player-fast-forward")
-        b.wait_in_text(last_term_line, "logout")
+        b.wait_in_text(self._term_line(26), "logout")
         b.wait_attr(slider, "style", "left: 100%;")
         # test restart playback
         b.click("#player-restart")
-        b.wait_text(".xterm-accessibility-tree > div:nth-child(1)", "Blank line")
+        b.wait_text(self._term_line(1), "Blank line")
         b.wait_attr(slider, "style", "left: 100%;")
 
     def testSpeedControls(self):
-        speed_val = "#player-speed"
-        b = self.browser
-        m = self.machine
-        self.login_and_go("/session-recording")
-        b.wait_present(".content-header-extra")
-        b.wait_present("#user")
-        b.click(".listing-ct-item")
+        b, _ = self._login()
+        self._sel_rec()
         # increase speed
         b.wait_present("#player-speed-up")
         b.click("#player-speed-up")
-        b.wait_present(speed_val)
-        b.wait_text(speed_val, "x2")
+        b.wait_present("#player-speed")
+        b.wait_text("#player-speed", "x2")
         b.click("#player-speed-up")
-        b.wait_text(speed_val, "x4")
+        b.wait_text("#player-speed", "x4")
         b.click("#player-speed-up")
-        b.wait_text(speed_val, "x8")
+        b.wait_text("#player-speed", "x8")
         b.click("#player-speed-up")
-        b.wait_text(speed_val, "x16")
+        b.wait_text("#player-speed", "x16")
         # decrease speed
         b.click("#player-speed-down")
-        b.wait_text(speed_val, "x8")
+        b.wait_text("#player-speed", "x8")
         b.click("#player-speed-down")
-        b.wait_text(speed_val, "x4")
+        b.wait_text("#player-speed", "x4")
         b.click("#player-speed-down")
-        b.wait_text(speed_val, "x2")
+        b.wait_text("#player-speed", "x2")
         b.click("#player-speed-down")
-        b.wait_present(speed_val)
+        b.wait_present("#player-speed")
         b.click("#player-speed-down")
-        b.wait_text(speed_val, "/2")
+        b.wait_text("#player-speed", "/2")
         b.click("#player-speed-down")
-        b.wait_text(speed_val, "/4")
+        b.wait_text("#player-speed", "/4")
         b.click("#player-speed-down")
-        b.wait_text(speed_val, "/8")
+        b.wait_text("#player-speed", "/8")
         b.click("#player-speed-down")
-        b.wait_text(speed_val, "/16")
+        b.wait_text("#player-speed", "/16")
         # restore speed
         b.click("#player-speed-reset")
-        b.wait_present(speed_val)
+        b.wait_present("#player-speed")
         b.click("#player-speed-down")
-        b.wait_text(speed_val, "/2")
+        b.wait_text("#player-speed", "/2")
 
     def testZoomControls(self):
         default_scale_sel = '.console-ct[style^="transform: scale(1)"]'
         zoom_one_scale_sel = '.console-ct[style^="transform: scale(1.1)"]'
         zoom_two_scale_sel = '.console-ct[style^="transform: scale(1.2)"]'
         zoom_three_scale_sel = '.console-ct[style^="transform: scale(1.3)"]'
-        b = self.browser
-        m = self.machine
         zoom_fit_to = (
             '.console-ct[style*="translate(-50%, -50%)"]'
             '[style*="top: 50%"]'
             '[style*="left: 50%"]'
         )
 
-        self.login_and_go("/session-recording")
-        b.wait_present(".content-header-extra")
-        b.wait_present("#user")
-        b.click(".listing-ct-item")
+        b, _ = self._login()
+        self._sel_rec()
         # Wait for terminal with scale(1)
         b.wait_present(default_scale_sel)
         # Zoom in x3
@@ -118,47 +115,33 @@ class TestApplication(MachineCase):
         b.wait_present(zoom_fit_to)
 
     def testSkipFrame(self):
-        term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
-        b = self.browser
-        m = self.machine
-        self.login_and_go("/session-recording")
-        b.wait_present(".content-header-extra")
-        b.wait_present("#user")
-        b.click(".listing-ct-item")
-        b.wait_present(term_first_line)
+        b, _ = self._login()
+        self._sel_rec()
+        b.wait_present(self._term_line(1))
         # loop until 3 valid frames have passed
-        while "localhost" not in b.text(term_first_line):
+        while "localhost" not in b.text(self._term_line(1)):
             b.click("#player-skip-frame")
-        b.wait_in_text(term_first_line, "localhost")
+        b.wait_in_text(self._term_line(1), "localhost")
 
     def testPlaybackPause(self):
         import time
 
-        term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
-        b = self.browser
-        m = self.machine
-        self.login_and_go("/session-recording")
-        b.wait_present(".content-header-extra")
-        b.wait_present("#user")
-        b.click(".listing-ct-item")
+        b, _ = self._login()
+        self._sel_rec()
         # Start and pause the player
         b.click("#player-restart")
         b.click("#player-play-pause")
         b.click("#player-play-pause")
         time.sleep(10)
         # Make sure it didn't keep playing
-        b.wait_not_in_text(term_first_line, "whoami")
+        b.wait_not_in_text(self._term_line(1), "whoami")
         # Test if it can start playing again
         b.click("#player-play-pause")
 
     def testSessionRecordingConf(self):
         import json, configparser
 
-        b = self.browser
-        m = self.machine
-        self.login_and_go("/session-recording")
-        b.wait_present(".content-header-extra")
-        b.wait_present("#user")
+        b, m = self._login()
         # Ensure that the button leads to the config page
         b.click("#btn-config")
         b.enter_page("/session-recording/config")
@@ -168,6 +151,7 @@ class TestApplication(MachineCase):
         conf_file = f"{conf_file_path}tlog-rec-session.conf"
         save_file = "/tmp/tlog-rec-session.conf"
         test_file = "/tmp/test-tlog-rec-session.conf"
+
         # Save the existing config
         m.download(conf_file, save_file)
         # Change all of the fields
@@ -215,6 +199,7 @@ class TestApplication(MachineCase):
         test_none_file = "/tmp/test-none-sssd-session-recording.conf"
         test_some_file = "/tmp/test-some-sssd-session-recording.conf"
         test_all_file = "/tmp/test-all-sssd-session-recording.conf"
+
         # Save the existing config
         m.download(conf_file, save_file)
         # Download test with scope 'None'
@@ -245,16 +230,11 @@ class TestApplication(MachineCase):
         assert conf["session_recording"]["scope"] == "all"
 
     def testDisplayDrag(self):
-        term_first_line = ".xterm-accessibility-tree div:nth-child(1)"
-        b = self.browser
-        m = self.machine
-        self.login_and_go("/session-recording")
-        b.wait_present(".content-header-extra")
-        b.wait_present("#user")
-        b.click(".listing-ct-item")
+        b, _ = self._login()
+        self._sel_rec()
         # start playback and pause in middle
         b.click("#player-play-pause")
-        b.wait_in_text(term_first_line, "localhost")
+        b.wait_in_text(self._term_line(1), "localhost")
         b.click("#player-play-pause")
         # zoom in so that the whole screen is no longer visible
         b.click("#player-zoom-in")
