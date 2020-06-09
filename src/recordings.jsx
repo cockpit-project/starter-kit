@@ -145,8 +145,7 @@ class Datetimepicker extends React.Component {
     }
 
     handleDateChange() {
-        const date = $(this.refs.datepicker_input).val()
-                .trim();
+        const date = $(this.refs.datepicker_input).val();
         this.setState({invalid: false, date: date});
         if (!parseDate(date)) {
             this.setState({invalid: true});
@@ -924,13 +923,13 @@ class View extends React.Component {
                                     <td className="top">
                                         <label className="control-label" htmlFor="date_since">{_("Since")}</label>
                                     </td>
-                                    <td>
+                                    <td id="since-search">
                                         <Datetimepicker value={this.state.date_since} onChange={this.handleDateSinceChange} />
                                     </td>
                                     <td className="top">
                                         <label className="control-label" htmlFor="date_until">{_("Until")}</label>
                                     </td>
-                                    <td>
+                                    <td id="until-search">
                                         <Datetimepicker value={this.state.date_until} onChange={this.handleDateUntilChange} />
                                     </td>
                                 </tr>
@@ -949,7 +948,7 @@ class View extends React.Component {
                                     </td>
                                     <td>
                                         <div className="input-group">
-                                            <input type="text" className="form-control" name="username" value={this.state.username}
+                                            <input type="text" id="username-search" className="form-control" name="username" value={this.state.username}
                                                    onChange={this.handleInputChange} />
                                         </div>
                                     </td>

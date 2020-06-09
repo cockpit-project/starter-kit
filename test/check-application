@@ -139,7 +139,7 @@ class TestApplication(MachineCase):
         b.click("#player-play-pause")
 
     def testSessionRecordingConf(self):
-        import json, configparser
+        import time, json, configparser
 
         b, m = self._login()
         # Ensure that the button leads to the config page
@@ -173,6 +173,7 @@ class TestApplication(MachineCase):
         b.set_checked("#journal_augment", False)
         b.set_val("#writer", "file")
         b.click("#btn-save-tlog-conf")
+        time.sleep(1)
         m.download(conf_file, test_file)
         # Revert to the previous config before testing to ensure test continuity
         m.upload([save_file], conf_file_path)
@@ -217,6 +218,7 @@ class TestApplication(MachineCase):
         # Download test with scope 'All'
         b.set_val("#scope", "all")
         b.click("#btn-save-sssd-conf")
+        time.sleep(1)
         m.download(conf_file, test_all_file)
         # Revert to the previous config before testing to ensure test continuity
         m.upload([save_file], conf_file_path)
@@ -282,39 +284,72 @@ class TestApplication(MachineCase):
         b.click("#player-zoom-out")
         b.wait_present(play_scale_sel)
 
-    def testSearch(self):
+    def _filter(self, inp, occ_dict):
         import time
 
         b, _ = self._login()
-        # conduct searches that will return 2, 1, or 0 items
-        terms = {
-            0: {
-                "this should return nothing",
-                "this should also return nothing",
-                "0123456789",
-            },
-            1: {
-                "extra commands",
-                "whoami",
-                "ssh",
-                "thisisatest123",
-                "thisisanothertest456",
-            },
-            2: {
-                "id",
-                "contractor1",
-                "localhost",
-                "exit",
-                "actor",
-                "contractor1@localhost",
-            },
-        }
-        for num in terms:
-            for term in terms[num]:
-                # enter the search term and wait for results to return
-                b.set_input_text("#recording-search", term)
+        for occ in occ_dict:
+            for term in occ_dict[occ]:
+                # enter the search term and wait for the results to return
+                b.set_input_text(inp, term)
                 time.sleep(0.5)
-                assert b.text(".listing-ct").count("contractor1") == num
+                assert b.text(".listing-ct").count("contractor") == occ
+
+    def testSearch(self):
+        self._filter(
+            "#recording-search",
+            {
+                0: {
+                    "this should return nothing",
+                    "this should also return nothing",
+                    "0123456789",
+                },
+                1: {
+                    "extra commands",
+                    "whoami",
+                    "ssh",
+                    "thisisatest123",
+                    "thisisanothertest456",
+                },
+                2: {
+                    "id",
+                    "localhost",
+                    "exit",
+                    "actor",
+                    "contractor",
+                    "contractor1@localhost",
+                },
+            },
+        )
+
+    def testFilterUsername(self):
+        self._filter(
+            "#username-search",
+            {
+                0: {"test", "contact", "contractor", "contractor11", "contractor4"},
+                2: {"contractor1"},
+            },
+        )
+
+    def testFilterSince(self):
+        self._filter(
+            "#since-search .bootstrap-datepicker",
+            {
+                0: {"2020-06-02", "2020-06-01 12:31:00"},
+                1: {"2020-06-01 12:17:01", "2020-06-01 12:30:50"},
+                2: {"2020-06-01", "2020-06-01 12:17:00"},
+            },
+        )
+
+    def testFilterUntil(self):
+        self._filter(
+            "#until-search .bootstrap-datepicker",
+            {
+                0: {"2020-06-01", "2020-06-01 12:16:00"},
+                1: {"2020-06-01 12:17:00", "2020-06-01 12:29:42"},
+                2: {"2020-06-02", "2020-06-01 12:31:00"},
+            },
+        )
 
 
 if __name__ == "__main__":
