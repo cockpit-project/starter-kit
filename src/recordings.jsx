@@ -475,7 +475,7 @@ class Recording extends React.Component {
                         </div>
                         <div className="row">
                             <div className="col-md-12">
-                                <button className="btn btn-default" style={{"float":"left"}} onClick={this.handleLogsClick}>{_("Logs View")}</button>
+                                <button id="btn-logs-view" className="btn btn-default" style={{"float":"left"}} onClick={this.handleLogsClick}>{_("Logs View")}</button>
                             </div>
                         </div>
                         {this.state.logsEnabled === true &&

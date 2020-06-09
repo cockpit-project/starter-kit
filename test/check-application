@@ -41,7 +41,7 @@ class TestApplication(MachineCase):
         self._sel_rec()
         # fast forward
         b.click("#player-fast-forward")
-        b.wait_in_text(self._term_line(26), "logout")
+        b.wait_in_text(self._term_line(12), "exit")
         b.wait_attr(slider, "style", "left: 100%;")
         # test restart playback
         b.click("#player-restart")
@@ -249,6 +249,17 @@ class TestApplication(MachineCase):
         b.mouse(".dragnpan", "mousemove", 10, 10)
         assert b.attr(".dragnpan", "scrollTop") != 0
         assert b.attr(".dragnpan", "scrollLeft") != 0
+
+    def testLogCorrelation(self):
+        b, _ = self._login()
+        # select the recording with the extra logs
+        self._sel_rec(":contains('01:07')")
+        b.click("#btn-logs-view")
+        # fast forward until the end
+        while "exit" not in b.text(self._term_line(22)):
+            b.click("#player-skip-frame")
+        # check for extra log entries
+        b.wait_present(".cockpit-log-message:contains('authentication failure')")
 
 
 if __name__ == "__main__":
