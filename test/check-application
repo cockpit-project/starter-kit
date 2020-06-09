@@ -153,6 +153,7 @@ class TestApplication(MachineCase):
         test_file = "/tmp/test-tlog-rec-session.conf"
 
         # Save the existing config
+        b.click("#btn-save-tlog-conf")
         m.download(conf_file, save_file)
         # Change all of the fields
         b.set_input_text("#shell", "/test/path/shell")
@@ -201,6 +202,7 @@ class TestApplication(MachineCase):
         test_all_file = "/tmp/test-all-sssd-session-recording.conf"
 
         # Save the existing config
+        b.click("#btn-save-sssd-conf")
         m.download(conf_file, save_file)
         # Download test with scope 'None'
         b.set_val("#scope", "none")
