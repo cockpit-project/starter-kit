@@ -11,6 +11,8 @@ blocks:
       prologue:
         commands:
           - checkout
+          - sudo rm -rf /etc/localtime
+          - sudo ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
           - sudo apt install -y python3-libvirt
           - docker build -t rpmbuilder .
           - id=$(docker create rpmbuilder)
@@ -26,7 +28,6 @@ blocks:
           - bots/image-customize -v -r "usermod -u 981 tlog || true" $TEST_OS
           - bots/image-customize -v -u ./test/files/1.journal:/var/log/journal/1.journal $TEST_OS
           - test/check-application -v
-
       - name: Check centos-8
         commands:
           - export TEST_OS=centos-8-stream
@@ -34,3 +35,7 @@ blocks:
           - bots/image-customize -v -r "usermod -u 981 tlog || true" $TEST_OS
           - bots/image-customize -v -u ./test/files/1.journal:/var/log/journal/1.journal $TEST_OS
           - test/check-application -v
+      epilogue:
+        on_fail:
+          commands:
+            - artifact push job .

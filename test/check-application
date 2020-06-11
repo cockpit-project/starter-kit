@@ -204,16 +204,19 @@ class TestApplication(MachineCase):
 
         # Save the existing config
         b.click("#btn-save-sssd-conf")
+        time.sleep(1)
         m.download(conf_file, save_file)
         # Download test with scope 'None'
         b.set_val("#scope", "none")
         b.click("#btn-save-sssd-conf")
+        time.sleep(1)
         m.download(conf_file, test_none_file)
         # Download test with scope 'Some'
         b.set_val("#scope", "some")
         b.set_input_text("#users", "test users")
         b.set_input_text("#groups", "test groups")
         b.click("#btn-save-sssd-conf")
+        time.sleep(1)
         m.download(conf_file, test_some_file)
         # Download test with scope 'All'
         b.set_val("#scope", "all")
