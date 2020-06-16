@@ -282,6 +282,40 @@ class TestApplication(MachineCase):
         b.click("#player-zoom-out")
         b.wait_present(play_scale_sel)
 
+    def testSearch(self):
+        import time
+
+        b, _ = self._login()
+        # conduct searches that will return 2, 1, or 0 items
+        terms = {
+            0: {
+                "this should return nothing",
+                "this should also return nothing",
+                "0123456789",
+            },
+            1: {
+                "extra commands",
+                "whoami",
+                "ssh",
+                "thisisatest123",
+                "thisisanothertest456",
+            },
+            2: {
+                "id",
+                "contractor1",
+                "localhost",
+                "exit",
+                "actor",
+                "contractor1@localhost",
+            },
+        }
+        for num in terms:
+            for term in terms[num]:
+                # enter the search term and wait for results to return
+                b.set_input_text("#recording-search", term)
+                time.sleep(0.5)
+                assert b.text(".listing-ct").count("contractor1") == num
+
 
 if __name__ == "__main__":
     test_main()
