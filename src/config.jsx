@@ -18,6 +18,9 @@
  */
 "use strict";
 
+import '../lib/patternfly/patternfly-cockpit.scss';
+import './recordings.css';
+
 let cockpit = require("cockpit");
 let React = require("react");
 let ReactDOM = require("react-dom");

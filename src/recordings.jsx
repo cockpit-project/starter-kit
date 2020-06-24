@@ -21,6 +21,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
+import '../lib/patternfly/patternfly-cockpit.scss';
+import './recordings.css';
+
 let $ = require("jquery");
 let cockpit = require("cockpit");
 let _ = cockpit.gettext;

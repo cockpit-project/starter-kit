@@ -348,7 +348,7 @@ table.listing.listing-ct > caption {
 }
 
 /* Align table title */
-table.listing-ct -> caption {
+table.listing-ct > caption {
     padding-left: 10px !important;
 }
 
