@@ -88,13 +88,13 @@ if (production) {
     output.filename = "[name].min.js";
 
     plugins.unshift(new CompressionPlugin({
-        asset: "[path].gz[query]",
         test: /\.(js|html)$/,
         minRatio: 0.9,
         deleteOriginalAssets: true
     }));
 }
 
+/* keep this in sync with cockpit.git */
 var babel_loader = {
     loader: "babel-loader",
     options: {
@@ -165,8 +165,10 @@ module.exports = {
                     {
                         loader: 'sass-loader',
                         options: {
+                            sassOptions: {
+                                outputStyle: 'compressed',
+                            },
                             sourceMap: true,
-                            outputStyle: 'compressed',
                         },
                     },
                 ]
@@ -186,8 +188,10 @@ module.exports = {
                     {
                         loader: 'sass-loader',
                         options: {
+                            sassOptions: {
+                                outputStyle: 'compressed',
+                            },
                             sourceMap: true,
-                            outputStyle: 'compressed',
                         },
                     },
                 ]
