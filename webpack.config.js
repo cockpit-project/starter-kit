@@ -118,6 +118,9 @@ module.exports = {
     resolve: {
         modules: [ nodedir ],
     },
+    watchOptions: {
+        ignored: /node_modules/,
+    },
     entry: info.entries,
     externals: externals,
     output: output,
