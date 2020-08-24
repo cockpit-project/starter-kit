@@ -65,7 +65,7 @@ dist/po.%.js: po/%.po $(NODE_MODULES_TEST)
 %.spec: %.spec.in
 	sed -e 's/%{VERSION}/$(VERSION)/g' $< > $@
 
-$(WEBPACK_TEST): $(NODE_MODULES_TEST) $(shell find src/ -type f) package.json webpack.config.js $(patsubst %,dist/po.%.js,$(LINGUAS))
+$(WEBPACK_TEST): $(NODE_MODULES_TEST) src/lib/patternfly/_fonts.scss $(shell find src/ -type f) package.json webpack.config.js $(patsubst %,dist/po.%.js,$(LINGUAS))
 	NODE_ENV=$(NODE_ENV) npm run build
 
 watch:
@@ -100,7 +100,7 @@ $(TARFILE): $(WEBPACK_TEST) cockpit-$(PACKAGE_NAME).spec
 	touch dist/*
 	tar czf cockpit-$(PACKAGE_NAME)-$(VERSION).tar.gz --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
 		--exclude cockpit-$(PACKAGE_NAME).spec.in \
-		$$(git ls-files) package-lock.json cockpit-$(PACKAGE_NAME).spec dist/
+		$$(git ls-files) src/lib/patternfly/*.scss package-lock.json cockpit-$(PACKAGE_NAME).spec dist/
 	mv node_modules.release node_modules
 
 srpm: $(TARFILE) cockpit-$(PACKAGE_NAME).spec
@@ -156,6 +156,13 @@ test/common:
 	git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 224
 	git checkout --force FETCH_HEAD -- test/common
 	git reset test/common
+
+src/lib/patternfly/_fonts.scss:
+	git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 227
+	mkdir -p pkg/lib/patternfly && git add pkg/lib/patternfly
+	git checkout --force FETCH_HEAD -- pkg/lib/patternfly
+	git restore --staged pkg/lib/patternfly
+	mkdir -p src/lib && mv pkg/lib/patternfly src/lib/patternfly && rmdir -p pkg/lib
 
 $(NODE_MODULES_TEST): package.json
 	# if it exists already, npm install won't update it; force that so that we always get up-to-date packages
