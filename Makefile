@@ -164,6 +164,10 @@ src/lib/patternfly/_fonts.scss:
 	git restore --staged pkg/lib/patternfly
 	mkdir -p src/lib && mv pkg/lib/patternfly src/lib/patternfly && rmdir -p pkg/lib
 
+# force serialization of the targets that call git, as they compete for the git lock
+bots: test/common
+test/common: src/lib/patternfly/_fonts.scss
+
 $(NODE_MODULES_TEST): package.json
 	# if it exists already, npm install won't update it; force that so that we always get up-to-date packages
 	rm -f package-lock.json
