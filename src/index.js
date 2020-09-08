@@ -32,6 +32,7 @@ import { Application } from './app.jsx';
  * the overrides will be correctly in the end of our stylesheet.
  */
 import "./lib/patternfly/patternfly-4-overrides.scss";
+import './app.scss';
 
 document.addEventListener("DOMContentLoaded", function () {
     ReactDOM.render(React.createElement(Application, {}), document.getElementById('app'));

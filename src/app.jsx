@@ -20,7 +20,6 @@
 import cockpit from 'cockpit';
 import React from 'react';
 import { Alert, Card, CardTitle, CardBody } from '@patternfly/react-core';
-import './app.scss';
 
 const _ = cockpit.gettext;
 
