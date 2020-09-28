@@ -78,7 +78,7 @@ info.files.forEach(function(value) {
 info.files = files;
 
 var plugins = [
-    new copy(info.files),
+    new copy({ patterns: info.files }),
     new extract({filename: "[name].css"})
 ];
 
