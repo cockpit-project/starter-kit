@@ -5,3 +5,4 @@ node_js:
   - "lts/*"
 script:
   - make
+  - make po/starter-kit.pot
