@@ -1,0 +1,35 @@
+name: release
+on:
+  push:
+    tags:
+      # this is a glob, not a regexp
+      - '[0-9]*'
+jobs:
+  cockpituous:
+    runs-on: ubuntu-latest
+    container:
+      image: docker.io/cockpit/release
+    steps:
+      - name: Set up configuration and secrets
+        run: |
+          # override GitHub's bind mount from host, we don't want anything from there and it interferes with ssh
+          export HOME=$(getent passwd $(id -u) | cut -f6 -d:)
+
+          # secrets come from https://github.com/organizations/ORGNAME/settings/secrets or https://github.com/OWNER/REPO/settings/secrets
+          # see https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
+          echo '${{ secrets.SSH_KNOWN_HOSTS }}' > ~/.ssh/known_hosts
+          echo '${{ secrets.FEDPKG_SSH_PUBLIC }}' > ~/.ssh/id_rsa.pub
+          echo '${{ secrets.FEDPKG_SSH_PRIVATE }}' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # FIXME: Set your Fedora user account name here
+          echo 'yourfedorauser' > ~/.config/bodhi-user
+          echo '${{ secrets.GITHUB_TOKEN }}' > ~/.config/github-token
+          echo '${{ secrets.COPR_TOKEN }}' > ~/.config/copr
+          echo '${{ secrets.FEDORA_PASSWORD }}' > ~/.fedora-password
+
+      - name: Run cockpituous
+        run: |
+          # override GitHub's bind mount from host, we don't want anything from there and it interferes with ssh
+          export HOME=$(getent passwd $(id -u) | cut -f6 -d:)
+          cd /build
+          release-runner -r https://github.com/$GITHUB_REPOSITORY -t $(basename $GITHUB_REF) ./cockpituous-release

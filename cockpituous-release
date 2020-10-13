@@ -1,4 +1,4 @@
-# This is a script run to release welder-web through Cockpituous:
+# This is a script run to release this project through Cockpituous:
 # https://github.com/cockpit-project/cockpituous/tree/master/release
 
 # Anything that start with 'job' may run in a way that it SIGSTOP's
@@ -6,6 +6,9 @@
 # order to complete its work.
 #
 # Check cockpituous documentation for available release targets.
+#
+# This gets run through a GitHub action: enable and adjust
+# .github/workflows/release.yml.disabled once you are ready.
 
 RELEASE_SOURCE="_release/source"
 RELEASE_SPEC="cockpit-starter-kit.spec"
@@ -14,18 +17,21 @@ RELEASE_SRPM="_release/srpm"
 job release-source
 job release-srpm -V
 
-# Once you have a Fedora package and add the https://pagure.io/user/cockpit
-# user to your project's maintainers, you can also upload to Fedora automatically:
+# Once you have a Fedora package, can upload to Fedora automatically: Provide the
+# secrets in .github/workflows/release.yml on GitHub, and enable the following:
 
-## Authenticate for pushing into Fedora dist-git (works in Cockpituous release container)
-# cat ~/.fedora-password | kinit cockpit@FEDORAPROJECT.ORG
+## Authenticate for pushing into Fedora dist-git
+# cat ~/.fedora-password | kinit yourfedorauser@FEDORAPROJECT.ORG
 ## Do fedora builds for the tag, using tarball
 # job release-koji -k master
-# job release-koji f29
-# job release-bodhi F29
+# job release-koji f33
+# job release-bodhi F33
 
 # These are likely the first of your release targets; but run them after Fedora uploads,
 # so that failures there will fail the release early, before publishing on GitHub
 
+# this needs no explicit secrets, just the GitHub action provided default one
 # job release-github
+
+# This needs secrets.COPR_TOKEN in .github/workflows/release.yml
 # job release-copr @myorg/myrepo
