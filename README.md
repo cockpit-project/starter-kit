@@ -96,12 +96,12 @@ that.  [Cockpituous release](https://github.com/cockpit-project/cockpituous/tree
 aims to fully automate project releases to GitHub, Fedora, Ubuntu, COPR, Docker
 Hub, and other places. The intention is that the only manual step for releasing
 a project is to create a signed tag for the version number; pushing the tag
-then triggers a GitHub webhook that calls a set of release scripts (on
-Cockpit's CI infrastructure).
+then triggers a [GitHub action](https://github.com/features/actions) that calls a set of release scripts.
 
-starter-kit includes an example [cockpitous release script](./cockpituous-release)
-that builds an upstream release tarball and source RPM. Please see the above
-cockpituous documentation for details.
+starter-kit includes an example [cockpitous release script](./cockpituous-release),
+with detailed comments how to use it. There is also an
+[example GitHub release action](.github/workflows/release.yml.disabled) to set
+up secrets and run cockpituous.
 
 # Further reading
 
