@@ -118,6 +118,9 @@ module.exports = {
     resolve: {
         modules: [ nodedir ],
     },
+    resolveLoader: {
+        modules: [ nodedir, path.resolve(__dirname, 'src/lib') ],
+    },
     watchOptions: {
         ignored: /node_modules/,
     },
@@ -165,15 +168,7 @@ module.exports = {
                             ]
                         },
                     },
-                    {
-                        loader: 'sass-loader',
-                        options: {
-                            sassOptions: {
-                                outputStyle: 'compressed',
-                            },
-                            sourceMap: true,
-                        },
-                    },
+                    'sassc-loader',
                 ]
             },
             {
@@ -188,15 +183,7 @@ module.exports = {
                             url: false
                         }
                     },
-                    {
-                        loader: 'sass-loader',
-                        options: {
-                            sassOptions: {
-                                outputStyle: 'compressed',
-                            },
-                            sourceMap: true,
-                        },
-                    },
+                    'sassc-loader',
                 ]
             },
         ]
