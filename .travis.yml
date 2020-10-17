@@ -3,6 +3,10 @@ sudo: false
 language: node_js
 node_js:
   - "lts/*"
+addons:
+  apt:
+    packages:
+      - sassc
 script:
   - make
   - make po/starter-kit.pot
