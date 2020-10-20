@@ -103,6 +103,14 @@ with detailed comments how to use it. There is also an
 [example GitHub release action](.github/workflows/release.yml.disabled) to set
 up secrets and run cockpituous.
 
+# Automated maintenance
+
+It is important to keep your [NPM modules](./package.json) up to date, to keep
+up with security updates and bug fixes. This is done with the
+[npm-update bot script](https://github.com/cockpit-project/bots/blob/master/npm-update)
+which is run weekly or upon [manual request](https://github.com/cockpit-project/starter-kit/actions) through the
+[npm-update.yml](.github/workflows/npm-update.yml) [GitHub action](https://github.com/features/actions).
+
 # Further reading
 
  * The [Starter Kit announcement](http://cockpit-project.org/blog/cockpit-starter-kit.html)
