@@ -80,6 +80,13 @@ You can also run the test against a different Cockpit image, for example:
 
     TEST_OS=fedora-32 make check
 
+These tests can be run in [Travis CI](https://travis-ci.com/). The included
+[travis.yml](./.travis.yml) runs the integration tests for two operating
+systems (Fedora and CentOS 8). Note that if/once your project grows bigger, or
+gets frequent changes, you likely need to move to a paid account, or different
+infrastructure with more capacity. Talk to the
+[Cockpit developers](https://cockpit-project.org/) if you are interested in that.
+
 # Customizing
 
 After cloning the Starter Kit you should rename the files, package names, and
