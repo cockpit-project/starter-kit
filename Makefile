@@ -38,10 +38,10 @@ po/POTFILES.html.in:
 	mkdir -p $(dir $@)
 	find src -name '*.html' > $@
 
-po/$(PACKAGE_NAME).html.pot: po/POTFILES.html.in
+po/$(PACKAGE_NAME).html.pot: po/POTFILES.html.in $(NODE_MODULES_TEST)
 	po/html2po -f $^ -o $@
 
-po/$(PACKAGE_NAME).manifest.pot:
+po/$(PACKAGE_NAME).manifest.pot: $(NODE_MODULES_TEST)
 	po/manifest2po src/manifest.json -o $@
 
 po/$(PACKAGE_NAME).pot: po/$(PACKAGE_NAME).html.pot po/$(PACKAGE_NAME).js.pot po/$(PACKAGE_NAME).manifest.pot
