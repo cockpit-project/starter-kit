@@ -7,7 +7,7 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const nodedir = path.resolve((process.env.SRCDIR || __dirname), "node_modules");
 
 /* A standard nodejs and webpack pattern */
-var production = process.env.NODE_ENV === 'production';
+const production = process.env.NODE_ENV === 'production';
 
 // Non-JS files which are copied verbatim to dist/
 const copy_files = [
@@ -30,7 +30,7 @@ if (production) {
 }
 
 /* keep this in sync with cockpit.git */
-var babel_loader = {
+const babel_loader = {
     loader: "babel-loader",
     options: {
         presets: [
