@@ -12,7 +12,6 @@ var externals = {
 /* These can be overridden, typically from the Makefile.am */
 const srcdir = (process.env.SRCDIR || __dirname) + path.sep + "src";
 const builddir = (process.env.SRCDIR || __dirname);
-const distdir = builddir + path.sep + "dist";
 const section = process.env.ONLYDIR || null;
 const nodedir = path.resolve((process.env.SRCDIR || __dirname), "node_modules");
 
@@ -29,12 +28,6 @@ var info = {
         "index.html",
         "manifest.json",
     ],
-};
-
-var output = {
-    path: distdir,
-    filename: "[name].js",
-    sourceMapFilename: "[file].map",
 };
 
 /*
@@ -84,9 +77,6 @@ var plugins = [
 
 /* Only minimize when in production mode */
 if (production) {
-    /* Rename output files when minimizing */
-    output.filename = "[name].min.js";
-
     plugins.unshift(new CompressionPlugin({
         test: /\.(js|html)$/,
         minRatio: 0.9,
@@ -126,7 +116,6 @@ module.exports = {
     },
     entry: info.entries,
     externals: externals,
-    output: output,
     devtool: "source-map",
     module: {
         rules: [
