@@ -1,4 +1,5 @@
 const path = require("path");
+const childProcess = require('child_process');
 const copy = require("copy-webpack-plugin");
 const extract = require("mini-css-extract-plugin");
 const webpack = require("webpack");
@@ -44,6 +45,18 @@ const babel_loader = {
             }],
             "@babel/preset-react"
         ]
+    }
+}
+
+/* check if sassc is available, to avoid unintelligible error messages */
+try {
+    childProcess.execFileSync('sassc', ['--version'], { stdio: ['pipe', 'inherit', 'inherit'] });
+} catch (e) {
+    if (e.code === 'ENOENT') {
+        console.error("ERROR: You need to install the 'sassc' package to build this project.");
+        process.exit(1);
+    } else {
+        throw e;
     }
 }
 
