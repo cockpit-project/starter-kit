@@ -12,7 +12,7 @@ module.exports = function() {
     childProcess.execFileSync(
         'sassc',
         ['--load-path=node_modules', '--style=compressed', '--sourcemap', this.resource, out],
-        { stdio: ['pipe', 'stdio', 'stdio'] });
+        { stdio: ['pipe', 'inherit', 'inherit'] });
 
     const css = fs.readFileSync(out, 'utf8');
     const cssmap = fs.readFileSync(out + ".map", 'utf8');
