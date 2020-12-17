@@ -6,7 +6,8 @@ License: LGPLv2+
 
 Source: cockpit-starter-kit-%{version}.tar.gz
 BuildArch: noarch
-BuildRequires:  libappstream-glib
+BuildRequires: make
+BuildRequires: libappstream-glib
 
 Requires: cockpit-system
 
