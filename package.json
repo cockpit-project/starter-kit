@@ -36,11 +36,13 @@
     "htmlparser": "^1.7.7",
     "jed": "^1.1.1",
     "mini-css-extract-plugin": "^0.11.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
     "po2json": "^1.0.0-alpha",
     "qunit": "^2.9.3",
     "sizzle": "^2.3.3",
     "stdio": "^2.1.0",
     "string-replace-loader": "^2.3.0",
+    "terser-webpack-plugin": "^2.0.1",
     "webpack": "^4.35.3",
     "webpack-cli": "^3.3.5"
   },
