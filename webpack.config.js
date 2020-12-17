@@ -2,6 +2,8 @@ const path = require("path");
 const childProcess = require('child_process');
 const copy = require("copy-webpack-plugin");
 const extract = require("mini-css-extract-plugin");
+const TerserJSPlugin = require('terser-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const webpack = require("webpack");
 const CompressionPlugin = require("compression-webpack-plugin");
 
@@ -77,6 +79,12 @@ module.exports = {
     // cockpit.js gets included via <script>, everything else should be bundled
     externals: { "cockpit": "cockpit" },
     devtool: "source-map",
+
+    optimization: {
+        minimize: production,
+        minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+    },
+
     module: {
         rules: [
             {
