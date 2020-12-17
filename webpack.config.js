@@ -79,6 +79,7 @@ module.exports = {
     // cockpit.js gets included via <script>, everything else should be bundled
     externals: { "cockpit": "cockpit" },
     devtool: "source-map",
+    stats: "errors-warnings",
 
     optimization: {
         minimize: production,
