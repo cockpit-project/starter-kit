@@ -36,8 +36,14 @@ class TestApplication(testlib.MachineCase):
         b.click("#navbar-dropdown")
         b.click(".display-language-menu a")
         b.wait_popup('display-language')
-        b.set_val("#display-language select", "de-de")
-        b.click("#display-language-select-button")
+        # the dialog changed in cockpit 233
+        cockpit_version = float(m.execute("cockpit-bridge --version | sed -n '/Version:/ s/^.*: //p'").strip())
+        if cockpit_version >= 233:
+            b.set_val("#display-language-modal select", "de-de")
+            b.click("#display-language-modal button.pf-m-primary")
+        else:
+            b.set_val("#display-language select", "de-de")
+            b.click("#display-language-select-button")
         b.expect_load()
         # HACK: work around language switching in Chrome not working in current session (Cockpit issue #8160)
         b.reload(ignore_cache=True)
@@ -49,6 +55,7 @@ class TestApplication(testlib.MachineCase):
         b.enter_page("/starter-kit")
         # page label (from js) should be translated
         b.wait_in_text(".pf-c-alert__title", "Läuft auf")
+
 
 if __name__ == '__main__':
     testlib.test_main()
