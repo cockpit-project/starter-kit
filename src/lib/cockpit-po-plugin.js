@@ -59,7 +59,7 @@ module.exports = class {
 
             // We know the brace in is the location to insert our function
             if (plurals) {
-                pos = output.indexOf('{', 1);
+                const pos = output.indexOf('{', 1);
                 output = output.substr(0, pos + 1) + "'plural-forms':" + String(plurals) + "," + output.substr(pos + 1);
             }
 
