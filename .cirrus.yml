@@ -1,0 +1,23 @@
+container:
+  # We should use quay.io/cockpit/tasks here and avoid package installation, but we can't currently run sudo in that container to fix /dev/kvm permissions
+  image: docker.io/fedora
+  kvm: true
+  # increase this if you have many tests that benefit from parallelism
+  cpu: 1
+
+test_task:
+  env:
+    matrix:
+      - TEST_OS: fedora-33
+      - TEST_OS: centos-8-stream
+
+  setup_script:
+    - chmod 666 /dev/kvm
+    - dnf install -y chromium-headless curl git libappstream-glib libvirt-daemon-kvm libvirt-client libvirt-python3 make npm rpm-build rpmdevtools sassc tar
+    - useradd build
+    - chown -R build:build .
+
+  # test PO template generation
+  pot_build_script: su -c 'make po/starter-kit.pot' build
+
+  check_script: su -c "TEST_JOBS=$(nproc) TEST_OS=$TEST_OS make check" build

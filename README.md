@@ -60,7 +60,7 @@ Violations of some rules can be fixed automatically by:
 
 Rules configuration can be found in the `.eslintrc.json` file.
 
-# Automated Testing
+# Running tests locally
 
 Run `make check` to build an RPM, install it into a standard Cockpit test VM
 (centos-7 by default), and run the test/check-application integration test on
@@ -80,12 +80,18 @@ You can also run the test against a different Cockpit image, for example:
 
     TEST_OS=fedora-32 make check
 
-These tests can be run in [Travis CI](https://travis-ci.com/). The included
-[travis.yml](./.travis.yml) runs the integration tests for two operating
-systems (Fedora and CentOS 8). Note that if/once your project grows bigger, or
-gets frequent changes, you likely need to move to a paid account, or different
-infrastructure with more capacity. Talk to the
-[Cockpit developers](https://cockpit-project.org/) if you are interested in that.
+# Running tests in CI
+
+These tests can be run in [Cirrus CI](https://cirrus-ci.org/), on their free
+[Linux Containers](https://cirrus-ci.org/guide/linux/) environment which
+explicitly supports `/dev/kvm`. Please see [Quick
+Start](https://cirrus-ci.org/guide/quick-start/) how to set up Cirrus CI for
+your project after forking from starter-kit.
+
+The included [.cirrus.yml](./.cirrus.yml) runs the integration tests for two
+operating systems (Fedora and CentOS 8). Note that if/once your project grows
+bigger, or gets frequent changes, you may need to move to a paid account, or
+different infrastructure with more capacity.
 
 # Customizing
 
