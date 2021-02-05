@@ -124,6 +124,10 @@ up with security updates and bug fixes. This is done with the
 which is run weekly or upon [manual request](https://github.com/cockpit-project/starter-kit/actions) through the
 [npm-update.yml](.github/workflows/npm-update.yml) [GitHub action](https://github.com/features/actions).
 
+# Live testing PRs
+
+Explain /livetest comment here
+
 # Further reading
 
  * The [Starter Kit announcement](http://cockpit-project.org/blog/cockpit-starter-kit.html)
