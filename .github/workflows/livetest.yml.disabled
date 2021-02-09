@@ -1,7 +1,9 @@
 name: Live test cockpit from PRs
 # Triggered when a repository collaborator comments /livetest on a PR
 # This is currently configured to run on cockpit-project org.
-# If you need to set up your own relay host and adjust the RELAY_HOST env variable
+# If your project lives somewhere else than the github cockpit-project organization,
+# you need to set up your own relay host, add a secret with the private SSH key, and
+# adjust the RELAY_HOST env variable and SINK_SSHRELAY_PRIVATE secret name.
 
 on:
   issue_comment:
@@ -67,7 +69,7 @@ jobs:
         env:
           SHA_SHORT: "${{ steps.get_commit_sha.outputs.sha_short }}"
         run: |
-            echo ::set-output name=SSH_GATEWAY_PORT::$((16#$SHA_SHORT % 32768))
+            echo ::set-output name=SSH_GATEWAY_PORT::$((16#$SHA_SHORT % 32768 + 1500))
 
       - name: Write a comment on the PR with link to the cockpit instance
         uses: actions/github-script@v3
