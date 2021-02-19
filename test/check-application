@@ -25,6 +25,7 @@ class TestApplication(testlib.MachineCase):
         # verify expected host name
         hostname = m.execute("hostname").strip()
         b.wait_in_text(".pf-c-alert__title", "Running on " + hostname)
+        b.snapshot("main-english")
 
         # change current hostname
         m.execute("echo new-%s > /etc/hostname" % hostname)
