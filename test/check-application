@@ -47,7 +47,7 @@ class TestApplication(testlib.MachineCase):
         b.expect_load()
         # HACK: work around language switching in Chrome not working in current session (Cockpit issue #8160)
         b.reload(ignore_cache=True)
-        b.wait_present("#content")
+        b.wait_visible("#content")
         # menu label (from manifest) should be translated
         b.wait_text("#host-apps a[href='/starter-kit']", "Bausatz")
 
