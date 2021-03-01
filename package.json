@@ -48,7 +48,7 @@
   "dependencies": {
     "@patternfly/patternfly": "4.87.3",
     "@patternfly/react-core": "4.97.2",
-    "core-js": "3.9.0",
+    "core-js": "3.9.1",
     "react": "16.14.0",
     "react-dom": "16.14.0"
   }
