@@ -93,6 +93,16 @@ operating systems (Fedora and CentOS 8). Note that if/once your project grows
 bigger, or gets frequent changes, you may need to move to a paid account, or
 different infrastructure with more capacity.
 
+Tests also run in [Packit](https://packit.dev/) for all currently supported
+Fedora releases; see the [packit.yaml](./packit.yaml) control file. You need to
+[enable Packit-as-a-service](https://packit.dev/docs/packit-as-a-service/) in your GitHub project to use this.
+To run the tests in the exact same way for upstream pull requests and for
+[Fedora package update gating](https://docs.fedoraproject.org/en-US/ci/), the
+tests are wrapped in the [FMF metadata format](https://github.com/psss/fmf)
+for using with the [tmt test management tool](https://docs.fedoraproject.org/en-US/ci/tmt/).
+Note that Packit tests can *not* run their own virtual machine images, thus
+they only run [@nondestructive tests](https://github.com/martinpitt/cockpit/blob/master/test/common/testlib.py).
+
 # Customizing
 
 After cloning the Starter Kit you should rename the files, package names, and
