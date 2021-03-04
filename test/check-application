@@ -12,7 +12,9 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 import testlib
 
-
+# Nondestructive tests all run in the same running VM. This allows them to run in Packit, Fedora, and RHEL dist-git gating
+# They must not permanently change any file or configuration on the system in a way that influences other tests.
+@testlib.nondestructive
 class TestApplication(testlib.MachineCase):
     def testBasic(self):
         b = self.browser
@@ -27,7 +29,7 @@ class TestApplication(testlib.MachineCase):
         b.wait_in_text(".pf-c-alert__title", "Running on " + hostname)
 
         # change current hostname
-        m.execute("echo new-%s > /etc/hostname" % hostname)
+        self.write_file("/etc/hostname", "new-" + hostname)
         # verify new hostname name
         b.wait_in_text(".pf-c-alert__title", "Running on new-" + hostname)
 
