@@ -75,7 +75,11 @@ devel-install: $(WEBPACK_TEST)
 	mkdir -p ~/.local/share/cockpit
 	ln -s `pwd`/dist ~/.local/share/cockpit/$(PACKAGE_NAME)
 
+print-version:
+	@echo "$(VERSION)"
+
 dist-gzip: $(TARFILE)
+	@ls -1 $(TARFILE)
 
 # when building a distribution tarball, call webpack with a 'production' environment
 # we don't ship node_modules for license and compactness reasons; we ship a
@@ -162,4 +166,4 @@ $(NODE_MODULES_TEST): package.json
 	env -u NODE_ENV npm install
 	env -u NODE_ENV npm prune
 
-.PHONY: all clean install devel-install dist-gzip srpm rpm check vm update-po
+.PHONY: all clean install devel-install print-version dist-gzip srpm rpm check vm update-po
