@@ -20,16 +20,19 @@ class TestApplication(testlib.MachineCase):
         b = self.browser
         m = self.machine
 
+        hostname = "starterbox"
+        self.write_file("/etc/hostname", hostname)
+
         self.login_and_go("/starter-kit")
         # verify expected heading
         b.wait_text(".pf-c-card__title", "Starter Kit")
 
         # verify expected host name
-        hostname = m.execute("hostname").strip()
         b.wait_in_text(".pf-c-alert__title", "Running on " + hostname)
+        b.assert_pixels(".pf-c-card__body", "hostname")
 
         # change current hostname
-        self.write_file("/etc/hostname", "new-" + hostname)
+        m.write("/etc/hostname", "new-" + hostname)
         # verify new hostname name
         b.wait_in_text(".pf-c-alert__title", "Running on new-" + hostname)
 
@@ -57,6 +60,7 @@ class TestApplication(testlib.MachineCase):
         b.enter_page("/starter-kit")
         # page label (from js) should be translated
         b.wait_in_text(".pf-c-alert__title", "Läuft auf")
+        b.assert_pixels(".pf-c-card__body", "gastgebername")
 
 
 if __name__ == '__main__':
