@@ -27,7 +27,7 @@ class TestApplication(testlib.MachineCase):
         # verify expected host name
         hostname = m.execute("hostname").strip()
         b.wait_in_text(".pf-c-alert__title", "Running on " + hostname)
-        b.assert_pixels("hostname")
+        b.assert_pixels(".pf-c-card__body", "hostname")
 
         # change current hostname
         self.write_file("/etc/hostname", "new-" + hostname)
@@ -58,7 +58,7 @@ class TestApplication(testlib.MachineCase):
         b.enter_page("/starter-kit")
         # page label (from js) should be translated
         b.wait_in_text(".pf-c-alert__title", "Läuft auf")
-        b.assert_pixels("gastgebername")
+        b.assert_pixels(".pf-c-card__body", "gastgebername")
 
 
 if __name__ == '__main__':
