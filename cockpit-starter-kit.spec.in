@@ -24,7 +24,7 @@ Cockpit Starter Kit Example Module
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/*
 
 # drop source maps, they are large and just for debugging
-find %{buildroot}%{_datadir}/cockpit/ -name '*.map' | xargs rm --verbose
+find %{buildroot}%{_datadir}/cockpit/ -name '*.map' | xargs --no-run-if-empty rm --verbose
 
 %files
 %{_datadir}/cockpit/*
