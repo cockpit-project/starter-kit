@@ -35,25 +35,6 @@ if (production) {
     }));
 }
 
-/* keep this in sync with cockpit.git */
-const babel_loader = {
-    loader: "babel-loader",
-    options: {
-        presets: [
-            ["@babel/env", {
-                "targets": {
-                    "chrome": "57",
-                    "firefox": "52",
-                    "safari": "10.3",
-                    "edge": "16",
-                    "opera": "44"
-                }
-            }],
-            "@babel/preset-react"
-        ]
-    }
-}
-
 /* check if sassc is available, to avoid unintelligible error messages */
 try {
     childProcess.execFileSync('sassc', ['--version'], { stdio: ['pipe', 'inherit', 'inherit'] });
@@ -100,7 +81,7 @@ module.exports = {
             },
             {
                 exclude: /node_modules/,
-                use: babel_loader,
+                use: "babel-loader",
                 test: /\.(js|jsx)$/
             },
             /* HACK: remove unwanted fonts from PatternFly's css */
