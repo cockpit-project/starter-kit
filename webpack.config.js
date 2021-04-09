@@ -3,6 +3,7 @@ const childProcess = require('child_process');
 
 const copy = require("copy-webpack-plugin");
 const extract = require("mini-css-extract-plugin");
+const TerserJSPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CompressionPlugin = require("compression-webpack-plugin");
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -69,7 +70,7 @@ module.exports = {
 
     optimization: {
         minimize: production,
-        minimizer: [`...`, new CssMinimizerPlugin()],
+        minimizer: [new TerserJSPlugin(), new CssMinimizerPlugin()],
     },
 
     module: {

@@ -27,6 +27,8 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/*
 find %{buildroot}%{_datadir}/cockpit/ -name '*.map' | xargs --no-run-if-empty rm --verbose
 
 %files
+%doc README.md
+%license LICENSE dist/index.js.LICENSE.txt
 %{_datadir}/cockpit/*
 %{_datadir}/metainfo/*
 
