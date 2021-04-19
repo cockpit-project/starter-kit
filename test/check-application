@@ -38,9 +38,12 @@ class TestApplication(testlib.MachineCase):
         b.click("#navbar-dropdown")
         b.click(".display-language-menu a")
         b.wait_popup('display-language')
-        # the dialog changed in cockpit 233
+        # the dialog changed several times
         cockpit_version = float(m.execute("cockpit-bridge --version | sed -n '/Version:/ s/^.*: //p'").strip())
-        if cockpit_version >= 233:
+        if cockpit_version >= 242:
+            b.click("#display-language-modal [data-value='de-de'] button")
+            b.click("#display-language-modal button.pf-m-primary")
+        elif cockpit_version >= 233:
             b.set_val("#display-language-modal select", "de-de")
             b.click("#display-language-modal button.pf-m-primary")
         else:
