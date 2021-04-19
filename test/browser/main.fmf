@@ -5,6 +5,7 @@ require:
   - cockpit-ws
   - cockpit-system
   - git
+  - glibc-langpack-de
   - libvirt-python3
   - make
   - npm
