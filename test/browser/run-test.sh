@@ -4,7 +4,7 @@ set -eux
 # tests need cockpit's bots/ libraries and test infrastructure
 cd $SOURCE
 git init
-make bots test/common
+make bots test/common test/reference
 
 # only install a subset to save time/space
 rm -f package-lock.json  # otherwise the command below installs *everything*, argh

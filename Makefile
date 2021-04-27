@@ -93,6 +93,7 @@ $(TARFILE): $(WEBPACK_TEST) cockpit-$(PACKAGE_NAME).spec
 	touch dist/*
 	tar czf cockpit-$(PACKAGE_NAME)-$(VERSION).tar.gz --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
 		--exclude cockpit-$(PACKAGE_NAME).spec.in \
+		--exclude test/reference \
 		$$(git ls-files) $(LIB_TEST) src/lib/patternfly/*.scss package-lock.json cockpit-$(PACKAGE_NAME).spec dist/
 	mv node_modules.release node_modules
 
@@ -132,7 +133,7 @@ vm: $(VM_IMAGE)
 
 # run the browser integration tests; skip check for SELinux denials
 # this will run all tests/check-* and format them as TAP
-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
+check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common test/reference
 	TEST_AUDIT_NO_SELINUX=1 test/common/run-tests
 
 # checkout Cockpit's bots for standard test VM images and API to launch them
@@ -150,6 +151,9 @@ test/common:
 	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git pull/15479/head; \
 	    git checkout --force FETCH_HEAD -- test/common; \
 	    git reset test/common'
+
+test/reference: test/common
+	test/common/pixel-tests pull
 
 # checkout Cockpit's PF/React/build library; again this has no API stability guarantee, so check out a stable tag
 $(LIB_TEST):
