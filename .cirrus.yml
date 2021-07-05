@@ -1,7 +1,7 @@
 container:
   # official cockpit CI container, with cockpit related build and test dependencies
   # if you want to use your own, see the documentation about required packages:
-  # https://github.com/cockpit-project/cockpit/blob/master/HACKING.md#getting-the-development-dependencies
+  # https://github.com/cockpit-project/cockpit/blob/main/HACKING.md#getting-the-development-dependencies
   image: quay.io/cockpit/tasks
   kvm: true
   # increase this if you have many tests that benefit from parallelism

@@ -67,7 +67,7 @@ Run `make check` to build an RPM, install it into a standard Cockpit test VM
 it. This uses Cockpit's Chrome DevTools Protocol based browser tests, through a
 Python API abstraction. Note that this API is not guaranteed to be stable, so
 if you run into failures and don't want to adjust tests, consider checking out
-Cockpit's test/common from a tag instead of master (see the `test/common`
+Cockpit's test/common from a tag instead of main (see the `test/common`
 target in `Makefile`).
 
 After the test VM is prepared, you can manually run the test without rebuilding
@@ -101,7 +101,7 @@ To run the tests in the exact same way for upstream pull requests and for
 tests are wrapped in the [FMF metadata format](https://github.com/psss/fmf)
 for using with the [tmt test management tool](https://docs.fedoraproject.org/en-US/ci/tmt/).
 Note that Packit tests can *not* run their own virtual machine images, thus
-they only run [@nondestructive tests](https://github.com/martinpitt/cockpit/blob/master/test/common/testlib.py).
+they only run [@nondestructive tests](https://github.com/martinpitt/cockpit/blob/main/test/common/testlib.py).
 
 # Customizing
 
@@ -115,7 +115,7 @@ change:
 # Automated release
 
 Once your cloned project is ready for a release, you should consider automating
-that.  [Cockpituous release](https://github.com/cockpit-project/cockpituous/tree/master/release)
+that.  [Cockpituous release](https://github.com/cockpit-project/cockpituous/tree/main/release)
 aims to fully automate project releases to GitHub, Fedora, Ubuntu, COPR, Docker
 Hub, and other places. The intention is that the only manual step for releasing
 a project is to create a signed tag for the version number; pushing the tag
@@ -130,7 +130,7 @@ up secrets and run cockpituous.
 
 It is important to keep your [NPM modules](./package.json) up to date, to keep
 up with security updates and bug fixes. This is done with the
-[npm-update bot script](https://github.com/cockpit-project/bots/blob/master/npm-update)
+[npm-update bot script](https://github.com/cockpit-project/bots/blob/main/npm-update)
 which is run weekly or upon [manual request](https://github.com/cockpit-project/starter-kit/actions) through the
 [npm-update.yml](.github/workflows/npm-update.yml) [GitHub action](https://github.com/features/actions).
 
