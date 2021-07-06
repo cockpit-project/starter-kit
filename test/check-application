@@ -25,7 +25,7 @@ class TestApplication(testlib.MachineCase):
         b.wait_text(".pf-c-card__title", "Starter Kit")
 
         # verify expected host name
-        hostname = m.execute("hostname").strip()
+        hostname = m.execute("cat /etc/hostname").strip()
         b.wait_in_text(".pf-c-alert__title", "Running on " + hostname)
 
         # change current hostname
