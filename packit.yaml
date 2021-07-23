@@ -12,7 +12,7 @@ actions:
   create-archive:
     - make NODE_ENV=development NODE_OPTIONS=--max-old-space-size=500
     # dummy LICENSE.txt, as terser did not run
-    - touch dist/index.js.LICENSE.txt
+    - touch dist/index.js.LICENSE.txt.gz
     - make dist-gzip
   # starter-kit.git has no release tags; your project can drop this once you have a release
   get-current-version: make print-version
