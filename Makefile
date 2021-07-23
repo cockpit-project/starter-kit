@@ -154,7 +154,7 @@ test/common:
 # checkout Cockpit's PF/React/build library; again this has no API stability guarantee, so check out a stable tag
 $(LIB_TEST):
 	flock Makefile sh -ec '\
-	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 242; \
+	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 249; \
 	    git checkout --force FETCH_HEAD -- pkg/lib; \
 	    git reset -- pkg/lib'
 	mv pkg/lib src/ && rmdir -p pkg
