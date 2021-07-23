@@ -44,7 +44,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cockpit-system cockpit-ws nodejs npm sassc make
+          sudo apt install -y cockpit-system cockpit-ws nodejs npm make
 
       - uses: actions/github-script@v3
         id: get-pr

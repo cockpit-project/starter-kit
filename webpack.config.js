@@ -1,5 +1,4 @@
 const path = require("path");
-const childProcess = require('child_process');
 
 const copy = require("copy-webpack-plugin");
 const extract = require("mini-css-extract-plugin");
@@ -37,22 +36,11 @@ if (production) {
     }));
 }
 
-/* check if sassc is available, to avoid unintelligible error messages */
-try {
-    childProcess.execFileSync('sassc', ['--version'], { stdio: ['pipe', 'inherit', 'inherit'] });
-} catch (e) {
-    if (e.code === 'ENOENT') {
-        console.error("ERROR: You need to install the 'sassc' package to build this project.");
-        process.exit(1);
-    } else {
-        throw e;
-    }
-}
-
 module.exports = {
     mode: production ? 'production' : 'development',
     resolve: {
-        modules: [ nodedir ],
+        modules: [ nodedir, path.resolve(__dirname, 'src/lib') ],
+        alias: { 'font-awesome': path.resolve(nodedir, 'font-awesome-sass/assets/stylesheets') },
     },
     resolveLoader: {
         modules: [ nodedir, path.resolve(__dirname, 'src/lib') ],
@@ -90,7 +78,7 @@ module.exports = {
                         options: {
                             sourceMap: true,
                             url: false,
-                        }
+                        },
                     },
                     {
                         loader: 'string-replace-loader',
@@ -107,7 +95,15 @@ module.exports = {
                             ]
                         },
                     },
-                    'sassc-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: !production,
+                            sassOptions: {
+                                outputStyle: production ? 'compressed' : undefined,
+                            },
+                        },
+                    },
                 ]
             },
             {
@@ -122,7 +118,15 @@ module.exports = {
                             url: false
                         }
                     },
-                    'sassc-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: !production,
+                            sassOptions: {
+                                outputStyle: production ? 'compressed' : undefined,
+                            },
+                        },
+                    },
                 ]
             },
         ]
