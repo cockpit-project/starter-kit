@@ -6,6 +6,7 @@ TEST_OS = centos-8-stream
 endif
 export TEST_OS
 TARFILE=cockpit-$(PACKAGE_NAME)-$(VERSION).tar.gz
+NODE_CACHE=cockpit-$(PACKAGE_NAME)-node-$(VERSION).tar.xz
 RPMFILE=$(shell rpmspec -D"VERSION $(VERSION)" -q cockpit-$(PACKAGE_NAME).spec.in).rpm
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
 # stamp file to check if/when npm install ran
@@ -94,6 +95,11 @@ $(TARFILE): $(WEBPACK_TEST) cockpit-$(PACKAGE_NAME).spec
 		--exclude cockpit-$(PACKAGE_NAME).spec.in --exclude node_modules \
 		$$(git ls-files) $(LIB_TEST) src/lib package-lock.json cockpit-$(PACKAGE_NAME).spec dist/
 
+$(NODE_CACHE): $(NODE_MODULES_TEST)
+	tar --xz -cf $@ node_modules
+
+node-cache: $(NODE_CACHE)
+
 srpm: $(TARFILE) cockpit-$(PACKAGE_NAME).spec
 	rpmbuild -bs \
 	  --define "_sourcedir `pwd`" \
@@ -164,4 +170,4 @@ $(NODE_MODULES_TEST): package.json
 	env -u NODE_ENV npm install
 	env -u NODE_ENV npm prune
 
-.PHONY: all clean install devel-install print-version dist-gzip srpm rpm check vm update-po
+.PHONY: all clean install devel-install print-version dist-gzip node-cache srpm rpm check vm update-po
