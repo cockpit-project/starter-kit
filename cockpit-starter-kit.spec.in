@@ -4,8 +4,10 @@ Release: 1%{?dist}
 Summary: Cockpit Starter Kit Example Module
 License: LGPLv2+
 
-Source: cockpit-starter-kit-%{version}.tar.xz
+Source0: https://github.com/cockpit-project/starter-kit/releases/download/%{version}/cockpit-starter-kit-%{version}.tar.xz
+Source1: https://github.com/cockpit-project/starter-kit/releases/download/%{version}/cockpit-starter-kit-node-%{version}.tar.xz
 BuildArch: noarch
+BuildRequires:  nodejs
 BuildRequires: make
 BuildRequires: libappstream-glib
 
@@ -17,7 +19,13 @@ Requires: cockpit-system
 Cockpit Starter Kit Example Module
 
 %prep
-%setup -n cockpit-starter-kit
+%setup -q -n cockpit-starter-kit
+%setup -q -a 1 -n cockpit-starter-kit
+
+%build
+# ignore pre-built webpack in release tarball and rebuild it
+rm -rf dist
+NODE_ENV=production make
 
 %install
 %make_install

@@ -100,7 +100,7 @@ $(NODE_CACHE): $(NODE_MODULES_TEST)
 
 node-cache: $(NODE_CACHE)
 
-srpm: $(TARFILE) cockpit-$(PACKAGE_NAME).spec
+srpm: $(TARFILE) $(NODE_CACHE) cockpit-$(PACKAGE_NAME).spec
 	rpmbuild -bs \
 	  --define "_sourcedir `pwd`" \
 	  --define "_srcrpmdir `pwd`" \
@@ -108,7 +108,7 @@ srpm: $(TARFILE) cockpit-$(PACKAGE_NAME).spec
 
 rpm: $(RPMFILE)
 
-$(RPMFILE): $(TARFILE) cockpit-$(PACKAGE_NAME).spec
+$(RPMFILE): $(TARFILE) $(NODE_CACHE) cockpit-$(PACKAGE_NAME).spec
 	mkdir -p "`pwd`/output"
 	mkdir -p "`pwd`/rpmbuild"
 	rpmbuild -bb \
