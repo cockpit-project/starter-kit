@@ -88,13 +88,11 @@ dist-gzip: $(TARFILE)
 $(TARFILE): export NODE_ENV=production
 $(TARFILE): $(WEBPACK_TEST) cockpit-$(PACKAGE_NAME).spec
 	if type appstream-util >/dev/null 2>&1; then appstream-util validate-relax --nonet *.metainfo.xml; fi
-	mv node_modules node_modules.release
 	touch -r package.json $(NODE_MODULES_TEST)
 	touch dist/*
 	tar czf cockpit-$(PACKAGE_NAME)-$(VERSION).tar.gz --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
-		--exclude cockpit-$(PACKAGE_NAME).spec.in \
+		--exclude cockpit-$(PACKAGE_NAME).spec.in --exclude node_modules \
 		$$(git ls-files) $(LIB_TEST) src/lib/patternfly/*.scss package-lock.json cockpit-$(PACKAGE_NAME).spec dist/
-	mv node_modules.release node_modules
 
 srpm: $(TARFILE) cockpit-$(PACKAGE_NAME).spec
 	rpmbuild -bs \
