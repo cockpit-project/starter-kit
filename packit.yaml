@@ -4,7 +4,12 @@
 
 specfile_path: cockpit-starter-kit.spec
 actions:
-  post-upstream-clone: make cockpit-starter-kit.spec
+  post-upstream-clone:
+  post-upstream-clone:
+    - make cockpit-starter-kit.spec
+    # replace Source1 manually, as create-archive: can't handle multiple tarballs
+    - make node-cache
+    - sh -c 'sed -i "/^Source1:/ s/https:.*/$(ls *-node*.tar.xz)/" cockpit-*.spec'
   # build in development mode; production mode uses too much memory for limited
   # sandcastle containers; also reduce memory consumption of webpack
   # https://github.com/packit/sandcastle/pull/92
