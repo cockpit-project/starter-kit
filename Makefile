@@ -5,7 +5,7 @@ ifeq ($(TEST_OS),)
 TEST_OS = centos-8-stream
 endif
 export TEST_OS
-TARFILE=cockpit-$(PACKAGE_NAME)-$(VERSION).tar.gz
+TARFILE=cockpit-$(PACKAGE_NAME)-$(VERSION).tar.xz
 NODE_CACHE=cockpit-$(PACKAGE_NAME)-node-$(VERSION).tar.xz
 RPMFILE=$(shell rpmspec -D"VERSION $(VERSION)" -q cockpit-$(PACKAGE_NAME).spec.in).rpm
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
@@ -79,7 +79,7 @@ devel-install: $(WEBPACK_TEST)
 print-version:
 	@echo "$(VERSION)"
 
-dist-gzip: $(TARFILE)
+dist: $(TARFILE)
 	@ls -1 $(TARFILE)
 
 # when building a distribution tarball, call webpack with a 'production' environment
@@ -91,7 +91,7 @@ $(TARFILE): $(WEBPACK_TEST) cockpit-$(PACKAGE_NAME).spec
 	if type appstream-util >/dev/null 2>&1; then appstream-util validate-relax --nonet *.metainfo.xml; fi
 	touch -r package.json $(NODE_MODULES_TEST)
 	touch dist/*
-	tar czf cockpit-$(PACKAGE_NAME)-$(VERSION).tar.gz --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
+	tar --xz -cf cockpit-$(PACKAGE_NAME)-$(VERSION).tar.xz --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
 		--exclude cockpit-$(PACKAGE_NAME).spec.in --exclude node_modules \
 		$$(git ls-files) $(LIB_TEST) src/lib package-lock.json cockpit-$(PACKAGE_NAME).spec dist/
 
@@ -170,4 +170,4 @@ $(NODE_MODULES_TEST): package.json
 	env -u NODE_ENV npm install
 	env -u NODE_ENV npm prune
 
-.PHONY: all clean install devel-install print-version dist-gzip node-cache srpm rpm check vm update-po
+.PHONY: all clean install devel-install print-version dist node-cache srpm rpm check vm update-po

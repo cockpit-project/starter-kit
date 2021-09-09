@@ -4,7 +4,7 @@ Release: 1%{?dist}
 Summary: Cockpit Starter Kit Example Module
 License: LGPLv2+
 
-Source: cockpit-starter-kit-%{version}.tar.gz
+Source: cockpit-starter-kit-%{version}.tar.xz
 BuildArch: noarch
 BuildRequires: make
 BuildRequires: libappstream-glib
