@@ -93,7 +93,7 @@ $(TARFILE): $(WEBPACK_TEST) cockpit-$(PACKAGE_NAME).spec
 	touch dist/*
 	tar --xz -cf cockpit-$(PACKAGE_NAME)-$(VERSION).tar.xz --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
 		--exclude cockpit-$(PACKAGE_NAME).spec.in --exclude node_modules \
-		$$(git ls-files) $(LIB_TEST) src/lib package-lock.json cockpit-$(PACKAGE_NAME).spec dist/
+		$$(git ls-files) src/lib package-lock.json cockpit-$(PACKAGE_NAME).spec dist/
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
 	tar --xz -cf $@ node_modules
