@@ -7,6 +7,9 @@ License: LGPLv2+
 Source0: https://github.com/cockpit-project/starter-kit/releases/download/%{version}/%{name}-%{version}.tar.xz
 Source1: https://github.com/cockpit-project/starter-kit/releases/download/%{version}/%{name}-node-%{version}.tar.xz
 BuildArch: noarch
+%if 0%{?fedora}
+BuildRequires: nodejs-devel
+%endif
 BuildRequires:  nodejs
 BuildRequires: make
 BuildRequires: libappstream-glib
