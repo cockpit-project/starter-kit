@@ -4,6 +4,7 @@ require:
   - cockpit-starter-kit
   - cockpit-ws
   - cockpit-system
+  - bzip2
   - git
   - glibc-langpack-de
   - libvirt-python3
