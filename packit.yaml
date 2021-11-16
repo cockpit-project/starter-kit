@@ -28,3 +28,4 @@ jobs:
       targets:
       - fedora-all
       - centos-stream-8
+      - centos-stream-9
