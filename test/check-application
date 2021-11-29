@@ -34,12 +34,17 @@ class TestApplication(testlib.MachineCase):
         b.wait_in_text(".pf-c-alert__title", "Running on new-" + hostname)
 
         # change language to German
+        # the menu and dialog changed several times
         b.switch_to_top()
-        b.click("#navbar-dropdown")
-        b.click(".display-language-menu a")
-        b.wait_popup('display-language')
-        # the dialog changed several times
         cockpit_version = float(m.execute("cockpit-bridge --version | sed -n '/Version:/ s/^.*: //p'").strip())
+        if cockpit_version >= 258:
+            b.click("#toggle-menu")
+            b.click(".display-language-menu")
+            b.wait_popup('display-language-modal')
+        else:
+            b.click("#navbar-dropdown")
+            b.click(".display-language-menu a")
+            b.wait_popup('display-language')
         if cockpit_version >= 242:
             b.click("#display-language-modal [data-value='de-de'] button")
             b.click("#display-language-modal button.pf-m-primary")
