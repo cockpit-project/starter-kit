@@ -34,26 +34,18 @@ class TestApplication(testlib.MachineCase):
         b.wait_in_text(".pf-c-alert__title", "Running on new-" + hostname)
 
         # change language to German
-        # the menu and dialog changed several times
         b.switch_to_top()
-        cockpit_version = float(m.execute("cockpit-bridge --version | sed -n '/Version:/ s/^.*: //p'").strip())
-        if cockpit_version >= 258:
-            b.click("#toggle-menu")
-            b.click(".display-language-menu")
-            b.wait_popup('display-language-modal')
-        else:
+        # the menu and dialog changed several times
+        if self.system_before(258):
             b.click("#navbar-dropdown")
             b.click(".display-language-menu a")
             b.wait_popup('display-language')
-        if cockpit_version >= 242:
-            b.click("#display-language-modal [data-value='de-de'] button")
-            b.click("#display-language-modal button.pf-m-primary")
-        elif cockpit_version >= 233:
-            b.set_val("#display-language-modal select", "de-de")
-            b.click("#display-language-modal button.pf-m-primary")
         else:
-            b.set_val("#display-language select", "de-de")
-            b.click("#display-language-select-button")
+            b.click("#toggle-menu")
+            b.click(".display-language-menu")
+            b.wait_popup('display-language-modal')
+        b.click("#display-language-modal [data-value='de-de'] button")
+        b.click("#display-language-modal button.pf-m-primary")
         b.expect_load()
         # HACK: work around language switching in Chrome not working in current session (Cockpit issue #8160)
         b.reload(ignore_cache=True)
