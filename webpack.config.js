@@ -13,8 +13,6 @@ const crypto = require("crypto");
 const crypto_orig_createHash = crypto.createHash;
 crypto.createHash = algorithm => crypto_orig_createHash(algorithm == "md4" ? "sha256" : algorithm);
 
-const webpack = require("webpack");
-
 /* A standard nodejs and webpack pattern */
 const production = process.env.NODE_ENV === 'production';
 
