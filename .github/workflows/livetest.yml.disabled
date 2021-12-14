@@ -73,7 +73,7 @@ jobs:
         run: make && sudo make install
 
       - name: Create a new test user
-        # WARNING: if you want to add this users to sudoers make sure to propertly delete the SINK_SSHRELAY_PRIVATE
+        # WARNING: if you want to add this users to sudoers make sure to properly delete the SINK_SSHRELAY_PRIVATE
         run: sudo useradd --create-home livetest; echo livetest:foobar | sudo chpasswd
 
       - name: Get the commit SHA that triggered the workflow
