@@ -12,12 +12,9 @@ LOGS="$(pwd)/logs"
 mkdir -p "$LOGS"
 chmod a+w "$LOGS"
 
-# install firefox (available everywhere in Fedora and RHEL); install the package to pull in all the dependencies
+# install firefox (available everywhere in Fedora and RHEL)
 # we don't need the H.264 codec, and it is sometimes not available (rhbz#2005760)
 dnf install --disablerepo=fedora-cisco-openh264 -y firefox
-# install nightly for Chrome DevTools Protocol support
-curl --location 'https://download.mozilla.org/?product=firefox-nightly-latest-ssl&os=linux64&lang=en-US' | tar -C /usr/local/lib/ -xj
-ln -s /usr/local/lib/firefox/firefox /usr/local/bin/
 
 # create user account for logging in
 if ! id admin 2>/dev/null; then
