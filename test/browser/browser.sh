@@ -12,6 +12,9 @@ LOGS="$(pwd)/logs"
 mkdir -p "$LOGS"
 chmod a+w "$LOGS"
 
+# HACK: https://bugzilla.redhat.com/show_bug.cgi?id=2033020
+dnf update -y pam || true
+
 # install firefox (available everywhere in Fedora and RHEL)
 # we don't need the H.264 codec, and it is sometimes not available (rhbz#2005760)
 dnf install --disablerepo=fedora-cisco-openh264 -y firefox
