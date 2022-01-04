@@ -43,6 +43,12 @@ or
 
     $ make watch
 
+When developing against a virtual machine, webpack can also automatically upload
+the code changes by setting the `RSYNC` environment variable to
+the remote hostname.
+
+    $ RSYNC=c make watch
+
 # Running eslint
 
 Cockpit Starter Kit uses [ESLint](https://eslint.org/) to automatically check
