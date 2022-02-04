@@ -17,7 +17,7 @@ dnf update -y pam || true
 
 # install firefox (available everywhere in Fedora and RHEL)
 # we don't need the H.264 codec, and it is sometimes not available (rhbz#2005760)
-dnf install --disablerepo=fedora-cisco-openh264 -y firefox
+dnf install --disablerepo=fedora-cisco-openh264 -y --setopt=install_weak_deps=False firefox
 
 # create user account for logging in
 if ! id admin 2>/dev/null; then
