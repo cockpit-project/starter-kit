@@ -9,7 +9,6 @@ export TEST_OS
 TARFILE=$(RPM_NAME)-$(VERSION).tar.xz
 NODE_CACHE=$(RPM_NAME)-node-$(VERSION).tar.xz
 SPEC=$(RPM_NAME).spec
-RPMFILE=$(shell rpmspec -D"VERSION $(VERSION)" -q packaging/$(SPEC).in).rpm
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
 # stamp file to check if/when npm install ran
 NODE_MODULES_TEST=package-lock.json
@@ -102,15 +101,8 @@ $(NODE_CACHE): $(NODE_MODULES_TEST)
 
 node-cache: $(NODE_CACHE)
 
-srpm: $(TARFILE) $(NODE_CACHE) $(SPEC)
-	rpmbuild -bs \
-	  --define "_sourcedir `pwd`" \
-	  --define "_srcrpmdir `pwd`" \
-	  $(SPEC)
-
-rpm: $(RPMFILE)
-
-$(RPMFILE): $(TARFILE) $(NODE_CACHE) $(SPEC)
+# convenience target for developers
+rpm: $(TARFILE) $(NODE_CACHE) $(SPEC)
 	mkdir -p "`pwd`/output"
 	mkdir -p "`pwd`/rpmbuild"
 	rpmbuild -bb \
@@ -124,13 +116,13 @@ $(RPMFILE): $(TARFILE) $(NODE_CACHE) $(SPEC)
 	find `pwd`/output -name '*.rpm' -printf '%f\n' -exec mv {} . \;
 	rm -r "`pwd`/rpmbuild"
 	rm -r "`pwd`/output" "`pwd`/build"
-	# sanity check
-	test -e "$(RPMFILE)"
 
-# build a VM with locally built rpm installed
-$(VM_IMAGE): $(RPMFILE) bots
+# build a VM with locally built distro pkgs installed
+$(VM_IMAGE): $(TARFILE) $(NODE_CACHE) bots
 	rm -f $(VM_IMAGE) $(VM_IMAGE).qcow2
-	bots/image-customize -v -i cockpit-ws -i `pwd`/$(RPMFILE) -s $(CURDIR)/test/vm.install $(TEST_OS)
+	bots/image-customize --verbose --upload $(NODE_CACHE):/var/tmp/ --build $(TARFILE) \
+		--install cockpit-ws \
+		--script $(CURDIR)/test/vm.install $(TEST_OS)
 
 # convenience target for the above
 vm: $(VM_IMAGE)
@@ -172,4 +164,4 @@ $(NODE_MODULES_TEST): package.json
 	env -u NODE_ENV npm install
 	env -u NODE_ENV npm prune
 
-.PHONY: all clean install devel-install print-version dist node-cache srpm rpm check vm update-po
+.PHONY: all clean install devel-install print-version dist node-cache rpm check vm update-po
