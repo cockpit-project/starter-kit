@@ -1,13 +1,14 @@
 # extract name from package.json
 PACKAGE_NAME := $(shell awk '/"name":/ {gsub(/[",]/, "", $$2); print $$2}' package.json)
+RPM_NAME := cockpit-$(PACKAGE_NAME)
 VERSION := $(shell T=$$(git describe 2>/dev/null) || T=1; echo $$T | tr '-' '.')
 ifeq ($(TEST_OS),)
 TEST_OS = centos-8-stream
 endif
 export TEST_OS
-TARFILE=cockpit-$(PACKAGE_NAME)-$(VERSION).tar.xz
-NODE_CACHE=cockpit-$(PACKAGE_NAME)-node-$(VERSION).tar.xz
-RPMFILE=$(shell rpmspec -D"VERSION $(VERSION)" -q cockpit-$(PACKAGE_NAME).spec.in).rpm
+TARFILE=$(RPM_NAME)-$(VERSION).tar.xz
+NODE_CACHE=$(RPM_NAME)-node-$(VERSION).tar.xz
+RPMFILE=$(shell rpmspec -D"VERSION $(VERSION)" -q $(RPM_NAME).spec.in).rpm
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
 # stamp file to check if/when npm install ran
 NODE_MODULES_TEST=package-lock.json
@@ -63,7 +64,7 @@ watch:
 
 clean:
 	rm -rf dist/
-	[ ! -e cockpit-$(PACKAGE_NAME).spec.in ] || rm -f cockpit-$(PACKAGE_NAME).spec
+	rm -f $(RPM_NAME).spec
 
 install: $(WEBPACK_TEST)
 	mkdir -p $(DESTDIR)/usr/share/cockpit/$(PACKAGE_NAME)
@@ -87,28 +88,28 @@ dist: $(TARFILE)
 # pre-built dist/ (so it's not necessary) and ship packge-lock.json (so that
 # node_modules/ can be reconstructed if necessary)
 $(TARFILE): export NODE_ENV=production
-$(TARFILE): $(WEBPACK_TEST) cockpit-$(PACKAGE_NAME).spec
+$(TARFILE): $(WEBPACK_TEST) $(RPM_NAME).spec
 	if type appstream-util >/dev/null 2>&1; then appstream-util validate-relax --nonet *.metainfo.xml; fi
 	touch -r package.json $(NODE_MODULES_TEST)
 	touch dist/*
-	tar --xz -cf cockpit-$(PACKAGE_NAME)-$(VERSION).tar.xz --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
-		--exclude cockpit-$(PACKAGE_NAME).spec.in --exclude node_modules \
-		$$(git ls-files) src/lib package-lock.json cockpit-$(PACKAGE_NAME).spec dist/
+	tar --xz -cf $(TARFILE) --transform 's,^,$(RPM_NAME)/,' \
+		--exclude $(RPM_NAME).spec.in --exclude node_modules \
+		$$(git ls-files) src/lib package-lock.json $(RPM_NAME).spec dist/
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
 	tar --xz -cf $@ node_modules
 
 node-cache: $(NODE_CACHE)
 
-srpm: $(TARFILE) $(NODE_CACHE) cockpit-$(PACKAGE_NAME).spec
+srpm: $(TARFILE) $(NODE_CACHE) $(RPM_NAME).spec
 	rpmbuild -bs \
 	  --define "_sourcedir `pwd`" \
 	  --define "_srcrpmdir `pwd`" \
-	  cockpit-$(PACKAGE_NAME).spec
+	  $(RPM_NAME).spec
 
 rpm: $(RPMFILE)
 
-$(RPMFILE): $(TARFILE) $(NODE_CACHE) cockpit-$(PACKAGE_NAME).spec
+$(RPMFILE): $(TARFILE) $(NODE_CACHE) $(RPM_NAME).spec
 	mkdir -p "`pwd`/output"
 	mkdir -p "`pwd`/rpmbuild"
 	rpmbuild -bb \
@@ -118,7 +119,7 @@ $(RPMFILE): $(TARFILE) $(NODE_CACHE) cockpit-$(PACKAGE_NAME).spec
 	  --define "_srcrpmdir `pwd`" \
 	  --define "_rpmdir `pwd`/output" \
 	  --define "_buildrootdir `pwd`/build" \
-	  cockpit-$(PACKAGE_NAME).spec
+	  $(RPM_NAME).spec
 	find `pwd`/output -name '*.rpm' -printf '%f\n' -exec mv {} . \;
 	rm -r "`pwd`/rpmbuild"
 	rm -r "`pwd`/output" "`pwd`/build"
