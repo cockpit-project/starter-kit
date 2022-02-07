@@ -8,7 +8,7 @@ dist/
 /.vagrant
 package-lock.json
 Test*FAIL*
-bots/
+/bots
 test/common/
 test/images/
 src/lib/
