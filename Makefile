@@ -119,8 +119,7 @@ rpm: $(TARFILE) $(NODE_CACHE) $(SPEC)
 
 # build a VM with locally built distro pkgs installed
 $(VM_IMAGE): $(TARFILE) $(NODE_CACHE) bots
-	rm -f $(VM_IMAGE) $(VM_IMAGE).qcow2
-	bots/image-customize --verbose --upload $(NODE_CACHE):/var/tmp/ --build $(TARFILE) \
+	bots/image-customize --verbose --fresh --upload $(NODE_CACHE):/var/tmp/ --build $(TARFILE) \
 		--install cockpit-ws \
 		--script $(CURDIR)/test/vm.install $(TEST_OS)
 
