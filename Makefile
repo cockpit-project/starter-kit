@@ -118,9 +118,10 @@ rpm: $(TARFILE) $(NODE_CACHE) $(SPEC)
 	rm -r "`pwd`/output" "`pwd`/build"
 
 # build a VM with locally built distro pkgs installed
+# disable networking, VM images have mock/pbuilder with the common build dependencies pre-installed
 $(VM_IMAGE): $(TARFILE) $(NODE_CACHE) bots
-	bots/image-customize --verbose --fresh --upload $(NODE_CACHE):/var/tmp/ --build $(TARFILE) \
-		--install cockpit-ws \
+	bots/image-customize --verbose --no-network --fresh \
+		--upload $(NODE_CACHE):/var/tmp/ --build $(TARFILE) \
 		--script $(CURDIR)/test/vm.install $(TEST_OS)
 
 # convenience target for the above
