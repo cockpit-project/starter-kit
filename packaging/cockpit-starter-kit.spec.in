@@ -10,6 +10,10 @@ BuildArch: noarch
 BuildRequires:  nodejs
 BuildRequires: make
 BuildRequires: libappstream-glib
+BuildRequires: gettext
+%if 0%{?rhel} && 0%{?rhel} <= 8
+BuildRequires: libappstream-glib-devel
+%endif
 
 Requires: cockpit-system
 
