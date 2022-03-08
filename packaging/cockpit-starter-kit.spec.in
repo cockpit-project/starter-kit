@@ -13,8 +13,6 @@ BuildRequires: libappstream-glib
 
 Requires: cockpit-system
 
-%define debug_package %{nil}
-
 %description
 Cockpit Starter Kit Example Module
 
