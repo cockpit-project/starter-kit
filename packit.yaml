@@ -3,6 +3,9 @@
 # See https://packit.dev/docs/configuration/ for the format of this file
 
 specfile_path: cockpit-starter-kit.spec
+srpm_build_deps:
+- make
+- npm
 actions:
   post-upstream-clone:
   post-upstream-clone:
