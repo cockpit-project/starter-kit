@@ -17,6 +17,10 @@ NODE_MODULES_TEST=package-lock.json
 WEBPACK_TEST=dist/manifest.json
 # one example file in src/lib to check if it was already checked out
 LIB_TEST=src/lib/cockpit-po-plugin.js
+# the Cockpit's test API & PF/React/build library have no API stability guarantee:
+# hence check out a stable tag to make sure to not break;
+# remember to update it from time to time
+COCKPIT_GIT_VERSION=262
 
 all: $(WEBPACK_TEST)
 
@@ -151,18 +155,17 @@ bots:
 	if [ -n "$$COCKPIT_BOTS_REF" ]; then git -C bots fetch --quiet --depth=1 origin "$$COCKPIT_BOTS_REF"; git -C bots checkout --quiet FETCH_HEAD; fi
 	@echo "checked out bots/ ref $$(git -C bots rev-parse HEAD)"
 
-# checkout Cockpit's test API; this has no API stability guarantee, so check out a stable tag
-# when you start a new project, use the latest release, and update it from time to time
+# checkout Cockpit's test API; see notes above on COCKPIT_GIT_VERSION
 test/common:
 	flock Makefile sh -ec '\
-	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 262; \
+	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git $(COCKPIT_GIT_VERSION); \
 	    git checkout --force FETCH_HEAD -- test/common; \
 	    git reset test/common'
 
-# checkout Cockpit's PF/React/build library; again this has no API stability guarantee, so check out a stable tag
+# checkout Cockpit's PF/React/build library; see notes above on COCKPIT_GIT_VERSION
 $(LIB_TEST):
 	flock Makefile sh -ec '\
-	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 262; \
+	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git $(COCKPIT_GIT_VERSION); \
 	    git checkout --force FETCH_HEAD -- pkg/lib; \
 	    git reset -- pkg/lib'
 	mv pkg/lib src/ && rmdir -p pkg
