@@ -51,7 +51,9 @@ class TestApplication(testlib.MachineCase):
             b.reload(ignore_cache=True)
         b.wait_visible("#content")
         # menu label (from manifest) should be translated
-        b.wait_text("#host-apps a[href='/starter-kit']", "Bausatz")
+        # HACK: This regressed in cockpit 265, see https://github.com/cockpit-project/cockpit/pull/17145
+        if self.system_before(265) or not self.system_before(266):
+            b.wait_text("#host-apps a[href='/starter-kit']", "Bausatz")
 
         b.go("/starter-kit")
         b.enter_page("/starter-kit")
