@@ -46,7 +46,6 @@ class TestApplication(testlib.MachineCase):
             b.wait_popup('display-language-modal')
         b.click("#display-language-modal [data-value='de-de'] button")
         b.click("#display-language-modal button.pf-m-primary")
-        b.expect_load()
         # HACK: work around language switching in Chrome not working in current session (Cockpit issue #8160)
         b.reload(ignore_cache=True)
         b.wait_visible("#content")
