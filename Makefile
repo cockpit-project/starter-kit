@@ -138,9 +138,13 @@ $(VM_IMAGE): $(TARFILE) $(NODE_CACHE) bots
 vm: $(VM_IMAGE)
 	echo $(VM_IMAGE)
 
+# convenience target to setup all the bits needed for the integration tests
+# without actually running them
+prepare-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
+
 # run the browser integration tests; skip check for SELinux denials
 # this will run all tests/check-* and format them as TAP
-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
+check: prepare-check
 	TEST_AUDIT_NO_SELINUX=1 test/common/run-tests
 
 # checkout Cockpit's bots for standard test VM images and API to launch them
