@@ -129,7 +129,7 @@ rpm: $(TARFILE) $(NODE_CACHE) $(SPEC)
 
 # build a VM with locally built distro pkgs installed
 # disable networking, VM images have mock/pbuilder with the common build dependencies pre-installed
-$(VM_IMAGE): $(TARFILE) $(NODE_CACHE) bots
+$(VM_IMAGE): $(TARFILE) $(NODE_CACHE) bots test/vm.install
 	bots/image-customize --no-network --fresh \
 		--upload $(NODE_CACHE):/var/tmp/ --build $(TARFILE) \
 		--script $(CURDIR)/test/vm.install $(TEST_OS)
