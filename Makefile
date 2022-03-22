@@ -112,6 +112,13 @@ $(NODE_CACHE): $(NODE_MODULES_TEST)
 node-cache: $(NODE_CACHE)
 
 # convenience target for developers
+srpm: $(TARFILE) $(NODE_CACHE) $(SPEC)
+	rpmbuild -bs \
+	  --define "_sourcedir `pwd`" \
+	  --define "_srcrpmdir `pwd`" \
+	  $(SPEC)
+
+# convenience target for developers
 rpm: $(TARFILE) $(NODE_CACHE) $(SPEC)
 	mkdir -p "`pwd`/output"
 	mkdir -p "`pwd`/rpmbuild"
