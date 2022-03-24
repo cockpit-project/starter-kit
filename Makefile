@@ -17,6 +17,8 @@ NODE_MODULES_TEST=package-lock.json
 WEBPACK_TEST=dist/manifest.json
 # one example file in src/lib to check if it was already checked out
 LIB_TEST=src/lib/cockpit-po-plugin.js
+# common arguments for tar, mostly to make the generated tarballs reproducible
+TAR_ARGS = --sort=name --mtime "@$(shell git show --no-patch --format='%at')" --mode=go=rX,u+rw,a-s --numeric-owner --owner=0 --group=0
 
 all: $(WEBPACK_TEST)
 
@@ -102,12 +104,12 @@ $(TARFILE): $(WEBPACK_TEST) $(SPEC)
 	if type appstream-util >/dev/null 2>&1; then appstream-util validate-relax --nonet *.metainfo.xml; fi
 	touch -r package.json $(NODE_MODULES_TEST)
 	touch dist/*
-	tar --xz -cf $(TARFILE) --transform 's,^,$(RPM_NAME)/,' \
+	tar --xz $(TAR_ARGS) -cf $(TARFILE) --transform 's,^,$(RPM_NAME)/,' \
 		--exclude packaging/$(SPEC).in --exclude node_modules \
 		$$(git ls-files) src/lib package-lock.json $(SPEC) dist/
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
-	tar --xz -cf $@ node_modules
+	tar --xz $(TAR_ARGS) -cf $@ node_modules
 
 node-cache: $(NODE_CACHE)
 
