@@ -89,6 +89,11 @@ devel-install: $(WEBPACK_TEST)
 	mkdir -p ~/.local/share/cockpit
 	ln -s `pwd`/dist ~/.local/share/cockpit/$(PACKAGE_NAME)
 
+# assumes that there was symlink set up using the above devel-install target,
+# and removes it
+devel-uninstall:
+	rm -f ~/.local/share/cockpit/$(PACKAGE_NAME)
+
 print-version:
 	@echo "$(VERSION)"
 
@@ -191,4 +196,4 @@ $(NODE_MODULES_TEST): package.json
 	env -u NODE_ENV npm install
 	env -u NODE_ENV npm prune
 
-.PHONY: all clean install devel-install print-version dist node-cache rpm check vm update-po print-vm
+.PHONY: all clean install devel-install print-version dist node-cache rpm check vm update-po print-vm devel-uninstall
