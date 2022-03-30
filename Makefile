@@ -147,6 +147,10 @@ $(VM_IMAGE): $(TARFILE) $(NODE_CACHE) bots test/vm.install
 vm: $(VM_IMAGE)
 	echo $(VM_IMAGE)
 
+# convenience target to print the filename of the test image
+print-vm:
+	echo $(VM_IMAGE)
+
 # convenience target to setup all the bits needed for the integration tests
 # without actually running them
 prepare-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
@@ -187,4 +191,4 @@ $(NODE_MODULES_TEST): package.json
 	env -u NODE_ENV npm install
 	env -u NODE_ENV npm prune
 
-.PHONY: all clean install devel-install print-version dist node-cache rpm check vm update-po
+.PHONY: all clean install devel-install print-version dist node-cache rpm check vm update-po print-vm
