@@ -23,7 +23,9 @@ automatically minified and compressed. Set `NODE_ENV=production` if you want to
 duplicate this behavior.
 
 For development, you usually want to run your module straight out of the git
-tree. To do that, link that to the location were `cockpit-bridge` looks for packages:
+tree. To do that, run `make devel-install`, which links your checkout to the
+location were cockpit-bridge looks for packages. If you prefer to do
+this manually:
 
 ```
 mkdir -p ~/.local/share/cockpit
@@ -48,6 +50,11 @@ the code changes by setting the `RSYNC` environment variable to
 the remote hostname.
 
     $ RSYNC=c make watch
+
+To "uninstall" the locally installed version, run `make devel-uninstall`, or
+remove manually the symlink:
+
+    rm ~/.local/share/cockpit/starter-kit
 
 # Running eslint
 
