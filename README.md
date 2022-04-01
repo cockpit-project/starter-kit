@@ -1,6 +1,6 @@
 # Cockpit Starter Kit
 
-Scaffolding for a [Cockpit](http://www.cockpit-project.org) module.
+Scaffolding for a [Cockpit](https://cockpit-project.org/) module.
 
 # Getting and building the source
 
@@ -112,13 +112,13 @@ different infrastructure with more capacity.
 
 Tests also run in [Packit](https://packit.dev/) for all currently supported
 Fedora releases; see the [packit.yaml](./packit.yaml) control file. You need to
-[enable Packit-as-a-service](https://packit.dev/docs/packit-as-a-service/) in your GitHub project to use this.
+[enable Packit-as-a-service](https://packit.dev/docs/packit-service/) in your GitHub project to use this.
 To run the tests in the exact same way for upstream pull requests and for
 [Fedora package update gating](https://docs.fedoraproject.org/en-US/ci/), the
-tests are wrapped in the [FMF metadata format](https://github.com/psss/fmf)
+tests are wrapped in the [FMF metadata format](https://github.com/teemtee/fmf)
 for using with the [tmt test management tool](https://docs.fedoraproject.org/en-US/ci/tmt/).
 Note that Packit tests can *not* run their own virtual machine images, thus
-they only run [@nondestructive tests](https://github.com/martinpitt/cockpit/blob/main/test/common/testlib.py).
+they only run [@nondestructive tests](https://github.com/cockpit-project/cockpit/blob/main/test/common/testlib.py).
 
 # Customizing
 
@@ -153,7 +153,7 @@ which is run weekly or upon [manual request](https://github.com/cockpit-project/
 
 # Further reading
 
- * The [Starter Kit announcement](http://cockpit-project.org/blog/cockpit-starter-kit.html)
+ * The [Starter Kit announcement](https://cockpit-project.org/blog/cockpit-starter-kit.html)
    blog post explains the rationale for this project.
- * [Cockpit Deployment and Developer documentation](http://cockpit-project.org/guide/latest/)
- * [Make your project easily discoverable](http://cockpit-project.org/blog/making-a-cockpit-application.html)
+ * [Cockpit Deployment and Developer documentation](https://cockpit-project.org/guide/latest/)
+ * [Make your project easily discoverable](https://cockpit-project.org/blog/making-a-cockpit-application.html)
