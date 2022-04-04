@@ -11,4 +11,7 @@
   </description>
   <extends>org.cockpit_project.cockpit</extends>
   <launchable type="cockpit-manifest">starter-kit</launchable>
+  <url type="homepage">https://github.com/cockpit-project/starter-kit</url>
+  <url type="bugtracker">https://github.com/cockpit-project/starter-kit/issues</url>
+  <update_contact>cockpit-devel_AT_lists.fedorahosted.org</update_contact>
 </component>
