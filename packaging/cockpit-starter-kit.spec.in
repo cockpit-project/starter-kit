@@ -27,7 +27,7 @@ Cockpit Starter Kit Example Module
 %build
 # ignore pre-built webpack in release tarball and rebuild it
 rm -rf dist
-NODE_ENV=production make
+ESLINT=0 NODE_ENV=production make
 
 %install
 %make_install
