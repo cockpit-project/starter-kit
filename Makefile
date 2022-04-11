@@ -158,7 +158,7 @@ print-vm:
 
 # convenience target to setup all the bits needed for the integration tests
 # without actually running them
-prepare-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
+prepare-check: $(VM_IMAGE) test/common
 
 # run the browser integration tests; skip check for SELinux denials
 # this will run all tests/check-* and format them as TAP
