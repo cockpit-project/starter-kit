@@ -5,4 +5,5 @@ set -eu
 # arguments but with an appropriate $TEST_OS, and optionally $TEST_SCENARIO
 
 [ -z "${TEST_SCENARIO:-}" ] || export TEST_BROWSER="$TEST_SCENARIO"
+export RUN_TESTS_OPTIONS=--track-naughties
 make check
