@@ -163,7 +163,7 @@ prepare-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
 # run the browser integration tests; skip check for SELinux denials
 # this will run all tests/check-* and format them as TAP
 check: prepare-check
-	TEST_AUDIT_NO_SELINUX=1 test/common/run-tests
+	TEST_AUDIT_NO_SELINUX=1 test/common/run-tests ${RUN_TESTS_OPTIONS}
 
 # checkout Cockpit's bots for standard test VM images and API to launch them
 # must be from main, as only that has current and existing images; but testvm.py API is stable
@@ -177,7 +177,7 @@ bots:
 # when you start a new project, use the latest release, and update it from time to time
 test/common:
 	flock Makefile sh -ec '\
-	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 265; \
+	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 267; \
 	    git checkout --force FETCH_HEAD -- test/common; \
 	    git reset test/common'
 
