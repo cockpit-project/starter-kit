@@ -35,7 +35,7 @@ po/$(PACKAGE_NAME).js.pot:
 		--keyword=gettext:1,1t --keyword=gettext:1c,2,2t \
 		--keyword=ngettext:1,2,3t --keyword=ngettext:1c,2,3,4t \
 		--keyword=gettextCatalog.getString:1,3c --keyword=gettextCatalog.getPlural:2,3,4c \
-		--from-code=UTF-8 $$(find src/ \( -name '*.js' -o -name '*.jsx' \) \! -path 'src/lib/*')
+		--from-code=UTF-8 $$(find src/ \( -name '*.js' -o -name '*.jsx' -o -name '*.ts' -o -name '*.tsx' \) \! -path 'src/lib/*')
 
 po/$(PACKAGE_NAME).html.pot: $(NODE_MODULES_TEST)
 	po/html2po -o $@ $$(find src -name '*.html' \! -path 'src/lib/*')
