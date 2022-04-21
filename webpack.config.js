@@ -9,6 +9,7 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const ESLintPlugin = require('eslint-webpack-plugin');
 const CockpitPoPlugin = require("./src/lib/cockpit-po-plugin");
 const CockpitRsyncPlugin = require("./src/lib/cockpit-rsync-plugin");
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 /* A standard nodejs and webpack pattern */
 const production = process.env.NODE_ENV === 'production';
@@ -30,10 +31,11 @@ const plugins = [
     new extract({filename: "[name].css"}),
     new CockpitPoPlugin(),
     new CockpitRsyncPlugin({dest: packageJson.name}),
+    new ForkTsCheckerWebpackPlugin()
 ];
 
 if (eslint) {
-    plugins.push(new ESLintPlugin({ extensions: ["js", "jsx"], failOnWarning: true, }));
+    plugins.push(new ESLintPlugin({ extensions: ["js", "jsx", "ts", "tsx"], failOnWarning: true, }));
 }
 
 /* Only minimize when in production mode */
@@ -49,6 +51,7 @@ module.exports = {
     resolve: {
         modules: [ "node_modules", path.resolve(__dirname, 'src/lib') ],
         alias: { 'font-awesome': 'font-awesome-sass/assets/stylesheets' },
+        extensions: ['.tsx', '.ts', '.js', '.jsx']
     },
     resolveLoader: {
         modules: [ "node_modules", path.resolve(__dirname, 'src/lib') ],
@@ -57,7 +60,7 @@ module.exports = {
         ignored: /node_modules/,
     },
     entry: {
-        index: "./src/index.js",
+        index: "./src/index.ts",
     },
     // cockpit.js gets included via <script>, everything else should be bundled
     externals: { "cockpit": "cockpit" },
@@ -85,7 +88,7 @@ module.exports = {
             {
                 exclude: /node_modules/,
                 use: "babel-loader",
-                test: /\.(js|jsx)$/
+                test: /\.(js|jsx|ts|tsx)$/
             },
             /* HACK: remove unwanted fonts from PatternFly's css */
             {

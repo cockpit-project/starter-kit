@@ -4,7 +4,7 @@
         "browser": true,
         "es6": true
     },
-    "extends": ["eslint:recommended", "standard", "standard-jsx", "react-app"],
+    "extends": ["eslint:recommended", "standard", "standard-jsx", "react-app", "plugin:@typescript-eslint/recommended"],
     "parser": "@babel/eslint-parser",
     "parserOptions": {
         "ecmaVersion": "7",
@@ -13,7 +13,7 @@
         },
         "sourceType": "module"
     },
-    "plugins": ["flowtype", "react", "react-hooks"],
+    "plugins": ["flowtype", "react", "react-hooks", "@typescript-eslint"],
     "rules": {
         "indent": ["error", 4,
             {

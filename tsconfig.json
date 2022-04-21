@@ -1,0 +1,16 @@
+{
+   "compilerOptions": {
+     "target": "es2015",
+     "module": "commonjs",
+     "lib": ["dom", "es2017"],
+     "strict": true,
+     "strictNullChecks": true,
+     "noUnusedLocals": true,
+     "moduleResolution": "node",
+     "noEmitOnError": true,
+     "esModuleInterop": true,
+     "jsx": "react",
+     "types": [ "src/types" ]
+   }
+ }
+ 

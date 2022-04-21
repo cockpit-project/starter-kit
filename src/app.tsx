@@ -21,14 +21,18 @@ import cockpit from 'cockpit';
 import React from 'react';
 import { Alert, Card, CardTitle, CardBody } from '@patternfly/react-core';
 
+interface ApplicationState {
+    hostname: string;
+}
+
 const _ = cockpit.gettext;
 
-export class Application extends React.Component {
-    constructor() {
-        super();
+export class Application extends React.Component<unknown, ApplicationState> {
+    constructor(props: unknown) {
+        super(props);
         this.state = { hostname: _("Unknown") };
 
-        cockpit.file('/etc/hostname').watch(content => {
+        cockpit.file('/etc/hostname').watch((content: string) => {
             this.setState({ hostname: content.trim() });
         });
     }

@@ -9,6 +9,7 @@
                 "opera": "44"
             }
         }],
+        "@babel/preset-typescript",
         "@babel/preset-react"
     ]
 }
