@@ -32,6 +32,3 @@ job release-srpm -V
 
 # this needs no explicit secrets, just the GitHub action provided default one
 # job release-github
-
-# This needs secrets.COPR_TOKEN in .github/workflows/release.yml
-# job release-copr @myorg/myrepo
