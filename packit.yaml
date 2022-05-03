@@ -32,3 +32,14 @@ jobs:
       - fedora-all
       - centos-stream-8
       - centos-stream-9
+
+  # Build releases in COPR: https://packit.dev/docs/configuration/#copr_build
+  #- job: copr_build
+  #  trigger: release
+  #  metadata:
+  #    owner: your_copr_login
+  #    project: your_copr_project
+  #    preserve_project: True
+  #    targets:
+  #    - fedora-all
+  #    - centos-stream-9-x86_64

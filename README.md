@@ -133,15 +133,18 @@ change:
 
 Once your cloned project is ready for a release, you should consider automating
 that.  [Cockpituous release](https://github.com/cockpit-project/cockpituous/tree/main/release)
-aims to fully automate project releases to GitHub, Fedora, Ubuntu, COPR, Docker
-Hub, and other places. The intention is that the only manual step for releasing
-a project is to create a signed tag for the version number; pushing the tag
-then triggers a [GitHub action](https://github.com/features/actions) that calls a set of release scripts.
+and [Packit](https://packit.dev/) aim to fully automate project releases to
+GitHub, Fedora, Ubuntu, COPR, Docker Hub, and other places. The intention is
+that the only manual step for releasing a project is to create a signed tag for
+the version number; pushing the tag then triggers a [GitHub
+action](https://github.com/features/actions) that calls a set of release
+scripts.
 
-starter-kit includes an example [cockpitous release script](./cockpituous-release),
-with detailed comments how to use it. There is also an
-[example GitHub release action](.github/workflows/release.yml.disabled) to set
-up secrets and run cockpituous.
+starter-kit includes an example [cockpitous release script](./cockpituous-release)
+
+and a [packit.yaml](./packit.yaml) control file with detailed comments how to
+use it. There is also an [example GitHub release action](.github/workflows/release.yml.disabled)
+to set up secrets and run cockpituous.
 
 # Automated maintenance
 
