@@ -21,6 +21,8 @@ BuildRequires: libappstream-glib-devel
 
 Requires: cockpit-bridge
 
+%{NODEJS_PROVIDES}
+
 %description
 Cockpit Starter Kit Example Module
 
