@@ -25,8 +25,7 @@ Requires: cockpit-system
 Cockpit Starter Kit Example Module
 
 %prep
-%setup -q -n %{name}
-%setup -q -a 1 -n %{name}
+%autosetup -n %{name} -a 1
 # ignore pre-built webpack in release tarball and rebuild it
 rm -rf dist
 
