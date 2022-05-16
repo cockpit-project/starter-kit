@@ -48,8 +48,8 @@
     "webpack-cli": "^4.9.1"
   },
   "dependencies": {
-    "@patternfly/patternfly": "4.194.1",
-    "@patternfly/react-core": "4.211.3",
+    "@patternfly/patternfly": "4.194.4",
+    "@patternfly/react-core": "4.214.2",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   }
