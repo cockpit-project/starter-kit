@@ -132,19 +132,25 @@ change:
 # Automated release
 
 Once your cloned project is ready for a release, you should consider automating
-that.  [Cockpituous release](https://github.com/cockpit-project/cockpituous/tree/main/release)
-and [Packit](https://packit.dev/) aim to fully automate project releases to
-GitHub, Fedora, Ubuntu, COPR, Docker Hub, and other places. The intention is
-that the only manual step for releasing a project is to create a signed tag for
-the version number; pushing the tag then triggers a [GitHub
-action](https://github.com/features/actions) that calls a set of release
-scripts.
+that. The intention is that the only manual step for releasing a project is to create
+a signed tag for the version number, which includes a summary of the noteworthy
+changes:
 
-starter-kit includes an example [cockpitous release script](./cockpituous-release)
+```
+123
 
-and a [packit.yaml](./packit.yaml) control file with detailed comments how to
-use it. There is also an [example GitHub release action](.github/workflows/release.yml.disabled)
-to set up secrets and run cockpituous.
+- this new feature
+- fix bug #123
+```
+
+Pushing the release tag triggers the [release.yml](.github/workflows/release.yml.disabled)
+[GitHub action](https://github.com/features/actions) workflow. This creates the
+official release tarball and publishes as upstream release to GitHub. The
+workflow is disabled by default -- to use it, edit the file as per the comment
+at the top, and rename it to just `*.yml`.
+
+The Fedora and COPR releases are done with [Packit](https://packit.dev/),
+see the [packit.yaml](./packit.yaml) control file.
 
 # Automated maintenance
 

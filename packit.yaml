@@ -3,6 +3,8 @@
 # See https://packit.dev/docs/configuration/ for the format of this file
 
 specfile_path: cockpit-starter-kit.spec
+# use the nicely formatted release description from our upstream release, instead of git shortlog
+copy_upstream_release_description: true
 
 srpm_build_deps:
   - make
@@ -37,3 +39,23 @@ jobs:
   #    targets:
   #      - fedora-all
   #      - centos-stream-9-x86_64
+
+  # Build releases in Fedora: https://packit.dev/docs/configuration/#propose_downstream
+  #- job: propose_downstream
+  #  trigger: release
+  #  metadata:
+  #    dist_git_branches:
+  #      - fedora-all
+
+  #- job: koji_build
+  #  trigger: commit
+  #  metadata:
+  #    dist_git_branches:
+  #      - fedora-all
+
+  #- job: bodhi_update
+  #  trigger: commit
+  #  metadata:
+  #    dist_git_branches:
+  #      # rawhide updates are created automatically
+  #      - fedora-branched
