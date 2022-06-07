@@ -19,7 +19,7 @@ BuildRequires: gettext
 BuildRequires: libappstream-glib-devel
 %endif
 
-Requires: cockpit-system
+Requires: cockpit-bridge
 
 %description
 Cockpit Starter Kit Example Module
