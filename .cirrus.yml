@@ -18,4 +18,5 @@ test_task:
   # test PO template generation
   pot_build_script: make po/starter-kit.pot
 
-  check_script: TEST_JOBS=$(nproc) TEST_OS=$TEST_OS make check
+  # chromium has too little /dev/shm, and we can't make that bigger
+  check_script: TEST_BROWSER=firefox TEST_JOBS=$(nproc) TEST_OS=$TEST_OS make check
