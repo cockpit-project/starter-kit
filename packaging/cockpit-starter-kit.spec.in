@@ -11,7 +11,7 @@ ExclusiveArch: %{nodejs_arches} noarch
 %if 0%{?fedora}
 BuildRequires: nodejs-devel
 %endif
-BuildRequires:  nodejs
+BuildRequires: nodejs
 BuildRequires: make
 BuildRequires: libappstream-glib
 BuildRequires: gettext
@@ -27,7 +27,10 @@ Cockpit Starter Kit Example Module
 %prep
 %autosetup -n %{name} -a 1
 # ignore pre-built webpack in release tarball and rebuild it
+# but keep it in RHEL/CentOS-8, as that has a too old nodejs
+%if ! 0%{?rhel} || 0%{?rhel} >= 9
 rm -rf dist
+%endif
 
 %build
 ESLINT=0 NODE_ENV=production make
