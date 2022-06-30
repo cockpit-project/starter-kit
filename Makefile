@@ -40,7 +40,7 @@ COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'
 $(COCKPIT_REPO_STAMP): Makefile
 	@git rev-list --quiet --objects $(COCKPIT_REPO_TREE) -- 2>/dev/null || \
 	    git fetch --no-tags --no-write-fetch-head --depth=1 $(COCKPIT_REPO_URL) $(COCKPIT_REPO_COMMIT)
-	git archive $(COCKPIT_REPO_TREE) -- tools/git-utils.sh $(COCKPIT_REPO_FILES) | tar x
+	git archive $(COCKPIT_REPO_TREE) -- $(COCKPIT_REPO_FILES) | tar x
 
 #
 # i18n
@@ -116,7 +116,7 @@ dist: $(TARFILE)
 
 # when building a distribution tarball, call webpack with a 'production' environment
 # we don't ship node_modules for license and compactness reasons; we ship a
-# pre-built dist/ (so it's not necessary) and ship packge-lock.json (so that
+# pre-built dist/ (so it's not necessary) and ship package-lock.json (so that
 # node_modules/ can be reconstructed if necessary)
 $(TARFILE): export NODE_ENV=production
 $(TARFILE): $(WEBPACK_TEST) $(SPEC)
