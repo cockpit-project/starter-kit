@@ -72,12 +72,6 @@ po/$(PACKAGE_NAME).pot: po/$(PACKAGE_NAME).html.pot po/$(PACKAGE_NAME).js.pot po
 po/LINGUAS:
 	echo $(LINGUAS) | tr ' ' '\n' > $@
 
-# Update translations against current PO template
-update-po: po/$(PACKAGE_NAME).pot
-	for lang in $(LINGUAS); do \
-		msgmerge --output-file=po/$$lang.po po/$$lang.po $<; \
-	done
-
 #
 # Build/Install/dist
 #
@@ -196,4 +190,4 @@ $(NODE_MODULES_TEST): package.json
 	env -u NODE_ENV npm install
 	env -u NODE_ENV npm prune
 
-.PHONY: all clean install devel-install print-version dist node-cache rpm check vm update-po print-vm devel-uninstall
+.PHONY: all clean install devel-install print-version dist node-cache rpm check vm print-vm devel-uninstall
