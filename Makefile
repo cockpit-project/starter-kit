@@ -16,11 +16,31 @@ NODE_MODULES_TEST=package-lock.json
 # one example file in dist/ from webpack to check if that already ran
 WEBPACK_TEST=dist/manifest.json
 # one example file in pkg/lib to check if it was already checked out
-LIB_TEST=pkg/lib/cockpit-po-plugin.js
+COCKPIT_REPO_STAMP=pkg/lib/cockpit-po-plugin.js
 # common arguments for tar, mostly to make the generated tarballs reproducible
 TAR_ARGS = --sort=name --mtime "@$(shell git show --no-patch --format='%at')" --mode=go=rX,u+rw,a-s --numeric-owner --owner=0 --group=0
 
 all: $(WEBPACK_TEST)
+
+# checkout common files from Cockpit repository required to build this project;
+# this has no API stability guarantee, so check out a stable tag when you start
+# a new project, use the latest release, and update it from time to time
+COCKPIT_REPO_FILES = \
+	pkg/lib \
+	test/common \
+	tools/git-utils.sh \
+	tools/make-bots \
+	$(NULL)
+
+COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
+COCKPIT_REPO_COMMIT = 5a37c1966cbd0adddab9e453b2c1c854c0f7a2ba # 272
+
+$(COCKPIT_REPO_FILES): $(COCKPIT_REPO_STAMP)
+COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'
+$(COCKPIT_REPO_STAMP): Makefile
+	@git rev-list --quiet --objects $(COCKPIT_REPO_TREE) -- 2>/dev/null || \
+	    git fetch --no-tags --no-write-fetch-head --depth=1 $(COCKPIT_REPO_URL) $(COCKPIT_REPO_COMMIT)
+	git archive $(COCKPIT_REPO_TREE) -- tools/git-utils.sh $(COCKPIT_REPO_FILES) | tar x
 
 #
 # i18n
@@ -65,7 +85,7 @@ update-po: po/$(PACKAGE_NAME).pot
 %.spec: packaging/%.spec.in
 	sed -e 's/%{VERSION}/$(VERSION)/g' $< > $@
 
-$(WEBPACK_TEST): $(NODE_MODULES_TEST) $(LIB_TEST) $(shell find src/ -type f) package.json webpack.config.js
+$(WEBPACK_TEST): $(NODE_MODULES_TEST) $(COCKPIT_REPO_STAMP) $(shell find src/ -type f) package.json webpack.config.js
 	NODE_ENV=$(NODE_ENV) node_modules/.bin/webpack
 
 watch:
@@ -166,27 +186,8 @@ check: prepare-check
 	TEST_AUDIT_NO_SELINUX=1 test/common/run-tests ${RUN_TESTS_OPTIONS}
 
 # checkout Cockpit's bots for standard test VM images and API to launch them
-# must be from main, as only that has current and existing images; but testvm.py API is stable
-# support CI testing against a bots change
-bots:
-	git clone --quiet --reference-if-able $${XDG_CACHE_HOME:-$$HOME/.cache}/cockpit-project/bots https://github.com/cockpit-project/bots.git
-	if [ -n "$$COCKPIT_BOTS_REF" ]; then git -C bots fetch --quiet --depth=1 origin "$$COCKPIT_BOTS_REF"; git -C bots checkout --quiet FETCH_HEAD; fi
-	@echo "checked out bots/ ref $$(git -C bots rev-parse HEAD)"
-
-# checkout Cockpit's test API; this has no API stability guarantee, so check out a stable tag
-# when you start a new project, use the latest release, and update it from time to time
-test/common:
-	flock Makefile sh -ec '\
-	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 80483286d5e7bffd1b7583a499e1b7e04d55f1f3; \
-	    git checkout --force FETCH_HEAD -- test/common; \
-	    git reset test/common'
-
-# checkout Cockpit's PF/React/build library; again this has no API stability guarantee, so check out a stable tag
-$(LIB_TEST):
-	flock Makefile sh -ec '\
-	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 265; \
-	    git checkout --force FETCH_HEAD -- pkg/lib; \
-	    git reset -- pkg/lib'
+bots: tools/make-bots
+	tools/make-bots
 
 $(NODE_MODULES_TEST): package.json
 	# if it exists already, npm install won't update it; force that so that we always get up-to-date packages
