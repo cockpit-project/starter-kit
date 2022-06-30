@@ -11,7 +11,7 @@ NODE_CACHE=$(RPM_NAME)-node-$(VERSION).tar.xz
 SPEC=$(RPM_NAME).spec
 APPSTREAMFILE=org.cockpit-project.$(PACKAGE_NAME).metainfo.xml
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
-# stamp file to check if/when npm install ran
+# stamp file to check for node_modules/
 NODE_MODULES_TEST=package-lock.json
 # one example file in dist/ from webpack to check if that already ran
 WEBPACK_TEST=dist/manifest.json
@@ -121,11 +121,9 @@ dist: $(TARFILE)
 $(TARFILE): export NODE_ENV=production
 $(TARFILE): $(WEBPACK_TEST) $(SPEC)
 	if type appstream-util >/dev/null 2>&1; then appstream-util validate-relax --nonet *.metainfo.xml; fi
-	touch -r package.json $(NODE_MODULES_TEST)
-	touch dist/*
 	tar --xz $(TAR_ARGS) -cf $(TARFILE) --transform 's,^,$(RPM_NAME)/,' \
 		--exclude packaging/$(SPEC).in --exclude node_modules \
-		$$(git ls-files) pkg/lib package-lock.json $(SPEC) dist/
+		$$(git ls-files) $(COCKPIT_REPO_FILES) $(NODE_MODULES_TEST) $(SPEC) dist/
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
 	tar --xz $(TAR_ARGS) -cf $@ node_modules
@@ -190,4 +188,4 @@ $(NODE_MODULES_TEST): package.json
 	env -u NODE_ENV npm install
 	env -u NODE_ENV npm prune
 
-.PHONY: all clean install devel-install print-version dist node-cache rpm check vm print-vm devel-uninstall
+.PHONY: all clean install devel-install devel-uninstall print-version dist node-cache rpm prepare-check check vm print-vm
