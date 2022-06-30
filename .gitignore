@@ -11,7 +11,7 @@ Test*FAIL*
 /bots
 test/common/
 test/images/
-src/lib/
+pkg
 *.pot
 POTFILES*
 tmp/

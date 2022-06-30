@@ -15,8 +15,8 @@ VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
 NODE_MODULES_TEST=package-lock.json
 # one example file in dist/ from webpack to check if that already ran
 WEBPACK_TEST=dist/manifest.json
-# one example file in src/lib to check if it was already checked out
-LIB_TEST=src/lib/cockpit-po-plugin.js
+# one example file in pkg/lib to check if it was already checked out
+LIB_TEST=pkg/lib/cockpit-po-plugin.js
 # common arguments for tar, mostly to make the generated tarballs reproducible
 TAR_ARGS = --sort=name --mtime "@$(shell git show --no-patch --format='%at')" --mode=go=rX,u+rw,a-s --numeric-owner --owner=0 --group=0
 
@@ -35,10 +35,10 @@ po/$(PACKAGE_NAME).js.pot:
 		--keyword=gettext:1,1t --keyword=gettext:1c,2,2t \
 		--keyword=ngettext:1,2,3t --keyword=ngettext:1c,2,3,4t \
 		--keyword=gettextCatalog.getString:1,3c --keyword=gettextCatalog.getPlural:2,3,4c \
-		--from-code=UTF-8 $$(find src/ \( -name '*.js' -o -name '*.jsx' \) \! -path 'src/lib/*')
+		--from-code=UTF-8 $$(find src/ \( -name '*.js' -o -name '*.jsx' \))
 
 po/$(PACKAGE_NAME).html.pot: $(NODE_MODULES_TEST)
-	po/html2po -o $@ $$(find src -name '*.html' \! -path 'src/lib/*')
+	po/html2po -o $@ $$(find src -name '*.html')
 
 po/$(PACKAGE_NAME).manifest.pot: $(NODE_MODULES_TEST)
 	po/manifest2po src/manifest.json -o $@
@@ -111,7 +111,7 @@ $(TARFILE): $(WEBPACK_TEST) $(SPEC)
 	touch dist/*
 	tar --xz $(TAR_ARGS) -cf $(TARFILE) --transform 's,^,$(RPM_NAME)/,' \
 		--exclude packaging/$(SPEC).in --exclude node_modules \
-		$$(git ls-files) src/lib package-lock.json $(SPEC) dist/
+		$$(git ls-files) pkg/lib package-lock.json $(SPEC) dist/
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
 	tar --xz $(TAR_ARGS) -cf $@ node_modules
@@ -187,7 +187,6 @@ $(LIB_TEST):
 	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 265; \
 	    git checkout --force FETCH_HEAD -- pkg/lib; \
 	    git reset -- pkg/lib'
-	mv pkg/lib src/ && rmdir -p pkg
 
 $(NODE_MODULES_TEST): package.json
 	# if it exists already, npm install won't update it; force that so that we always get up-to-date packages
