@@ -16,3 +16,4 @@ pkg
 POTFILES*
 tmp/
 /po/LINGUAS
+/tools
