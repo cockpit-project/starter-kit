@@ -23,8 +23,7 @@ actions:
 jobs:
   - job: tests
     trigger: pull_request
-    metadata:
-      targets:
+    targets:
       - fedora-all
       - centos-stream-8
       - centos-stream-9
@@ -32,30 +31,26 @@ jobs:
   # Build releases in COPR: https://packit.dev/docs/configuration/#copr_build
   #- job: copr_build
   #  trigger: release
-  #  metadata:
-  #    owner: your_copr_login
-  #    project: your_copr_project
-  #    preserve_project: True
-  #    targets:
-  #      - fedora-all
-  #      - centos-stream-9-x86_64
+  #  owner: your_copr_login
+  #  project: your_copr_project
+  #  preserve_project: True
+  #  targets:
+  #    - fedora-all
+  #    - centos-stream-9-x86_64
 
   # Build releases in Fedora: https://packit.dev/docs/configuration/#propose_downstream
   #- job: propose_downstream
   #  trigger: release
-  #  metadata:
-  #    dist_git_branches:
-  #      - fedora-all
+  #  dist_git_branches:
+  #    - fedora-all
 
   #- job: koji_build
   #  trigger: commit
-  #  metadata:
-  #    dist_git_branches:
-  #      - fedora-all
+  #  dist_git_branches:
+  #    - fedora-all
 
   #- job: bodhi_update
   #  trigger: commit
-  #  metadata:
-  #    dist_git_branches:
-  #      # rawhide updates are created automatically
-  #      - fedora-branched
+  #  dist_git_branches:
+  #    # rawhide updates are created automatically
+  #    - fedora-branched
