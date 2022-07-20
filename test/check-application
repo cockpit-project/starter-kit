@@ -36,24 +36,14 @@ class TestApplication(testlib.MachineCase):
         # change language to German
         b.switch_to_top()
         # the menu and dialog changed several times
-        if self.system_before(258):
-            b.click("#navbar-dropdown")
-            b.click(".display-language-menu a")
-            b.wait_popup('display-language')
-        else:
-            b.click("#toggle-menu")
-            b.click(".display-language-menu")
-            b.wait_popup('display-language-modal')
+        b.click("#toggle-menu")
+        b.click(".display-language-menu")
+        b.wait_popup('display-language-modal')
         b.click("#display-language-modal [data-value='de-de'] button")
         b.click("#display-language-modal button.pf-m-primary")
-        if self.system_before(265) and b.cdp.browser.name == "chromium":
-            # HACK: work around language switching in Chrome not working in current session (Cockpit issue #8160)
-            b.reload(ignore_cache=True)
         b.wait_visible("#content")
         # menu label (from manifest) should be translated
-        # HACK: This regressed in cockpit 265, see https://github.com/cockpit-project/cockpit/pull/17145
-        if self.system_before(265) or not self.system_before(266):
-            b.wait_text("#host-apps a[href='/starter-kit']", "Bausatz")
+        b.wait_text("#host-apps a[href='/starter-kit']", "Bausatz")
 
         b.go("/starter-kit")
         b.enter_page("/starter-kit")
