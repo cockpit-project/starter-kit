@@ -44,6 +44,8 @@ class TestApplication(testlib.MachineCase):
         b.wait_visible("#content")
         # menu label (from manifest) should be translated
         b.wait_text("#host-apps a[href='/starter-kit']", "Bausatz")
+        # window title should be translated; this is not considered as "visible"
+        self.assertIn("Bausatz", b.call_js_func("ph_text", "head title"))
 
         b.go("/starter-kit")
         b.enter_page("/starter-kit")
