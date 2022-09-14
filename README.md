@@ -15,7 +15,7 @@ make
 
 # Installing
 
-`make install` compiles and installs the package in `/usr/share/cockpit/`. The
+`make install` compiles and installs the package in `/usr/local/share/cockpit/`. The
 convenience targets `srpm` and `rpm` build the source and binary rpms,
 respectively. Both of these make use of the `dist` target, which is used
 to generate the distribution tarball. In `production` mode, source files are
