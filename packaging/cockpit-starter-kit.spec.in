@@ -36,7 +36,7 @@ rm -rf dist
 ESLINT=0 NODE_ENV=production make
 
 %install
-%make_install
+%make_install PREFIX=/usr
 
 # drop source maps, they are large and just for debugging
 find %{buildroot}%{_datadir}/cockpit/ -name '*.map' | xargs --no-run-if-empty rm --verbose
