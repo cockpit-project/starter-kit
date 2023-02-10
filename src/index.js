@@ -17,6 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
+import "cockpit-dark-theme";
 import "patternfly/patternfly-4-cockpit.scss";
 
 import React from 'react';
