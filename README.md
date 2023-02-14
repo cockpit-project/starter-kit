@@ -51,6 +51,12 @@ the remote hostname.
 
     $ RSYNC=c make watch
 
+When developing against a remote host as a normal user, `RSYNC_DEVEL` can be
+set to upload code changes to `~/.local/share/cockpit/` instead of
+`/usr/local`.
+
+    $ RSYNC_DEVEL=example.com make watch
+
 To "uninstall" the locally installed version, run `make devel-uninstall`, or
 remove manually the symlink:
 
