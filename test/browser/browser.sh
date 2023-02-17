@@ -19,6 +19,11 @@ dnf update -y pam || true
 # we don't need the H.264 codec, and it is sometimes not available (rhbz#2005760)
 dnf install --disablerepo=fedora-cisco-openh264 -y --setopt=install_weak_deps=False firefox
 
+# nodejs 10 is too old for current Cockpit test API
+if grep -q platform:el8 /etc/os-release; then
+    dnf module switch-to -y nodejs:16
+fi
+
 # create user account for logging in
 if ! id admin 2>/dev/null; then
     useradd -c Administrator -G wheel admin
