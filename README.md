@@ -37,7 +37,7 @@ your browser.
 
 You can also use
 [watch mode](https://webpack.js.org/guides/development/#using-watch-mode) to
-automatically update the webpack on every code change with
+automatically update the bundle on every code change with
 
     $ npm run watch
 
@@ -45,7 +45,7 @@ or
 
     $ make watch
 
-When developing against a virtual machine, webpack can also automatically upload
+When developing against a virtual machine, watch mode can also automatically upload
 the code changes by setting the `RSYNC` environment variable to
 the remote hostname.
 
@@ -67,7 +67,7 @@ remove manually the symlink:
 Cockpit Starter Kit uses [ESLint](https://eslint.org/) to automatically check
 JavaScript code style in `.js` and `.jsx` files.
 
-The linter is executed within every build as a webpack preloader.
+eslint is executed within every build.
 
 For developer convenience, the ESLint can be started explicitly by:
 
@@ -84,7 +84,7 @@ Rules configuration can be found in the `.eslintrc.json` file.
 Cockpit uses [Stylelint](https://stylelint.io/) to automatically check CSS code
 style in `.css` and `scss` files.
 
-The linter is executed within every build as a webpack preloader.
+styleint is executed within every build.
 
 For developer convenience, the Stylelint can be started explicitly by:
 
