@@ -14,14 +14,14 @@ APPSTREAMFILE=org.cockpit-project.$(PACKAGE_NAME).metainfo.xml
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
 # stamp file to check for node_modules/
 NODE_MODULES_TEST=package-lock.json
-# one example file in dist/ from webpack to check if that already ran
-WEBPACK_TEST=dist/manifest.json
+# one example file in dist/ from bundler to check if that already ran
+DIST_TEST=dist/manifest.json
 # one example file in pkg/lib to check if it was already checked out
 COCKPIT_REPO_STAMP=pkg/lib/cockpit-po-plugin.js
 # common arguments for tar, mostly to make the generated tarballs reproducible
 TAR_ARGS = --sort=name --mtime "@$(shell git show --no-patch --format='%at')" --mode=go=rX,u+rw,a-s --numeric-owner --owner=0 --group=0
 
-all: $(WEBPACK_TEST)
+all: $(DIST_TEST)
 
 # checkout common files from Cockpit repository required to build this project;
 # this has no API stability guarantee, so check out a stable tag when you start
@@ -80,18 +80,18 @@ po/LINGUAS:
 %.spec: packaging/%.spec.in
 	sed -e 's/%{VERSION}/$(VERSION)/g' $< > $@
 
-$(WEBPACK_TEST): $(NODE_MODULES_TEST) $(COCKPIT_REPO_STAMP) $(shell find src/ -type f) package.json webpack.config.js
+$(DIST_TEST): $(NODE_MODULES_TEST) $(COCKPIT_REPO_STAMP) $(shell find src/ -type f) package.json webpack.config.js
 	NODE_ENV=$(NODE_ENV) node_modules/.bin/webpack
 
 watch:
-	NODE_ENV=$(NODE_ENV) node_modules/.bin/webpack --watch
+	NODE_ENV=$(NODE_ENV) npm run watch
 
 clean:
 	rm -rf dist/
 	rm -f $(SPEC)
 	rm -f po/LINGUAS
 
-install: $(WEBPACK_TEST) po/LINGUAS
+install: $(DIST_TEST) po/LINGUAS
 	mkdir -p $(DESTDIR)$(PREFIX)/share/cockpit/$(PACKAGE_NAME)
 	cp -r dist/* $(DESTDIR)$(PREFIX)/share/cockpit/$(PACKAGE_NAME)
 	mkdir -p $(DESTDIR)$(PREFIX)/share/metainfo/
@@ -100,7 +100,7 @@ install: $(WEBPACK_TEST) po/LINGUAS
 		-o $(DESTDIR)$(PREFIX)/share/metainfo/$(APPSTREAMFILE)
 
 # this requires a built source tree and avoids having to install anything system-wide
-devel-install: $(WEBPACK_TEST)
+devel-install: $(DIST_TEST)
 	mkdir -p ~/.local/share/cockpit
 	ln -s `pwd`/dist ~/.local/share/cockpit/$(PACKAGE_NAME)
 
@@ -115,12 +115,12 @@ print-version:
 dist: $(TARFILE)
 	@ls -1 $(TARFILE)
 
-# when building a distribution tarball, call webpack with a 'production' environment
+# when building a distribution tarball, call bundler with a 'production' environment
 # we don't ship node_modules for license and compactness reasons; we ship a
 # pre-built dist/ (so it's not necessary) and ship package-lock.json (so that
 # node_modules/ can be reconstructed if necessary)
 $(TARFILE): export NODE_ENV=production
-$(TARFILE): $(WEBPACK_TEST) $(SPEC)
+$(TARFILE): $(DIST_TEST) $(SPEC)
 	if type appstream-util >/dev/null 2>&1; then appstream-util validate-relax --nonet *.metainfo.xml; fi
 	tar --xz $(TAR_ARGS) -cf $(TARFILE) --transform 's,^,$(RPM_NAME)/,' \
 		--exclude packaging/$(SPEC).in --exclude node_modules \
