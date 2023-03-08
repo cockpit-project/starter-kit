@@ -2,9 +2,19 @@
 
 Scaffolding for a [Cockpit](https://cockpit-project.org/) module.
 
+# Development dependencies
+
+On Debian/Ubuntu:
+
+    $ sudo apt install gettext nodejs npm make
+
+On Fedora:
+
+    $ sudo dnf install gettext nodejs npm make
+
+
 # Getting and building the source
 
-Make sure you have `npm` available (usually from your distribution package).
 These commands check out the source and build it into the `dist/` directory:
 
 ```
