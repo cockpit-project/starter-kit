@@ -21,7 +21,7 @@
     "@babel/preset-react": "^7.0.0",
     "argparse": "^2.0.1",
     "babel-loader": "^8.0.6",
-    "chrome-remote-interface": "^0.31.0",
+    "chrome-remote-interface": "^0.32.1",
     "compression-webpack-plugin": "^9.0.0",
     "copy-webpack-plugin": "^9.0.0",
     "css-loader": "^6.5.0",
