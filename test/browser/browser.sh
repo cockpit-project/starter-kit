@@ -2,12 +2,7 @@
 set -eux
 
 TESTS="$(realpath $(dirname "$0"))"
-if [ -d source ]; then
-    # path for standard-test-source
-    SOURCE="$(pwd)/source"
-else
-    SOURCE="$(realpath $TESTS/../..)"
-fi
+SOURCE="$(realpath $TESTS/../..)"
 LOGS="$(pwd)/logs"
 mkdir -p "$LOGS"
 chmod a+w "$LOGS"
