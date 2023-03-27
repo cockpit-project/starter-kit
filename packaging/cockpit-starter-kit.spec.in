@@ -8,9 +8,6 @@ Source0: https://github.com/cockpit-project/starter-kit/releases/download/%{vers
 Source1: https://github.com/cockpit-project/starter-kit/releases/download/%{version}/%{name}-node-%{version}.tar.xz
 BuildArch: noarch
 ExclusiveArch: %{nodejs_arches} noarch
-%if 0%{?fedora}
-BuildRequires: nodejs-devel
-%endif
 BuildRequires: nodejs
 BuildRequires: make
 BuildRequires: libappstream-glib
