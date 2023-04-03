@@ -18,6 +18,8 @@ BuildRequires: libappstream-glib-devel
 
 Requires: cockpit-bridge
 
+%{NPM_PROVIDES}
+
 %description
 Cockpit Starter Kit Example Module
 
