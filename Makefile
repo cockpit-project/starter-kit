@@ -9,6 +9,7 @@ export TEST_OS
 TARFILE=$(RPM_NAME)-$(VERSION).tar.xz
 NODE_CACHE=$(RPM_NAME)-node-$(VERSION).tar.xz
 SPEC=$(RPM_NAME).spec
+SPEC_LIST=nodejs_provides.list
 PREFIX ?= /usr/local
 APPSTREAMFILE=org.cockpit-project.$(PACKAGE_NAME).metainfo.xml
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
@@ -77,8 +78,10 @@ po/LINGUAS:
 # Build/Install/dist
 #
 
-%.spec: packaging/%.spec.in
-	sed -e 's/%{VERSION}/$(VERSION)/g' $< > $@
+%.spec: packaging/%.spec.in $(SPEC_LIST)
+	sed -e 's/%{VERSION}/$(VERSION)/g' \
+		-e '/%{NODEJS_PROVIDES}/{r $(SPEC_LIST)' -e 'd}' \
+		$< > $@
 
 $(DIST_TEST): $(NODE_MODULES_TEST) $(COCKPIT_REPO_STAMP) $(shell find src/ -type f) package.json webpack.config.js
 	NODE_ENV=$(NODE_ENV) node_modules/.bin/webpack
@@ -90,6 +93,7 @@ clean:
 	rm -rf dist/
 	rm -f $(SPEC)
 	rm -f po/LINGUAS
+	rm -f $(SPEC_LIST)
 
 install: $(DIST_TEST) po/LINGUAS
 	mkdir -p $(DESTDIR)$(PREFIX)/share/cockpit/$(PACKAGE_NAME)
@@ -130,6 +134,11 @@ $(NODE_CACHE): $(NODE_MODULES_TEST)
 	tar --xz $(TAR_ARGS) -cf $@ node_modules
 
 node-cache: $(NODE_CACHE)
+
+$(SPEC_LIST): $(NODE_MODULES_TEST)
+	npm ls --json | \
+	  jq -r 'def fn: gsub("@"; "") | gsub("/"; "-"); def fv: gsub("-(?<a>alpha|beta|rc)-?"; "~\(.a)"); .dependencies | to_entries[] | "Provides: bundled(nodejs-\(.key | fn)) = \(.value.version | fv)"' \
+	  > $@
 
 # convenience target for developers
 srpm: $(TARFILE) $(NODE_CACHE) $(SPEC)
