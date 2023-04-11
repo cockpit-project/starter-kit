@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
-
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
 import copy from 'esbuild-plugin-copy';
-import esbuild from 'esbuild';
 
 import { cleanPlugin } from './pkg/lib/esbuild-cleanup-plugin.js';
 import { cockpitCompressPlugin } from './pkg/lib/esbuild-compress-plugin.js';
@@ -13,6 +12,9 @@ import { cockpitRsyncEsbuildPlugin } from './pkg/lib/cockpit-rsync-plugin.js';
 import { esbuildStylesPlugins } from './pkg/lib/esbuild-common.js';
 import { eslintPlugin } from './pkg/lib/esbuild-eslint-plugin.js';
 import { stylelintPlugin } from './pkg/lib/esbuild-stylelint-plugin.js';
+
+const useWasm = os.arch() !== 'x64';
+const esbuild = (await import(useWasm ? 'esbuild-wasm' : 'esbuild')).default;
 
 const production = process.env.NODE_ENV === 'production';
 const watchMode = process.env.ESBUILD_WATCH === "true";
