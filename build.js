@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+
 import copy from 'esbuild-plugin-copy';
 
 import { cleanPlugin } from './pkg/lib/esbuild-cleanup-plugin.js';
@@ -52,9 +53,9 @@ const cwd = process.cwd();
 function watch_dirs(dir, on_change) {
     const callback = (ev, dir, fname) => {
         // only listen for "change" events, as renames are noisy
-        // ignore hidden files and the "4913" temporary file create by vim
+        // ignore hidden files
         const isHidden = /^\./.test(fname);
-        if (ev !== "change" || isHidden || fname === "4913") {
+        if (ev !== "change" || isHidden) {
             return;
         }
         on_change(path.join(dir, fname));
