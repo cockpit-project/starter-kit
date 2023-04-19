@@ -21,6 +21,15 @@ actions:
   get-current-version: make print-version
 
 jobs:
+  - job: copr_build
+    trigger: pull_request
+    targets:
+    - fedora-all
+    - fedora-latest-aarch64
+    - centos-stream-8
+    - centos-stream-9
+    - centos-stream-9-aarch64
+  
   - job: tests
     trigger: pull_request
     targets:
