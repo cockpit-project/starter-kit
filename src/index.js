@@ -18,7 +18,7 @@
  */
 
 import "cockpit-dark-theme";
-import "patternfly/patternfly-4-cockpit.scss";
+import "patternfly/patternfly-5-cockpit.scss";
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -30,7 +30,7 @@ import { Application } from './app.jsx';
  * out of the dist/index.js and since it will maintain the order of the imported CSS,
  * the overrides will be correctly in the end of our stylesheet.
  */
-import "patternfly/patternfly-4-overrides.scss";
+import "patternfly/patternfly-5-overrides.scss";
 import './app.scss';
 
 document.addEventListener("DOMContentLoaded", function () {
