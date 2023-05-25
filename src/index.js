@@ -23,14 +23,6 @@ import "patternfly/patternfly-5-cockpit.scss";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Application } from './app.jsx';
-/*
- * PF4 overrides need to come after the JSX components imports because
- * these are importing CSS stylesheets that we are overriding
- * Having the overrides here will ensure that when mini-css-extract-plugin will extract the CSS
- * out of the dist/index.js and since it will maintain the order of the imported CSS,
- * the overrides will be correctly in the end of our stylesheet.
- */
-import "patternfly/patternfly-5-overrides.scss";
 import './app.scss';
 
 document.addEventListener("DOMContentLoaded", function () {
