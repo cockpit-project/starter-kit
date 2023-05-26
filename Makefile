@@ -29,12 +29,10 @@ all: $(DIST_TEST)
 COCKPIT_REPO_FILES = \
 	pkg/lib \
 	test/common \
-	tools/git-utils.sh \
-	tools/make-bots \
 	$(NULL)
 
 COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
-COCKPIT_REPO_COMMIT = 3ca979d542a4d6cf865f2132e0bdf1b06c49d07f # 292 + 56 commits
+COCKPIT_REPO_COMMIT = 63eee8e92dafcbfffe32f7018cbda7c2e7a2642f # 292-75-g63eee8e92
 
 $(COCKPIT_REPO_FILES): $(COCKPIT_REPO_STAMP)
 COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'
@@ -192,8 +190,8 @@ check: prepare-check
 	TEST_AUDIT_NO_SELINUX=1 test/common/run-tests ${RUN_TESTS_OPTIONS}
 
 # checkout Cockpit's bots for standard test VM images and API to launch them
-bots: tools/make-bots
-	tools/make-bots
+bots: $(COCKPIT_REPO_STAMP)
+	test/common/make-bots
 
 $(NODE_MODULES_TEST): package.json
 	# if it exists already, npm install won't update it; force that so that we always get up-to-date packages

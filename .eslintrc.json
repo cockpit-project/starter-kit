@@ -4,12 +4,9 @@
         "browser": true,
         "es6": true
     },
-    "extends": ["eslint:recommended", "standard", "standard-jsx", "react-app"],
+    "extends": ["eslint:recommended", "standard", "standard-jsx", "standard-react"],
     "parserOptions": {
-        "ecmaVersion": "7",
-        "ecmaFeatures": {
-            "jsx": true
-        },
+        "ecmaVersion": "2022",
         "sourceType": "module"
     },
     "plugins": ["flowtype", "react", "react-hooks"],
