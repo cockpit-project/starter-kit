@@ -13,7 +13,7 @@ if [ ! -d node_modules/chrome-remote-interface ]; then
     rm -f package-lock.json  # otherwise the command below installs *everything*, argh
     mv package.json .package.json
     # only install a subset to save time/space
-    npm install chrome-remote-interface sizzle
+    npm install chrome-remote-interface
     mv .package.json package.json
 fi
 
