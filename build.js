@@ -20,7 +20,7 @@ const esbuild = (await import(useWasm ? 'esbuild-wasm' : 'esbuild')).default;
 const production = process.env.NODE_ENV === 'production';
 const watchMode = process.env.ESBUILD_WATCH === "true";
 // linters dominate the build time, so disable them for production builds by default, but enable in watch mode
-const lint = process.env.LINT ? (process.env.LINT !== 0) : (watchMode || !production);
+const lint = process.env.LINT ? (process.env.LINT !== '0') : (watchMode || !production);
 // List of directories to use when using import statements
 const nodePaths = ['pkg/lib'];
 const outdir = 'dist';
