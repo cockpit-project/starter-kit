@@ -49,7 +49,7 @@ You can also use
 [watch mode](https://esbuild.github.io/api/#watch) to
 automatically update the bundle on every code change with
 
-    $ npm run watch
+    $ ./build.js -w
 
 or
 
@@ -110,7 +110,7 @@ During fast iterative development, you can also choose to not run eslint/styleli
 This speeds up the build and avoids build failures due to e. g. ill-formatted
 css or other issues:
 
-    $ make LINT=0
+    $ ./build.js -es
 
 # Running tests locally
 
