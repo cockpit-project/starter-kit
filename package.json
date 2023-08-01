@@ -32,7 +32,6 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
-    "eslint-plugin-standard": "^5.0.0",
     "htmlparser": "^1.7.7",
     "jed": "^1.1.1",
     "po2json": "^1.0.0-alpha",
@@ -46,8 +45,8 @@
   "dependencies": {
     "@patternfly/patternfly": "5.0.0-alpha.64",
     "@patternfly/react-core": "5.0.0-alpha.115",
-    "@patternfly/react-styles": "5.0.0-alpha.16",
     "@patternfly/react-icons": "5.0.0-alpha.19",
+    "@patternfly/react-styles": "5.0.0-alpha.16",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   }
