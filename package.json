@@ -6,6 +6,9 @@
   "repository": "git@github.com:cockpit/starter-kit.git",
   "author": "",
   "license": "LGPL-2.1",
+  "engines": {
+    "node": ">= 16"
+  },
   "scripts": {
     "watch": "ESBUILD_WATCH='true' ./build.js",
     "build": "./build.js",
