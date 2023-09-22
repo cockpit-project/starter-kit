@@ -12,3 +12,5 @@ export RUN_TESTS_OPTIONS=--track-naughties
 export LINT=1
 
 make check
+
+ruff check test/check*
