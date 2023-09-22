@@ -6,8 +6,10 @@
 
 import testlib
 
-# Nondestructive tests all run in the same running VM. This allows them to run in Packit, Fedora, and RHEL dist-git gating
-# They must not permanently change any file or configuration on the system in a way that influences other tests.
+
+# Nondestructive tests all run in the same running VM. This allows them to run in Packit, Fedora, and
+# RHEL dist-git gating. They must not permanently change any file or configuration on the system in a
+# way that influences other tests.
 @testlib.nondestructive
 class TestApplication(testlib.MachineCase):
     def testBasic(self):
