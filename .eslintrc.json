@@ -9,7 +9,7 @@
         "ecmaVersion": "2022",
         "sourceType": "module"
     },
-    "plugins": ["flowtype", "react", "react-hooks"],
+    "plugins": ["react", "react-hooks"],
     "rules": {
         "indent": ["error", 4,
             {
