@@ -38,7 +38,7 @@
     "htmlparser": "1.7.7",
     "jed": "1.1.1",
     "qunit": "2.20.0",
-    "sass": "1.69.5",
+    "sass": "1.69.6",
     "stylelint": "15.11.0",
     "stylelint-config-standard": "34.0.0",
     "stylelint-config-standard-scss": "11.1.0",
