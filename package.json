@@ -39,10 +39,10 @@
     "jed": "1.1.1",
     "qunit": "2.20.0",
     "sass": "1.70.0",
-    "stylelint": "15.11.0",
-    "stylelint-config-standard": "34.0.0",
-    "stylelint-config-standard-scss": "11.1.0",
-    "stylelint-formatter-pretty": "3.2.1"
+    "stylelint": "16.2.0",
+    "stylelint-config-standard": "36.0.0",
+    "stylelint-config-standard-scss": "13.0.0",
+    "stylelint-formatter-pretty": "4.0.0"
   },
   "dependencies": {
     "@patternfly/patternfly": "5.1.0",
