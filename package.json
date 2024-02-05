@@ -1,10 +1,10 @@
 {
-  "name": "starter-kit",
-  "description": "Scaffolding for a cockpit module",
+  "name": "sensors",
+  "description": "Module that displays all data reported by lm-sensors",
   "type": "module",
   "main": "index.js",
-  "repository": "git@github.com:cockpit/starter-kit.git",
-  "author": "",
+  "repository": "git@github.com:ocristopfer/cockpit-sensors.git",
+  "author": "https://github.com/ocristopfer",
   "license": "LGPL-2.1",
   "engines": {
     "node": ">= 16"

@@ -1,7 +1,7 @@
 summary:
     Run browser integration tests on the host
 require:
-  - cockpit-starter-kit
+  - cockpit-sensors
   - cockpit-ws
   - cockpit-system
   - bzip2

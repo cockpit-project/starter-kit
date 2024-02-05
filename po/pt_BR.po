@@ -1,4 +1,4 @@
-# sensors German translations
+# sensors Portugues translations
 #, fuzzy
 msgid ""
 msgstr ""
@@ -6,9 +6,9 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-09 16:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: Cristopfer Luis <ocristopfer@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: de\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -16,38 +16,38 @@ msgstr ""
 
 #: src/index.html:20
 msgid "Cockpit Sensors"
-msgstr "Cockpit Sensoren"
+msgstr "Sensores para Cockpit"
 
 #: src/manifest.json:8 
 #: org.cockpit-project.sensors.metainfo.xml:5 
 #: src/app.jsx:162
 msgid "Sensors"
-msgstr "Sensoren"
+msgstr "Sensores"
 
 #: org.cockpit-project.sensors.metainfo.xml:8
 msgid "Sensors cockpit module"
-msgstr "Sensoren Cockpit Modul"
+msgstr "Sensores do lm-sensors para o cockpit"
 
 #: src/app.jsx:86
 msgid "lm-sensors not found, you want install it ?"
-msgstr "lm-sensors nicht gefunden, möchten Sie es installieren?"
+msgstr "Não foi encontrado o lm-sensors, deseja instala-lo?"
 
 #: src/app.jsx:95
 msgid "this version of lm-sensors don't suport output sensors data!"
-msgstr "diese Version von lm-sensors unterstützt keine Ausgabe von Sensordaten!"
+msgstr "Essa versão do lm-sensors não tem suporte para saida de dados!"
 
 #: src/app.jsx:130
 msgid "lm-sensors has a bug that converts all data to fahrenheit, including voltage, fans and etc."
-msgstr "lm-sensors hat einen Fehler, der alle Daten in Fahrenheit umwandelt, einschließlich Spannung, Lüfter usw."
+msgstr "lm-sensors tem um problema aonde ele converte todos os dados para fahrenheit, incluindo voltage, vetoinhas e etc."
 
 #: src/app.jsx:200
 msgid "Show temperature in Fahrenheit"
-msgstr "Temperatur in Fahrenheit anzeigen"
+msgstr "Exibir temperatus em Fahrenheit"
 
 #: src/app.jsx:206
 msgid "Expand all cards"
-msgstr "Erweitern Sie alle Karten"
+msgstr "Expandir todos os cards"
 
 #: src/app.jsx:174
 msgid "Install"
-msgstr "Installieren"
+msgstr "Instalar"

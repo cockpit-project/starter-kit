@@ -16,7 +16,7 @@ class TestApplication(testlib.MachineCase):
         b = self.browser
         m = self.machine
 
-        self.login_and_go("/starter-kit")
+        self.login_and_go("/sensors")
         # verify expected heading
         b.wait_text(".pf-v5-c-card__title", "Starter Kit")
 
@@ -39,12 +39,12 @@ class TestApplication(testlib.MachineCase):
         b.click("#display-language-modal button.pf-m-primary")
         b.wait_visible("#content")
         # menu label (from manifest) should be translated
-        b.wait_text("#host-apps a[href='/starter-kit']", "Bausatz")
+        b.wait_text("#host-apps a[href='/sensors']", "Bausatz")
         # window title should be translated; this is not considered as "visible"
         self.assertIn("Bausatz", b.call_js_func("ph_text", "head title"))
 
-        b.go("/starter-kit")
-        b.enter_page("/starter-kit")
+        b.go("/sensors")
+        b.enter_page("/sensors")
         # page label (from js) should be translated
         b.wait_in_text(".pf-v5-c-alert__title", "Läuft auf")
 
