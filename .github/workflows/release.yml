@@ -6,7 +6,7 @@ on:
   push:
     tags:
       # this is a glob, not a regexp
-      - '[0-9]*'
+      - "[0-9]*"
 jobs:
   source:
     runs-on: ubuntu-latest
@@ -25,6 +25,9 @@ jobs:
       # https://github.blog/2022-04-12-git-security-vulnerability-announced/
       - name: Pacify git's permission check
         run: git config --global --add safe.directory /__w/
+
+      - name: Fix git's permission check
+        run: git config --global --add safe.directory /__w/cockpit-sensors-2/cockpit-sensors-2
 
       - name: Workaround for https://github.com/actions/checkout/pull/697
         run: git fetch --force origin $(git describe --tags):refs/tags/$(git describe --tags)
