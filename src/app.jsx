@@ -31,11 +31,13 @@ export class Application extends React.Component {
     }
 
     componentDidMount() {
+        const storageHidedCards = localStorage.getItem('hidedCards');
+        const hidedCards = storageHidedCards != null && storageHidedCards !== '' ? storageHidedCards.split(',') : [];
         const intervalId = setInterval(() => {
             if (!this.state.isShowBtnInstall && !this.state.isError)
                 this.loadSensors();
         }, 1000);
-        this.setState({ intervalId, hidedCards: localStorage.getItem('hidedCards') });
+        this.setState({ intervalId, hidedCards });
     }
 
     componentWillUnmount() {
@@ -142,7 +144,6 @@ export class Application extends React.Component {
         Object.keys(isExpanded).forEach((element) => {
             isExpanded[element] = checked;
         });
-        console.log(this.state.isExpanded, isExpanded);
         this.setState({ isExpanded, expandAllCards: checked });
     };
 
@@ -176,7 +177,6 @@ export class Application extends React.Component {
         this.setState({ isShowLoading: true });
         cockpit.spawn(this.installCmd, { err: "message", superuser: "require" })
                 .done((sucess) => {
-                    console.log('instalou ?');
                     this.setState({ isShowLoading: false, isShowBtnInstall: false, alert: null });
                     cockpit.spawn(["sensors-detect", "--auto"], { err: "message", superuser: "require" })
                             .done((sucess) => {
@@ -189,7 +189,6 @@ export class Application extends React.Component {
                             });
                 })
                 .fail((err) => {
-                    console.log('erro ?');
                     this.setState({ isShowLoading: false, isShowBtnInstall: false });
                     this.setAlert(err.message, 'warning');
                 });
@@ -215,22 +214,26 @@ export class Application extends React.Component {
     };
 
     handleOnExpand = (event, id) => {
-        // eslint-disable-next-line no-console
-
         const isExpanded = this.state.isExpanded;
         isExpanded[id] = !isExpanded[id];
-        console.log(id, this.state.isExpanded, isExpanded);
         this.setState({ isExpanded });
     };
 
     hideCard(cardId) {
-        const hidedCards = this.state.hidedCards.push(cardId);
-        localStorage.setItem('hidedCards', hidedCards)
+        const hidedCards = this.state.hidedCards;
+        hidedCards.push(cardId);
+        localStorage.setItem('hidedCards', hidedCards);
+        this.setState({ hidedCards });
+    }
+
+    handleShowHidedCards() {
+        const hidedCards = [];
+        localStorage.setItem('hidedCards', hidedCards);
         this.setState({ hidedCards });
     }
 
     render() {
-        const { sensors, alert, fahrenheitChecked, isShowBtnInstall, isShowLoading, isExpanded, expandAllCards } = this.state;
+        const { sensors, alert, fahrenheitChecked, isShowBtnInstall, isShowLoading, isExpanded, expandAllCards, hidedCards } = this.state;
         return (
             <>
                 <Card>
@@ -254,14 +257,24 @@ export class Application extends React.Component {
                             {isShowLoading ? <Spinner isSVG /> : <></>}
                             {alert != null ? <Alert variant={alert.variant}>{alert.msg}</Alert> : <></>}
                             {isShowBtnInstall ? <Button onClick={this.handleInstallSensors}>{_('Install')}</Button> : <></>}
+                            {hidedCards.length > 0 ? <Button onClick={() => this.handleShowHidedCards()}>{_('Show hided cards')}</Button> : <></>}
                         </>
                         {sensors !== null
-                            ? Object.entries(sensors).map((key, keyIndex) =>
-                                <div key={key}>
+                            ? Object.entries(sensors).map((key, keyIndex) => {
+                                if (hidedCards.includes(key[0])) {
+                                    return ('');
+                                }
+                                return (
                                     <Card key={key}>
-                                        <CardTitle>{key[0]}</CardTitle>
+                                        <CardTitle>{key[0]}
+                                            <Button variant="plain" aria-label="Action" onClick={() => this.hideCard(key[0])}>
+                                                <EyeSlashIcon />
+                                            </Button>
+                                        </CardTitle>
+
                                         <CardBody>
                                             <CardTitle>{key[1].Adapter}</CardTitle>
+
                                             <Flex key={key[1]}>
                                                 {Object.entries(key[1]).map((item, itemIndex) => {
                                                     if (itemIndex === 0) return "";
@@ -269,8 +282,12 @@ export class Application extends React.Component {
                                                     if (isExpanded[chave] === undefined) {
                                                         isExpanded[chave] = false;
                                                     }
+                                                    if (hidedCards.includes(chave)) {
+                                                        return ('');
+                                                    }
                                                     return (
                                                         <FlexItem key={item} style={{ width: "15%" }}>
+
                                                             <Card key={item} id="expandable-card-icon" isExpanded={isExpanded[chave]}>
                                                                 <CardHeader
                                                                     style={{ justifyContent: 'normal' }}
@@ -281,6 +298,9 @@ export class Application extends React.Component {
                                                                         'aria-expanded': isExpanded[chave]
                                                                     }}
                                                                 ><CardTitle>{item[0]}</CardTitle>
+                                                                    <Button variant="plain" aria-label="Action" onClick={() => this.hideCard(chave)}>
+                                                                        <EyeSlashIcon />
+                                                                    </Button>
                                                                 </CardHeader>
                                                                 <CardTitle>{this.setIcon(Object.keys(item[1])[0])} {this.adjustValue(Object.keys(item[1])[0], Object.values(item[1])[0])}
                                                                 </CardTitle>
@@ -298,13 +318,8 @@ export class Application extends React.Component {
                                             </Flex>
                                         </CardBody>
                                     </Card>
-                                    <div style={{ marginTop: '20px' }}>
-                                        <Button variant="plain" aria-label="Action" onClick={this.hideCard(key)}>
-                                            <EyeSlashIcon />
-                                        </Button>
-
-                                    </div>
-                                </div>
+                                );
+                            }
                             )
                             : ''}
                     </CardBody>
