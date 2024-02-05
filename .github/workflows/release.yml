@@ -32,11 +32,6 @@ jobs:
       - name: Build release
         run: make dist
 
-      - name: Publish GitHub release
-        uses: cockpit-project/action-release@88d994da62d1451c7073e26748c18413fcdf46e9
-        with:
-          filename: "cockpit-sensors.tar.xz"
-
       - name: Build Deb release
         run: make deb
 
@@ -47,3 +42,8 @@ jobs:
           file: target/release/cockpit-sensors.deb
           asset_name: cockpit-sensors.deb
           tag: ${{ github.ref }}
+
+      - name: Publish GitHub release
+        uses: cockpit-project/action-release@88d994da62d1451c7073e26748c18413fcdf46e9
+        with:
+          filename: "cockpit-sensors.tar.xz"
