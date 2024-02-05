@@ -51,6 +51,10 @@ jobs:
           asset_name: cockpit-sensors.deb
           tag: ${{ github.ref }}
 
+
+      - name: Install RPM
+        run: apt update
+
       - name: Install RPM
         run: apt install rpm
 
