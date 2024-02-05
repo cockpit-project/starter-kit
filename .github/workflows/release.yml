@@ -1,11 +1,12 @@
-# Create a GitHub upstream release
+# Create a GitHub upstream release. Replace "TARNAME" with your project tarball
+# name and enable this by dropping the ".disabled" suffix from the file name.
 # See README.md.
 name: release
 on:
   push:
     tags:
       # this is a glob, not a regexp
-      - '[0-9]*'
+      - "[0-9]*"
 jobs:
   source:
     runs-on: ubuntu-latest
