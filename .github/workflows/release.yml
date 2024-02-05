@@ -6,7 +6,7 @@ on:
   push:
     tags:
       # this is a glob, not a regexp
-      - "[0-9]*"
+      - "*"
 jobs:
   source:
     runs-on: ubuntu-latest
@@ -36,3 +36,14 @@ jobs:
         uses: cockpit-project/action-release@88d994da62d1451c7073e26748c18413fcdf46e9
         with:
           filename: "cockpit-sensors.tar.xz"
+
+      - name: Build Deb release
+        run: make deb
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/cockpit-sensors.deb
+          asset_name: cockpit-sensors.deb
+          tag: ${{ github.ref }}
