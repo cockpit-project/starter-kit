@@ -7,4 +7,4 @@ Version: 1.4.2
 Depends: lm-sensors 
 Architecture: all 
 Homepage: https://github.com/ocristopfer/cockpit-sensors 
-Website: https://github.com/ocristopfer/cockpit-sensors 
+Website: https://github.com/ocristopfer/cockpit-sensors
