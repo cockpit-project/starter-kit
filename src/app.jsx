@@ -20,7 +20,7 @@
 import cockpit from 'cockpit';
 import React from 'react';
 import { Alert, Card, CardTitle, CardHeader, CardBody, CardExpandableContent, Checkbox, Button, Spinner, Flex, FlexItem } from '@patternfly/react-core';
-import { FanIcon, ThermometerHalfIcon, ChargingStationIcon, CpuIcon } from '@patternfly/react-icons/dist/esm/icons/';
+import { FanIcon, ThermometerHalfIcon, ChargingStationIcon, CpuIcon, EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/';
 
 const _ = cockpit.gettext;
 
@@ -31,11 +31,13 @@ export class Application extends React.Component {
     }
 
     componentDidMount() {
+        const storageHidedCards = localStorage.getItem('hidedCards');
+        const hidedCards = storageHidedCards != null && storageHidedCards !== '' ? storageHidedCards.split(',') : [];
         const intervalId = setInterval(() => {
             if (!this.state.isShowBtnInstall && !this.state.isError)
                 this.loadSensors();
         }, 1000);
-        this.setState({ intervalId });
+        this.setState({ intervalId, hidedCards });
     }
 
     componentWillUnmount() {
@@ -142,7 +144,6 @@ export class Application extends React.Component {
         Object.keys(isExpanded).forEach((element) => {
             isExpanded[element] = checked;
         });
-        console.log(this.state.isExpanded, isExpanded);
         this.setState({ isExpanded, expandAllCards: checked });
     };
 
@@ -176,7 +177,6 @@ export class Application extends React.Component {
         this.setState({ isShowLoading: true });
         cockpit.spawn(this.installCmd, { err: "message", superuser: "require" })
                 .done((sucess) => {
-                    console.log('instalou ?');
                     this.setState({ isShowLoading: false, isShowBtnInstall: false, alert: null });
                     cockpit.spawn(["sensors-detect", "--auto"], { err: "message", superuser: "require" })
                             .done((sucess) => {
@@ -189,7 +189,6 @@ export class Application extends React.Component {
                             });
                 })
                 .fail((err) => {
-                    console.log('erro ?');
                     this.setState({ isShowLoading: false, isShowBtnInstall: false });
                     this.setAlert(err.message, 'warning');
                 });
@@ -215,22 +214,26 @@ export class Application extends React.Component {
     };
 
     handleOnExpand = (event, id) => {
-        // eslint-disable-next-line no-console
-
         const isExpanded = this.state.isExpanded;
         isExpanded[id] = !isExpanded[id];
-        console.log(id, this.state.isExpanded, isExpanded);
         this.setState({ isExpanded });
     };
 
     hideCard(cardId) {
-        const hidedCards = this.state.hidedCards.push(cardId);
-        console.log(cardId, hidedCards);
+        const hidedCards = this.state.hidedCards;
+        hidedCards.push(cardId);
+        localStorage.setItem('hidedCards', hidedCards);
+        this.setState({ hidedCards });
+    }
+
+    handleShowHidedCards() {
+        const hidedCards = [];
+        localStorage.setItem('hidedCards', hidedCards);
         this.setState({ hidedCards });
     }
 
     render() {
-        const { sensors, alert, fahrenheitChecked, isShowBtnInstall, isShowLoading, isExpanded, expandAllCards } = this.state;
+        const { sensors, alert, fahrenheitChecked, isShowBtnInstall, isShowLoading, isExpanded, expandAllCards, hidedCards } = this.state;
         return (
             <>
                 <Card>
@@ -254,49 +257,69 @@ export class Application extends React.Component {
                             {isShowLoading ? <Spinner isSVG /> : <></>}
                             {alert != null ? <Alert variant={alert.variant}>{alert.msg}</Alert> : <></>}
                             {isShowBtnInstall ? <Button onClick={this.handleInstallSensors}>{_('Install')}</Button> : <></>}
+                            {hidedCards.length > 0 ? <Button onClick={() => this.handleShowHidedCards()}>{_('Show hided cards')}</Button> : <></>}
                         </>
                         {sensors !== null
-                            ? Object.entries(sensors).map((key, keyIndex) =>
-                                <Card key={key}>
-                                    <CardTitle>{key[0]}</CardTitle>
-                                    <CardBody>
-                                        <CardTitle>{key[1].Adapter}</CardTitle>
-                                        <Flex key={key[1]}>
-                                            {Object.entries(key[1]).map((item, itemIndex) => {
-                                                if (itemIndex === 0) return "";
-                                                const chave = keyIndex.toString() + itemIndex.toString();
-                                                if (isExpanded[chave] === undefined) {
-                                                    isExpanded[chave] = false;
-                                                }
-                                                return (
-                                                    <FlexItem key={item} style={{ width: "15%" }}>
-                                                        <Card key={item} id="expandable-card-icon" isExpanded={isExpanded[chave]}>
-                                                            <CardHeader
-                                                                style={{ justifyContent: 'normal' }}
-                                                                onExpand={(e) => this.handleOnExpand(e, chave)}
-                                                                toggleButtonProps={{
-                                                                    id: 'toggle-button2',
-                                                                    'aria-label': 'Patternfly Details',
-                                                                    'aria-expanded': isExpanded[chave]
-                                                                }}
-                                                            ><CardTitle>{item[0]}</CardTitle>
-                                                            </CardHeader>
-                                                            <CardTitle>{this.setIcon(Object.keys(item[1])[0])} {this.adjustValue(Object.keys(item[1])[0], Object.values(item[1])[0])}
-                                                            </CardTitle>
-                                                            <CardExpandableContent>
-                                                                <CardBody>
-                                                                    {Object.entries(item[1]).map((sensors, index) => (
-                                                                        <span key={sensors}>{this.adjustLabel(sensors[0])}: {sensors[1]}<br /></span>
-                                                                    ))}
-                                                                </CardBody>
-                                                            </CardExpandableContent>
-                                                        </Card>
-                                                    </FlexItem>
-                                                );
-                                            })}
-                                        </Flex>
-                                    </CardBody>
-                                </Card>
+                            ? Object.entries(sensors).map((key, keyIndex) => {
+                                if (hidedCards.includes(key[0])) {
+                                    return ('');
+                                }
+                                return (
+                                    <Card key={key}>
+                                        <CardTitle>{key[0]}
+                                            <Button variant="plain" aria-label="Action" onClick={() => this.hideCard(key[0])}>
+                                                <EyeSlashIcon />
+                                            </Button>
+                                        </CardTitle>
+
+                                        <CardBody>
+                                            <CardTitle>{key[1].Adapter}</CardTitle>
+
+                                            <Flex key={key[1]}>
+                                                {Object.entries(key[1]).map((item, itemIndex) => {
+                                                    if (itemIndex === 0) return "";
+                                                    const chave = keyIndex.toString() + itemIndex.toString();
+                                                    if (isExpanded[chave] === undefined) {
+                                                        isExpanded[chave] = false;
+                                                    }
+                                                    if (hidedCards.includes(chave)) {
+                                                        return ('');
+                                                    }
+                                                    return (
+                                                        <FlexItem key={item} style={{ width: "15%" }}>
+
+                                                            <Card key={item} id="expandable-card-icon" isExpanded={isExpanded[chave]}>
+                                                                <CardHeader
+                                                                    style={{ justifyContent: 'normal' }}
+                                                                    onExpand={(e) => this.handleOnExpand(e, chave)}
+                                                                    toggleButtonProps={{
+                                                                        id: 'toggle-button2',
+                                                                        'aria-label': 'Patternfly Details',
+                                                                        'aria-expanded': isExpanded[chave]
+                                                                    }}
+                                                                ><CardTitle>{item[0]}</CardTitle>
+                                                                    <Button variant="plain" aria-label="Action" onClick={() => this.hideCard(chave)}>
+                                                                        <EyeSlashIcon />
+                                                                    </Button>
+                                                                </CardHeader>
+                                                                <CardTitle>{this.setIcon(Object.keys(item[1])[0])} {this.adjustValue(Object.keys(item[1])[0], Object.values(item[1])[0])}
+                                                                </CardTitle>
+                                                                <CardExpandableContent>
+                                                                    <CardBody>
+                                                                        {Object.entries(item[1]).map((sensors, index) => (
+                                                                            <span key={sensors}>{this.adjustLabel(sensors[0])}: {sensors[1]}<br /></span>
+                                                                        ))}
+                                                                    </CardBody>
+                                                                </CardExpandableContent>
+                                                            </Card>
+                                                        </FlexItem>
+                                                    );
+                                                })}
+                                            </Flex>
+                                        </CardBody>
+                                    </Card>
+                                );
+                            }
                             )
                             : ''}
                     </CardBody>
