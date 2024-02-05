@@ -37,4 +37,4 @@ jobs:
       - name: Publish GitHub release
         uses: cockpit-project/action-release@88d994da62d1451c7073e26748c18413fcdf46e9
         with:
-          filename: ["cockpit-sensors.tar.xz", "cockpit-sensors.deb"]
+          filename: "cockpit-sensors.tar.xz"
