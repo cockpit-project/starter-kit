@@ -1,3 +1,4 @@
+%define _rpmfilename %%{NAME}.rpm
 Name: cockpit-sensors
 Version: %{VERSION}
 Release: 1%{?dist}

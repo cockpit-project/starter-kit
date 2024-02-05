@@ -50,3 +50,17 @@ jobs:
           file: cockpit-sensors.deb
           asset_name: cockpit-sensors.deb
           tag: ${{ github.ref }}
+
+      - name: Install RPM
+        run: apt install rpm
+
+      - name: Build RPM
+        run: make rpm
+
+      - name: Upload RPM binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: cockpit-sensors.rpm
+          asset_name: cockpit-sensors.rpm
+          tag: ${{ github.ref }}
