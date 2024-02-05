@@ -6,8 +6,8 @@ ifeq ($(TEST_OS),)
 TEST_OS = centos-8-stream
 endif
 export TEST_OS
-TARFILE=$(RPM_NAME)-$(VERSION).tar.xz
-NODE_CACHE=$(RPM_NAME)-node-$(VERSION).tar.xz
+TARFILE=$(RPM_NAME).tar.xz
+NODE_CACHE=$(RPM_NAME)-node.tar.xz
 SPEC=$(RPM_NAME).spec
 PREFIX ?= /usr/local
 APPSTREAMFILE=org.cockpit-project.$(PACKAGE_NAME).metainfo.xml
