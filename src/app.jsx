@@ -20,7 +20,7 @@
 import cockpit from 'cockpit';
 import React from 'react';
 import { Alert, Card, CardTitle, CardHeader, CardBody, CardExpandableContent, Checkbox, Button, Spinner, Flex, FlexItem } from '@patternfly/react-core';
-import { FanIcon, ThermometerHalfIcon, ChargingStationIcon, CpuIcon } from '@patternfly/react-icons/dist/esm/icons/';
+import { FanIcon, ThermometerHalfIcon, ChargingStationIcon, CpuIcon, EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/';
 
 const _ = cockpit.gettext;
 
@@ -35,7 +35,7 @@ export class Application extends React.Component {
             if (!this.state.isShowBtnInstall && !this.state.isError)
                 this.loadSensors();
         }, 1000);
-        this.setState({ intervalId });
+        this.setState({ intervalId, hidedCards: localStorage.getItem('hidedCards') });
     }
 
     componentWillUnmount() {
@@ -225,7 +225,7 @@ export class Application extends React.Component {
 
     hideCard(cardId) {
         const hidedCards = this.state.hidedCards.push(cardId);
-        console.log(cardId, hidedCards);
+        localStorage.setItem('hidedCards', hidedCards)
         this.setState({ hidedCards });
     }
 
@@ -257,46 +257,54 @@ export class Application extends React.Component {
                         </>
                         {sensors !== null
                             ? Object.entries(sensors).map((key, keyIndex) =>
-                                <Card key={key}>
-                                    <CardTitle>{key[0]}</CardTitle>
-                                    <CardBody>
-                                        <CardTitle>{key[1].Adapter}</CardTitle>
-                                        <Flex key={key[1]}>
-                                            {Object.entries(key[1]).map((item, itemIndex) => {
-                                                if (itemIndex === 0) return "";
-                                                const chave = keyIndex.toString() + itemIndex.toString();
-                                                if (isExpanded[chave] === undefined) {
-                                                    isExpanded[chave] = false;
-                                                }
-                                                return (
-                                                    <FlexItem key={item} style={{ width: "15%" }}>
-                                                        <Card key={item} id="expandable-card-icon" isExpanded={isExpanded[chave]}>
-                                                            <CardHeader
-                                                                style={{ justifyContent: 'normal' }}
-                                                                onExpand={(e) => this.handleOnExpand(e, chave)}
-                                                                toggleButtonProps={{
-                                                                    id: 'toggle-button2',
-                                                                    'aria-label': 'Patternfly Details',
-                                                                    'aria-expanded': isExpanded[chave]
-                                                                }}
-                                                            ><CardTitle>{item[0]}</CardTitle>
-                                                            </CardHeader>
-                                                            <CardTitle>{this.setIcon(Object.keys(item[1])[0])} {this.adjustValue(Object.keys(item[1])[0], Object.values(item[1])[0])}
-                                                            </CardTitle>
-                                                            <CardExpandableContent>
-                                                                <CardBody>
-                                                                    {Object.entries(item[1]).map((sensors, index) => (
-                                                                        <span key={sensors}>{this.adjustLabel(sensors[0])}: {sensors[1]}<br /></span>
-                                                                    ))}
-                                                                </CardBody>
-                                                            </CardExpandableContent>
-                                                        </Card>
-                                                    </FlexItem>
-                                                );
-                                            })}
-                                        </Flex>
-                                    </CardBody>
-                                </Card>
+                                <div key={key}>
+                                    <Card key={key}>
+                                        <CardTitle>{key[0]}</CardTitle>
+                                        <CardBody>
+                                            <CardTitle>{key[1].Adapter}</CardTitle>
+                                            <Flex key={key[1]}>
+                                                {Object.entries(key[1]).map((item, itemIndex) => {
+                                                    if (itemIndex === 0) return "";
+                                                    const chave = keyIndex.toString() + itemIndex.toString();
+                                                    if (isExpanded[chave] === undefined) {
+                                                        isExpanded[chave] = false;
+                                                    }
+                                                    return (
+                                                        <FlexItem key={item} style={{ width: "15%" }}>
+                                                            <Card key={item} id="expandable-card-icon" isExpanded={isExpanded[chave]}>
+                                                                <CardHeader
+                                                                    style={{ justifyContent: 'normal' }}
+                                                                    onExpand={(e) => this.handleOnExpand(e, chave)}
+                                                                    toggleButtonProps={{
+                                                                        id: 'toggle-button2',
+                                                                        'aria-label': 'Patternfly Details',
+                                                                        'aria-expanded': isExpanded[chave]
+                                                                    }}
+                                                                ><CardTitle>{item[0]}</CardTitle>
+                                                                </CardHeader>
+                                                                <CardTitle>{this.setIcon(Object.keys(item[1])[0])} {this.adjustValue(Object.keys(item[1])[0], Object.values(item[1])[0])}
+                                                                </CardTitle>
+                                                                <CardExpandableContent>
+                                                                    <CardBody>
+                                                                        {Object.entries(item[1]).map((sensors, index) => (
+                                                                            <span key={sensors}>{this.adjustLabel(sensors[0])}: {sensors[1]}<br /></span>
+                                                                        ))}
+                                                                    </CardBody>
+                                                                </CardExpandableContent>
+                                                            </Card>
+                                                        </FlexItem>
+                                                    );
+                                                })}
+                                            </Flex>
+                                        </CardBody>
+                                    </Card>
+                                    <div style={{ marginTop: '20px' }}>
+                                        <Button variant="plain" aria-label="Action" onClick={this.hideCard(key)}>
+                                            <EyeSlashIcon />
+                                        </Button>
+
+                                    </div>
+                                </div>
                             )
                             : ''}
                     </CardBody>
