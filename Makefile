@@ -190,3 +190,17 @@ $(NODE_MODULES_TEST): package.json
 	env -u NODE_ENV npm prune
 
 .PHONY: all clean install devel-install devel-uninstall print-version dist node-cache rpm prepare-check check vm print-vm
+
+
+deb:
+	rm -fr "`pwd`/output"
+	mkdir -m 0755 -p "`pwd`/output"
+	mkdir -m 0755 -p "`pwd`/output/cockpit-$(PACKAGE_NAME)"
+	mkdir -m 0755 -p "`pwd`/output/cockpit-$(PACKAGE_NAME)/DEBIAN"
+	mkdir -m 0755 -p "`pwd`/output/cockpit-$(PACKAGE_NAME)/usr/share/cockpit/$(PACKAGE_NAME)"
+	cp -r dist/* "`pwd`/output/cockpit-$(PACKAGE_NAME)/usr/share/cockpit/$(PACKAGE_NAME)"
+	cp packaging/cockpit-$(PACKAGE_NAME).control "`pwd`/output/cockpit-$(PACKAGE_NAME)/DEBIAN/control"
+	chmod 755 "`pwd`/output/cockpit-$(PACKAGE_NAME)/DEBIAN/control"
+	dpkg-deb -Zxz --build output/cockpit-$(PACKAGE_NAME)
+	mv "`pwd`/output/cockpit-$(PACKAGE_NAME).deb" "`pwd`/"
+	rm -r "`pwd`/output"
