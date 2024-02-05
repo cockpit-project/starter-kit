@@ -32,6 +32,9 @@ jobs:
       - name: Build release
         run: make dist
 
+      - name: Build Deb release
+        run: make deb
+
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -39,9 +42,6 @@ jobs:
           file: cockpit-sensors.tar.xz
           asset_name: cockpit-sensors.tar.xz
           tag: ${{ github.ref }}
-
-      - name: Build Deb release
-        run: make deb
 
       - name: Upload Deb binaries to release
         uses: svenstaro/upload-release-action@v2
