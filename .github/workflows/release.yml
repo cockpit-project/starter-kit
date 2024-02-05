@@ -32,18 +32,21 @@ jobs:
       - name: Build release
         run: make dist
 
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: cockpit-sensors.tar.xz
+          asset_name: cockpit-sensors.tar.xz
+          tag: ${{ github.ref }}
+
       - name: Build Deb release
         run: make deb
 
-      - name: Upload binaries to release
+      - name: Upload Deb binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: cockpit-sensors.deb
           asset_name: cockpit-sensors.deb
           tag: ${{ github.ref }}
-
-      - name: Publish GitHub release
-        uses: cockpit-project/action-release@88d994da62d1451c7073e26748c18413fcdf46e9
-        with:
-          filename: "cockpit-sensors.tar.xz"
