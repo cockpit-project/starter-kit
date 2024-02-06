@@ -18,35 +18,7 @@ class TestApplication(testlib.MachineCase):
 
         self.login_and_go("/sensors")
         # verify expected heading
-        b.wait_text(".pf-v5-c-card__title", "Starter Kit")
-
-        # verify expected host name
-        hostname = m.execute("cat /etc/hostname").strip()
-        b.wait_in_text(".pf-v5-c-alert__title", "Running on " + hostname)
-
-        # change current hostname
-        self.write_file("/etc/hostname", "new-" + hostname)
-        # verify new hostname name
-        b.wait_in_text(".pf-v5-c-alert__title", "Running on new-" + hostname)
-
-        # change language to German
-        b.switch_to_top()
-        # the menu and dialog changed several times
-        b.click("#toggle-menu")
-        b.click(".display-language-menu")
-        b.wait_popup('display-language-modal')
-        b.click("#display-language-modal [data-value='de-de'] button")
-        b.click("#display-language-modal button.pf-m-primary")
-        b.wait_visible("#content")
-        # menu label (from manifest) should be translated
-        b.wait_text("#host-apps a[href='/sensors']", "Bausatz")
-        # window title should be translated; this is not considered as "visible"
-        self.assertIn("Bausatz", b.call_js_func("ph_text", "head title"))
-
-        b.go("/sensors")
-        b.enter_page("/sensors")
-        # page label (from js) should be translated
-        b.wait_in_text(".pf-v5-c-alert__title", "Läuft auf")
+        b.wait_text(".pf-v5-c-card__title", "Sensors")
 
 
 if __name__ == '__main__':
