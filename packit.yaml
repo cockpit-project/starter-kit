@@ -41,27 +41,27 @@ jobs:
 
   # Build releases in COPR: https://packit.dev/docs/configuration/#copr_build
   - job: copr_build
-   trigger: release
-   owner: ocristopfer
-   project: cockpit-sensors
-   preserve_project: True
-   targets:
-     - fedora-all
-     - centos-stream-9-x86_64
+    trigger: release
+    owner: ocristopfer
+    project: cockpit-sensors
+    preserve_project: True
+    targets:
+      - fedora-all
+      - centos-stream-9-x86_64
 
   # Build releases in Fedora: https://packit.dev/docs/configuration/#propose_downstream
   - job: propose_downstream
-   trigger: release
-   dist_git_branches:
-     - fedora-all
+    trigger: release
+    dist_git_branches:
+      - fedora-all
 
   - job: koji_build
-   trigger: commit
-   dist_git_branches:
-     - fedora-all
+    trigger: commit
+    dist_git_branches:
+      - fedora-all
 
   - job: bodhi_update
-   trigger: commit
-   dist_git_branches:
-     # rawhide updates are created automatically
-     - fedora-branched
+    trigger: commit
+    dist_git_branches:
+      # rawhide updates are created automatically
+      - fedora-branched
