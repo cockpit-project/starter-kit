@@ -21,6 +21,9 @@ wget https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/coc
 - .deb package:
   https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.deb
 
+- .rpm package:
+  https://github.com/ocristopfer/cockpit-sensors/releases/download/1.0/cockpit-sensors.noarch.rpm
+
 # Prints
 
 ![alt text](https://i.ibb.co/tQ22dF4/cockpit.png)
