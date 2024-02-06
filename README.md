@@ -19,10 +19,10 @@ wget https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/coc
 ```
 
 - .deb package:
-  https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.deb
+  [cockpit-sensors.deb](https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.deb)
 
 - .rpm package:
-  https://github.com/ocristopfer/cockpit-sensors/releases/download/1.0/cockpit-sensors.noarch.rpm
+  [cockpit-sensors.noarch.rpm](https://github.com/ocristopfer/cockpit-sensors/releases/latest/download/cockpit-sensors.noarch.rpm)
 
 # Prints
 
