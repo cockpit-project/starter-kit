@@ -29,6 +29,7 @@ all: $(DIST_TEST)
 COCKPIT_REPO_FILES = \
 	pkg/lib \
 	test/common \
+	test/static-code \
 	$(NULL)
 
 COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
@@ -177,6 +178,9 @@ prepare-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
 # this will run all tests/check-* and format them as TAP
 check: prepare-check
 	test/common/run-tests ${RUN_TESTS_OPTIONS}
+
+codecheck: test/static-code $(NODE_MODULES_TEST)
+	test/static-code
 
 # checkout Cockpit's bots for standard test VM images and API to launch them
 bots: $(COCKPIT_REPO_STAMP)
