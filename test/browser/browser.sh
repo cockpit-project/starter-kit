@@ -5,7 +5,7 @@ export TEST_BROWSER=${TEST_BROWSER:-firefox}
 
 TESTS="$(realpath $(dirname "$0"))"
 export SOURCE="$(realpath $TESTS/../..)"
-export LOGS="$(pwd)/logs"
+export LOGS="${TMT_TEST_DATA:-$(pwd)/logs}"
 mkdir -p "$LOGS"
 chmod a+w "$LOGS"
 
