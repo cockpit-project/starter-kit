@@ -33,11 +33,13 @@ export class Application extends React.Component {
     componentDidMount() {
         const storageHidedCards = localStorage.getItem('hidedCards');
         const hidedCards = storageHidedCards != null && storageHidedCards !== '' ? storageHidedCards.split(',') : [];
+        const fahrenheitChecked = Boolean(localStorage.getItem('fahrenheitChecked')) || false
+        const isExpanded = JSON.parse(localStorage.getItem('isExpanded')) || {}    
         const intervalId = setInterval(() => {
             if (!this.state.isShowBtnInstall && !this.state.isError)
                 this.loadSensors();
         }, 1000);
-        this.setState({ intervalId, hidedCards });
+        this.setState({ intervalId, hidedCards, fahrenheitChecked, isExpanded });
     }
 
     componentWillUnmount() {
@@ -129,21 +131,22 @@ export class Application extends React.Component {
         this.setState({ alert: { msg, variant } });
     };
 
-    handleChange = (checked, event) => {
+    handleChangeFahrenheit = (event, checked) => {
         this.setState({ fahrenheitChecked: checked });
+        localStorage.setItem('fahrenheitChecked', checked);
         if (checked) {
-            // this.setAlert(_('lm-sensors has a bug that converts all data to fahrenheit, including voltage, fans and etc.'), 'info');
             this.setState({ fahrenheitTemp: ['-f'] });
         } else {
-            this.setState({ fahrenheitTemp: [], alert: null });
+            this.setState({ fahrenheitTemp: [] });
         }
     };
 
-    handleChangeCards = (checked, event) => {
+    handleChangeCards = (event, checked) => {
         const isExpanded = this.state.isExpanded;
         Object.keys(isExpanded).forEach((element) => {
             isExpanded[element] = checked;
         });
+        localStorage.setItem('isExpanded', JSON.stringify(isExpanded));
         this.setState({ isExpanded, expandAllCards: checked });
     };
 
@@ -169,7 +172,7 @@ export class Application extends React.Component {
                     }
                 })
                 .fail((e) => {
-                    this.getLmSensorsInstallCmd(index + 1);
+                   this.getLmSensorsInstallCmd(index + 1);
                 });
     };
 
@@ -189,7 +192,7 @@ export class Application extends React.Component {
                             });
                 })
                 .fail((err) => {
-                    this.setState({ isShowLoading: false, isShowBtnInstall: false });
+                    this.setState({ isShowLoading: false, isShowBtnInstall: true });
                     this.setAlert(err.message, 'warning');
                 });
     };
@@ -242,7 +245,7 @@ export class Application extends React.Component {
                         <Checkbox
                             label={_("Show temperature in Fahrenheit")}
                             isChecked={fahrenheitChecked}
-                            onChange={this.handleChange}
+                            onChange={this.handleChangeFahrenheit}
                             id="fahrenheit-checkbox"
                             name="fahrenheit-checkbox"
                         />
@@ -253,12 +256,11 @@ export class Application extends React.Component {
                             id="allcards-checkbox"
                             name="allcards-checkbox"
                         />
-                        <>
-                            {isShowLoading ? <Spinner isSVG /> : <></>}
-                            {alert != null ? <Alert variant={alert.variant}>{alert.msg}</Alert> : <></>}
-                            {isShowBtnInstall ? <Button onClick={this.handleInstallSensors}>{_('Install')}</Button> : <></>}
-                            {hidedCards.length > 0 ? <Button onClick={() => this.handleShowHidedCards()}>{_('Show hided cards')}</Button> : <></>}
-                        </>
+                        {isShowLoading ? <Spinner isSVG /> : <></>}
+                        {alert != null ? <Alert variant={alert.variant}>{alert.msg}</Alert> : <></>}
+                        {isShowBtnInstall ? <Button onClick={this.handleInstallSensors}>{_('Install')}</Button> : <></>}
+                        {hidedCards.length > 0 ? <Button onClick={() => this.handleShowHidedCards()}>{_('Show hided cards')}</Button> : <></>}
+                        
                         {sensors !== null
                             ? Object.entries(sensors).map((key, keyIndex) => {
                                 if (hidedCards.includes(key[0])) {
