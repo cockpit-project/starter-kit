@@ -33,8 +33,8 @@ export class Application extends React.Component {
     componentDidMount() {
         const storageHidedCards = localStorage.getItem('hidedCards');
         const hidedCards = storageHidedCards != null && storageHidedCards !== '' ? storageHidedCards.split(',') : [];
-        const fahrenheitChecked = Boolean(localStorage.getItem('fahrenheitChecked')) || false
-        const isExpanded = JSON.parse(localStorage.getItem('isExpanded')) || {}    
+        const fahrenheitChecked = Boolean(localStorage.getItem('fahrenheitChecked')) || false;
+        const isExpanded = JSON.parse(localStorage.getItem('isExpanded')) || {};
         const intervalId = setInterval(() => {
             if (!this.state.isShowBtnInstall && !this.state.isError)
                 this.loadSensors();
@@ -172,7 +172,7 @@ export class Application extends React.Component {
                     }
                 })
                 .fail((e) => {
-                   this.getLmSensorsInstallCmd(index + 1);
+                    this.getLmSensorsInstallCmd(index + 1);
                 });
     };
 
@@ -260,7 +260,7 @@ export class Application extends React.Component {
                         {alert != null ? <Alert variant={alert.variant}>{alert.msg}</Alert> : <></>}
                         {isShowBtnInstall ? <Button onClick={this.handleInstallSensors}>{_('Install')}</Button> : <></>}
                         {hidedCards.length > 0 ? <Button onClick={() => this.handleShowHidedCards()}>{_('Show hided cards')}</Button> : <></>}
-                        
+
                         {sensors !== null
                             ? Object.entries(sensors).map((key, keyIndex) => {
                                 if (hidedCards.includes(key[0])) {

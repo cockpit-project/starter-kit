@@ -19,7 +19,7 @@ class TestApplication(testlib.MachineCase):
 
         self.login_and_go("/sensors")
         # verify expected heading
-        b.wait_text(".pf-v5-c-card__title", "Sensors")
+        b.wait_text(".pf-v5-c-card__title-text", "Sensors")
 
 
 if __name__ == '__main__':
