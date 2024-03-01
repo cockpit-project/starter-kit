@@ -45,10 +45,10 @@
     "stylelint-formatter-pretty": "4.0.0"
   },
   "dependencies": {
-    "@patternfly/patternfly": "5.2.0",
-    "@patternfly/react-core": "5.2.0",
-    "@patternfly/react-icons": "5.2.0",
-    "@patternfly/react-styles": "5.2.0",
+    "@patternfly/patternfly": "5.2.1",
+    "@patternfly/react-core": "5.2.1",
+    "@patternfly/react-icons": "5.2.1",
+    "@patternfly/react-styles": "5.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   }
