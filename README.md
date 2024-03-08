@@ -188,10 +188,9 @@ see the [packit.yaml](./packit.yaml) control file.
 # Automated maintenance
 
 It is important to keep your [NPM modules](./package.json) up to date, to keep
-up with security updates and bug fixes. This is done with the
-[npm-update bot script](https://github.com/cockpit-project/bots/blob/main/npm-update)
-which is run weekly or upon [manual request](https://github.com/cockpit-project/starter-kit/actions) through the
-[npm-update.yml](.github/workflows/npm-update.yml) [GitHub action](https://github.com/features/actions).
+up with security updates and bug fixes. This happens with
+[dependabot](https://github.com/dependabot),
+see [configuration file](.github/dependabot.yml).
 
 # Further reading
 
