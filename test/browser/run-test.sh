@@ -27,6 +27,9 @@ if [ "${TEST_OS#centos-}" != "$TEST_OS" ]; then
     TEST_OS="${TEST_OS}-stream"
 fi
 
+# Chromium sometimes gets OOM killed on testing farm
+export TEST_BROWSER=firefox
+
 EXCLUDES=""
 
 # make it easy to check in logs
