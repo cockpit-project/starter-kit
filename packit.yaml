@@ -29,7 +29,8 @@ jobs:
     - centos-stream-8
     - centos-stream-9
     - centos-stream-9-aarch64
-  
+    - centos-stream-10
+
   - job: tests
     trigger: pull_request
     targets:
@@ -38,6 +39,7 @@ jobs:
       - centos-stream-8
       - centos-stream-9
       - centos-stream-9-aarch64
+      - centos-stream-10
 
   # Build releases in COPR: https://packit.dev/docs/configuration/#copr_build
   #- job: copr_build
