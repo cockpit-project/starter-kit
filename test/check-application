@@ -33,7 +33,7 @@ class TestApplication(testlib.MachineCase):
         b.switch_to_top()
         # the menu and dialog changed several times
         b.click("#toggle-menu")
-        b.click(".display-language-menu")
+        b.click("button.display-language-menu")
         b.wait_popup('display-language-modal')
         b.click("#display-language-modal [data-value='de-de'] button")
         b.click("#display-language-modal button.pf-m-primary")
