@@ -11,7 +11,7 @@ test_task:
   env:
     matrix:
       - TEST_OS: fedora-39
-      - TEST_OS: centos-8-stream
+      - TEST_OS: centos-9-stream
 
   fix_kvm_script: sudo chmod 666 /dev/kvm
 
