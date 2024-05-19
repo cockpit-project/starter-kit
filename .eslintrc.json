@@ -43,7 +43,7 @@
         "standard/no-callback-literal": "off"
     },
     "globals": {
-        "require": false,
-        "module": false
+        "require": "readonly",
+        "module": "readonly"
     }
 }
