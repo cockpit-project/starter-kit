@@ -10,7 +10,9 @@ BuildArch: noarch
 %if ! 0%{?suse_version}
 ExclusiveArch: %{nodejs_arches} noarch
 %endif
-BuildRequires: nodejs
+%if ! 0%{?rhel} || 0%{?rhel} >= 10
+BuildRequires: nodejs >= 18
+%endif
 BuildRequires: make
 %if 0%{?suse_version}
 # Suse's package has a different name
@@ -33,8 +35,8 @@ Cockpit Starter Kit Example Module
 %prep
 %autosetup -n %{name} -a 1
 # ignore pre-built bundle in release tarball and rebuild it
-# but keep it in RHEL/CentOS-8, as that has a too old nodejs
-%if ! 0%{?rhel} || 0%{?rhel} >= 9
+# but keep it in RHEL/CentOS-8/9, as that has a too old nodejs
+%if ! 0%{?rhel} || 0%{?rhel} >= 10
 rm -rf dist
 %endif
 
