@@ -6,11 +6,11 @@ Scaffolding for a [Cockpit](https://cockpit-project.org/) module.
 
 On Debian/Ubuntu:
 
-    $ sudo apt install gettext nodejs npm make
+    sudo apt install gettext nodejs npm make
 
 On Fedora:
 
-    $ sudo dnf install gettext nodejs npm make
+    sudo dnf install gettext nodejs npm make
 
 
 # Getting and building the source
@@ -49,23 +49,23 @@ You can also use
 [watch mode](https://esbuild.github.io/api/#watch) to
 automatically update the bundle on every code change with
 
-    $ ./build.js -w
+    ./build.js -w
 
 or
 
-    $ make watch
+    make watch
 
 When developing against a virtual machine, watch mode can also automatically upload
 the code changes by setting the `RSYNC` environment variable to
 the remote hostname.
 
-    $ RSYNC=c make watch
+    RSYNC=c make watch
 
 When developing against a remote host as a normal user, `RSYNC_DEVEL` can be
 set to upload code changes to `~/.local/share/cockpit/` instead of
 `/usr/local`.
 
-    $ RSYNC_DEVEL=example.com make watch
+    RSYNC_DEVEL=example.com make watch
 
 To "uninstall" the locally installed version, run `make devel-uninstall`, or
 remove manually the symlink:
@@ -81,11 +81,11 @@ eslint is executed as part of `test/static-code`, aka. `make codecheck`.
 
 For developer convenience, the ESLint can be started explicitly by:
 
-    $ npm run eslint
+    npm run eslint
 
 Violations of some rules can be fixed automatically by:
 
-    $ npm run eslint:fix
+    npm run eslint:fix
 
 Rules configuration can be found in the `.eslintrc.json` file.
 
@@ -98,11 +98,11 @@ styleint is executed as part of `test/static-code`, aka. `make codecheck`.
 
 For developer convenience, the Stylelint can be started explicitly by:
 
-    $ npm run stylelint
+    npm run stylelint
 
 Violations of some rules can be fixed automatically by:
 
-    $ npm run stylelint:fix
+    npm run stylelint:fix
 
 Rules configuration can be found in the `.stylelintrc.json` file.
 
