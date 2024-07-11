@@ -28,5 +28,5 @@ import "patternfly/patternfly-5-cockpit.scss";
 import './app.scss';
 
 document.addEventListener("DOMContentLoaded", () => {
-    createRoot(document.getElementById("app")).render(<Application />);
+    createRoot(document.getElementById("app")!).render(<Application />);
 });
