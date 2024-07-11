@@ -17,10 +17,11 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import cockpit from 'cockpit';
 import React from 'react';
 import { Alert } from "@patternfly/react-core/dist/esm/components/Alert/index.js";
 import { Card, CardBody, CardTitle } from "@patternfly/react-core/dist/esm/components/Card/index.js";
+
+import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
