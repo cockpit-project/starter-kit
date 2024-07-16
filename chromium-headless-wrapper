@@ -1,0 +1,10 @@
+#!/bin/sh
+# This is a hack around `headless_shell --version` not working
+set -eu
+
+if [ "$1" = "--version" ]; then
+    echo "Chromium $(rpm -q --queryformat '%{VERSION}' chromium-headless) Fedora Project"
+    exit 0
+fi
+
+exec /usr/lib*/chromium-browser/headless_shell "$@"
