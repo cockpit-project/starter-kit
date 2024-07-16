@@ -109,8 +109,10 @@ try {
     // base64 encoded PNG, works fine
     // const screenshot = await b.takeScreenshot();
 
+    /*
     console.log("\n\nFinished. Press Control-C to exit");
     await new Promise(resolve => setTimeout(resolve, 100000));
+    */
 } finally {
     await b.deleteSession();
 }
