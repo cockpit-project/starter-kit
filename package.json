@@ -12,8 +12,8 @@
   "scripts": {
     "watch": "ESBUILD_WATCH='true' ./build.js",
     "build": "./build.js",
-    "eslint": "eslint --ext .js --ext .jsx src/",
-    "eslint:fix": "eslint --fix --ext .js --ext .jsx src/",
+    "eslint": "eslint src/",
+    "eslint:fix": "eslint --fix src/",
     "stylelint": "stylelint src/*{.css,scss}",
     "stylelint:fix": "stylelint --fix src/*{.css,scss}"
   },
