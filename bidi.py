@@ -1,18 +1,37 @@
+import asyncio
 import json
 import logging
 import subprocess
 import time
 import urllib.request
+from dataclasses import dataclass
 
-import asyncio
 import websockets
-
 
 logger = logging.getLogger(__name__)
 
 
 class WebdriverError(RuntimeError):
     pass
+
+
+@dataclass
+class LogMessage:
+    level: str  # like "info"
+    type: str  # usually "console"
+    timestamp: int
+    args: list[object]
+    text: str
+
+    def __init__(self, message_params):
+        self.level = message_params["level"]
+        self.type = message_params["type"]
+        self.timestamp = message_params["timestamp"]
+        self.args = message_params.get("args", [])
+        self.text = message_params["text"]
+
+    def __str__(self):
+        return f"LogMessage: {self.type} {self.level} @{self.timestamp}: {self.text} {self.args}"
 
 
 class WebdriverBidi:
@@ -57,23 +76,32 @@ class WebdriverBidi:
         self.last_id = 0
         self.ws = None
         self.pending_commands: dict[int, asyncio.Future] = {}
+        self.logs: list[LogMessage] = []
 
     async def ws_reader(self) -> None:
         assert self.ws
         while True:
             try:
-                ret = json.loads(await self.ws.recv())
+                msg = json.loads(await self.ws.recv())
             except websockets.exceptions.ConnectionClosedOK:
                 logger.debug("ws_reader connection closed")
                 break
-            logger.debug("ws → %r", ret)
-            if ret["id"] in self.pending_commands:
-                logger.debug("ws_reader: resolving pending command %i", ret["id"])
-                if ret["type"] == "success":
-                    self.pending_commands[ret["id"]].set_result(ret["result"])
+            logger.debug("ws → %r", msg)
+            if "id" in msg and msg["id"] in self.pending_commands:
+                logger.debug("ws_reader: resolving pending command %i", msg["id"])
+                if msg["type"] == "success":
+                    self.pending_commands[msg["id"]].set_result(msg["result"])
                 else:
-                    self.pending_commands[ret["id"]].set_exception(WebdriverError(f"{ret['type']}: {ret['message']}"))
-                del self.pending_commands[ret["id"]]
+                    self.pending_commands[msg["id"]].set_exception(WebdriverError(f"{msg['type']}: {msg['message']}"))
+                del self.pending_commands[msg["id"]]
+                continue
+
+            if msg["type"] == "event":
+                if msg["method"] == "log.entryAdded":
+                    self.logs.append(LogMessage(msg["params"]))
+                    continue
+
+            logger.warning("ws_reader: unhandled message %r", msg)
 
     async def command(self, method, **params) -> asyncio.Future:
         assert self.ws
@@ -93,6 +121,8 @@ class WebdriverBidi:
 
             await self.command("session.subscribe", events=["log.entryAdded"])
             context = (await self.command("browsingContext.create", type="tab"))["context"]
+            await self.command("script.evaluate", expression="console.log('Hello BiDi')",
+                               awaitPromise=False, target={"context": context})
             await self.command("browsingContext.navigate", context=context, url="https://piware.de")
 
             await asyncio.sleep(5)
@@ -103,6 +133,10 @@ class WebdriverBidi:
         logger.debug("cleaning up webdriver")
         urllib.request.urlopen(urllib.request.Request(
             f"{self.webdriver_url}/session/{self.session_info['sessionId']}", method="DELETE"))
+
+        logger.info("Collected debug messages:")
+        for log in self.logs:
+            logger.info(log)
 
         self.driver.terminate()
         self.driver.wait()
