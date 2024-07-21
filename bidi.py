@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 import subprocess
+import sys
 import time
 import urllib.request
 from dataclasses import dataclass
@@ -37,15 +38,20 @@ class LogMessage:
 
 
 class WebdriverBidi:
-    def __init__(self, browser) -> None:
+    def __init__(self, browser, headless=False) -> None:
+        self.headless = headless
+
         # TODO: make dynamic
         self.webdriver_port = 12345
         self.webdriver_url = f"http://localhost:{self.webdriver_port}"
 
+        chrome_binary = "/usr/lib64/chromium-browser/headless_shell" if self.headless else "/usr/bin/chromium-browser"
+
         session_args = {"capabilities": {
             "alwaysMatch": {
                 "webSocketUrl": True,
-                "goog:chromeOptions": {"binary": "/usr/bin/chromium-browser"},
+                "goog:chromeOptions": {"binary": chrome_binary},
+                "moz:firefoxOptions": {"args": ["-headless"] if self.headless else []}
             }
         }}
 
@@ -129,7 +135,8 @@ class WebdriverBidi:
                                    awaitPromise=False, target={"context": context})
                 await self.command("browsingContext.navigate", context=context, url="https://piware.de")
 
-                await asyncio.sleep(5)
+                if not self.headless:
+                    await asyncio.sleep(3)
                 self.task_reader.cancel()
                 del self.task_reader
 
@@ -147,5 +154,6 @@ class WebdriverBidi:
 
 
 logging.basicConfig(level=logging.DEBUG)
-d = WebdriverBidi("chromium")  # or firefox
+d = WebdriverBidi(sys.argv[1] if len(sys.argv) > 1 else 'chromium',
+                  headless=True if len(sys.argv) > 2 and sys.argv[2] == 'headless' else False)
 asyncio.run(d.run())
