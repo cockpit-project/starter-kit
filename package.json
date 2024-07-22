@@ -40,7 +40,7 @@
     "gettext-parser": "8.0.0",
     "htmlparser": "1.7.7",
     "jed": "1.1.1",
-    "qunit": "2.21.0",
+    "qunit": "2.21.1",
     "sass": "1.77.8",
     "stylelint": "16.7.0",
     "stylelint-config-recommended-scss": "14.0.0",
