@@ -16,6 +16,12 @@ logger = logging.getLogger(__name__)
 # https://w3c.github.io/webdriver/#dfn-find-elements
 EL_ID = 'element-6066-11e4-a52e-4f735466cecf'
 
+DRIVERS = {
+    "chromium": "chromedriver",
+    # TODO: not packaged, get from https://github.com/mozilla/geckodriver/releases
+    "firefox": "/tmp/geckodriver",
+}
+
 
 class WebdriverError(RuntimeError):
     pass
@@ -58,14 +64,10 @@ class WebdriverBidi:
             }
         }}
 
-        if browser == 'chromium':
-            # add --verbose for debugging
-            self.driver = subprocess.Popen(["chromedriver", "--port=" + str(self.webdriver_port)])
-        elif browser == 'firefox':
-            # TODO: not packaged, get from https://github.com/mozilla/geckodriver/releases
-            self.driver = subprocess.Popen(["/tmp/geckodriver", "--port", str(self.webdriver_port)])
-        else:
-            raise ValueError(f"unknown browser {browser}")
+        try:
+            self.driver = subprocess.Popen([DRIVERS[browser], "--port=" + str(self.webdriver_port)])
+        except KeyError as e:
+            raise ValueError(f"unknown browser {browser}") from e
 
         req = urllib.request.Request(
                 f"{self.webdriver_url}/session",
