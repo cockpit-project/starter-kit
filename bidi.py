@@ -201,11 +201,13 @@ class WebdriverBidi:
         r = (await self.bidi("browsingContext.locateNodes", context=context,
                              locator={"type": "css", "value": "#menu-content"}))["nodes"]
         assert len(r) == 1
-        menu_content_id = r[0]['sharedId']
 
         # this doensn't yet have a BiDi command
-        r = await self.webdriver(f"/element/{menu_content_id}/text")
-        assert 'ADDICTED TO FREE SOFTWARE DEVELOPMENT' in r['value']
+        # r = await self.webdriver(f"/element/{r[0]['sharedId']}/text")
+        # ... but we don't need it, our CDP driver does this too:
+        r = await self.bidi("script.evaluate", expression="document.querySelector('#menu-content').textContent",
+                            awaitPromise=False, target={"context": context})
+        assert 'Addicted to Free Software Development' in r['result']['value']
 
         # locate first social link
         r = (await self.bidi("browsingContext.locateNodes", context=context,
