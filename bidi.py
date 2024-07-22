@@ -60,6 +60,7 @@ class WebdriverBidi:
         self.pending_commands: dict[int, asyncio.Future] = {}
         self.logs: list[LogMessage] = []
         self.session: Session | None = None
+        self.future_wait_page_load = None
 
         # TODO: make dynamic
         self.webdriver_port = 12345
@@ -130,6 +131,11 @@ class WebdriverBidi:
                     if data["method"] == "log.entryAdded":
                         self.logs.append(LogMessage(data["params"]))
                         continue
+                    if data["method"] == "browsingContext.domContentLoaded":
+                        logger.debug("page loaded: %r", data["params"])
+                        if self.future_wait_page_load:
+                            self.future_wait_page_load.set_result(data["params"]["url"])
+                        continue
 
                 logger.warning("ws_reader: unhandled message %r", data)
             elif msg.type == aiohttp.WSMsgType.ERROR:
@@ -163,6 +169,14 @@ class WebdriverBidi:
             logger.debug("webdriver %s %s %r → %r", method, path, post_data, r)
             return json.loads(r)
 
+    def arm_page_load(self):
+        assert self.future_wait_page_load is None, "already waiting for page load"
+        self.future_wait_page_load = asyncio.get_event_loop().create_future()
+
+    async def wait_page_load(self):
+        assert self.future_wait_page_load is not None, "call arm_page_load() first"
+        return await self.future_wait_page_load
+
     async def run(self):
         await self.ensure_session()
 
@@ -175,7 +189,9 @@ class WebdriverBidi:
         else:
             raise WebdriverError("timed out waiting for default realm")
 
-        await self.bidi("session.subscribe", events=["log.entryAdded"])
+        await self.bidi("session.subscribe", events=[
+            "log.entryAdded", "browsingContext.domContentLoaded",
+        ])
 
         await self.bidi("script.evaluate", expression="console.log('Hello BiDi')",
                         awaitPromise=False, target={"context": context})
@@ -195,8 +211,28 @@ class WebdriverBidi:
         r = (await self.bidi("browsingContext.locateNodes", context=context,
                              locator={"type": "css", "value": "a[rel='me']:first-child"}))["nodes"]
         assert len(r) == 1
-        # click it (again, no BiDi command)
-        await self.webdriver(f"/element/{r[0]['sharedId']}/click", {})
+
+        self.arm_page_load()
+
+        # click it: high-level webdriver command:
+        # await self.webdriver(f"/element/{r[0]['sharedId']}/click", {})
+
+        # click it: low-level BiDi command:
+        await self.bidi("input.performActions", context=context, actions=[
+            {
+                "id": "pointer-0",
+                "type": "pointer",
+                "parameters": {"pointerType": "mouse"},
+                "actions": [
+                    {"type": "pointerMove", "x": 0, "y": 0, "origin": {"type": "element", "element": r[0]}},
+                    {"type": "pointerDown", "button": 0},
+                    {"type": "pointerUp", "button": 0},
+                ],
+            }
+        ])
+
+        url = await self.wait_page_load()
+        assert url == "https://github.com/martinpitt/"
 
         if not self.headless:
             await asyncio.sleep(3)
