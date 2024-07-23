@@ -98,12 +98,19 @@ class WebdriverBidi:
         self.bidi_session = None
         await self.http_session.close()
 
+    def ws_done_callback(self, future):
+        for fut in self.pending_commands.values():
+            fut.set_exception(WebdriverError("websocket closed"))
+        if not future.cancelled():
+            log_proto.error("ws_reader crashed: %r", future.result())
+
     async def start_session(self) -> None:
         self.http_session = aiohttp.ClientSession(raise_for_status=True)
         await self.start_bidi_session()
         assert self.bidi_session
         self.ws = await self.http_session.ws_connect(self.bidi_session.ws_url)
         self.task_reader = asyncio.create_task(self.ws_reader(self.ws), name="bidi_reader")
+        self.task_reader.add_done_callback(self.ws_done_callback)
 
         await self.bidi("session.subscribe", events=[
             "log.entryAdded", "browsingContext.domContentLoaded",
