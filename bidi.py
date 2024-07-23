@@ -3,6 +3,7 @@
 import asyncio
 import json
 import logging
+import socket
 import sys
 import tempfile
 from dataclasses import dataclass
@@ -42,6 +43,24 @@ class Session:
     ws: aiohttp.client.ClientWebSocketResponse
     session_url: str
     task_reader: asyncio.Task
+
+
+# Return port numbers that were free at the time of checking
+# They might be in use again by the time the function returns...
+def pick_ports(count: int) -> list[int]:
+    sockets: list[socket.socket] = []
+    ports: list[int] = []
+
+    for _ in range(count):
+        sock = socket.socket()
+        sock.bind(('127.0.0.1', 0))
+        sockets.append(sock)
+        ports.append(sock.getsockname()[1])
+
+    for s in sockets:
+        s.close()
+
+    return ports
 
 
 class WebdriverBidi:
@@ -192,9 +211,6 @@ class ChromiumBidi(WebdriverBidi):
     async def start_session(self) -> None:
         assert self.session is None
 
-        # TODO: make dynamic
-        webdriver_port = 12345
-
         chrome_binary = "/usr/lib64/chromium-browser/headless_shell" if self.headless else "/usr/bin/chromium-browser"
 
         session_args = {"capabilities": {
@@ -204,6 +220,7 @@ class ChromiumBidi(WebdriverBidi):
             }
         }}
 
+        [webdriver_port] = pick_ports(1)
         self.driver = await asyncio.create_subprocess_exec("chromedriver", "--port=" + str(webdriver_port))
 
         aiohttp_session = aiohttp.ClientSession(raise_for_status=True)
@@ -244,9 +261,7 @@ class ChromiumBidi(WebdriverBidi):
 # But let's use https://firefox-source-docs.mozilla.org/testing/marionette/Protocol.html directly, fewer moving parts
 class FirefoxBidi(WebdriverBidi):
     async def start_session(self) -> None:
-        # TODO: make dynamic
-        marionette_port = 12345
-        bidi_port = 12346
+        [marionette_port, bidi_port] = pick_ports(2)
 
         self.homedir = tempfile.TemporaryDirectory(prefix="firefox-home-")
         (Path(self.homedir.name) / 'download').mkdir()
