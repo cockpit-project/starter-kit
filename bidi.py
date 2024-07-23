@@ -19,6 +19,10 @@ class WebdriverError(RuntimeError):
     pass
 
 
+# default timeout
+TIMEOUT = 5  # TODO: raise to 15
+
+
 @dataclass
 class LogMessage:
     level: str  # like "info"
@@ -140,9 +144,11 @@ class WebdriverBidi:
                         self.logs.append(LogMessage(data["params"]))
                         continue
                     if data["method"] == "browsingContext.domContentLoaded":
-                        logger.debug("page loaded: %r", data["params"])
                         if self.future_wait_page_load:
+                            logger.debug("page loaded: %r, resolving wait page load future", data["params"])
                             self.future_wait_page_load.set_result(data["params"]["url"])
+                        else:
+                            logger.debug("page loaded: %r (not awaited)", data["params"])
                         continue
 
                 logger.warning("ws_reader: unhandled message %r", data)
@@ -165,9 +171,14 @@ class WebdriverBidi:
         assert self.future_wait_page_load is None, "already waiting for page load"
         self.future_wait_page_load = asyncio.get_event_loop().create_future()
 
-    async def wait_page_load(self):
+    async def wait_page_load(self, timeout: int = TIMEOUT) -> str:
         assert self.future_wait_page_load is not None, "call arm_page_load() first"
-        return await self.future_wait_page_load
+        try:
+            url = await asyncio.wait_for(self.future_wait_page_load, timeout=timeout)
+            self.future_wait_page_load = None
+            return url
+        except asyncio.TimeoutError as e:
+            raise ValueError("timed out waiting for page load") from e
 
     #
     # High-level helpers
