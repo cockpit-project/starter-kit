@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import asyncio
+import base64
 import json
 import logging
 import socket
@@ -436,7 +437,12 @@ async def main():
         # await d.wait_page_load()
 
         print("\n\nSTEP: super-user-indicator")
-        await d.wait("#super-user-indicator")
+        try:
+            await d.wait("#super-user-indicator")
+        except ValueError:
+            s = await d.bidi("browsingContext.captureScreenshot", context=d.top_context, origin="document")
+            Path("screenshot.png").write_bytes(base64.b64decode(s["data"]))
+            raise
         # FIXME: wait for text helper
         for _ in range(5):
             t = await d.text("#super-user-indicator")
