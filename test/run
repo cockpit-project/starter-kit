@@ -1,5 +1,5 @@
 #! /bin/sh
-set -eu
+set -eux
 
 # This is the expected entry point for Cockpit CI; will be called without
 # arguments but with an appropriate $TEST_OS, and optionally $TEST_SCENARIO
@@ -8,5 +8,15 @@ TEST_SCENARIO="${TEST_SCENARIO:-}"
 [ "${TEST_SCENARIO}" = "${TEST_SCENARIO##firefox}" ] || export TEST_BROWSER=firefox
 export RUN_TESTS_OPTIONS=--track-naughties
 
-make codecheck
-make check
+make prepare-check
+
+bots/machine/testvm.py $TEST_OS &
+VM_PID=$!
+trap "kill $VM_PID" EXIT INT QUIT PIPE
+
+# Wait for the VM to be ready
+until nc -z 127.0.0.2 2201; do
+    sleep 1
+done
+
+./bidi-test.py
