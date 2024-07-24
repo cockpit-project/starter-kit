@@ -21,6 +21,14 @@ class WebdriverError(RuntimeError):
     pass
 
 
+class Error(RuntimeError):
+    def __init__(self, msg: str) -> None:
+        self.msg = msg
+
+    def __str__(self) -> str:
+        return self.msg
+
+
 # default timeout
 TIMEOUT = 5  # TODO: raise to 15
 
@@ -156,7 +164,7 @@ class WebdriverBidi:
                     if data["type"] == "success":
                         result = data["result"]
                         if result.get("type") == "exception":
-                            self.pending_commands[data["id"]].set_exception(RuntimeError(result["exceptionDetails"]))
+                            self.pending_commands[data["id"]].set_exception(Error(result["exceptionDetails"]["text"]))
                         else:
                             self.pending_commands[data["id"]].set_result(result)
                     else:
@@ -215,7 +223,7 @@ class WebdriverBidi:
             self.future_wait_page_load = None
             return url
         except asyncio.TimeoutError as e:
-            raise ValueError("timed out waiting for page load") from e
+            raise Error("timed out waiting for page load") from e
 
     async def switch_to_frame(self, name: str) -> None:
         frame = await self.locate(f"iframe[name='{name}']")
@@ -240,9 +248,9 @@ class WebdriverBidi:
                             locator={"type": "css", "value": selector})
         nodes = r["nodes"]
         if len(nodes) == 0:
-            raise ValueError(f"no element found for {selector}")
+            raise Error(f"no element found for {selector}")
         if len(nodes) > 1:
-            raise ValueError(f"selector {selector} is ambiguous: {nodes}")
+            raise Error(f"selector {selector} is ambiguous: {nodes}")
         log_command.debug("locate(%s) = %r", selector, nodes[0])
         return nodes[0]
 
@@ -255,11 +263,11 @@ class WebdriverBidi:
                 n = await self.locate(selector)
                 log_command.debug("wait(%s) success: %r", selector, n)
                 return
-            except (WebdriverError, ValueError, TimeoutError) as e:
+            except (WebdriverError, Error, TimeoutError) as e:
                 last_error = e
                 await asyncio.sleep(0.1)
         else:
-            raise ValueError(f"timed out waiting for {selector}: {last_error}")
+            raise Error(f"timed out waiting for {selector}: {last_error}")
 
     async def wait_js_cond(self, cond: str, error_description: str = "null") -> None:
         log_command.debug("wait_js_cond(%s)", cond)
@@ -462,7 +470,7 @@ async def main():
         print("\n\nSTEP: super-user-indicator")
         try:
             await d.wait_text("#super-user-indicator", "Limited access")
-        except ValueError:
+        except Error:
             s = await d.bidi("browsingContext.captureScreenshot", context=d.top_context, origin="document")
             Path("screenshot.png").write_bytes(base64.b64decode(s["data"]))
             raise
