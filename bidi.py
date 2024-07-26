@@ -140,10 +140,6 @@ class WebdriverBidi:
         else:
             raise WebdriverError("timed out waiting for default realm")
 
-        # avoid not seeing elements due to too small window
-        # await self.bidi("browsingContext.setViewport", context=self.top_context,
-        #                 viewport={"width": 1024, "height": 5000})
-
     async def __aenter__(self):
         await self.start_session()
         return self

@@ -126,8 +126,25 @@ class Browser:
         # TODO: wait for value
         time.sleep(0.2)
 
-    def mouse(self, selector: str, button: int = 0, click_count: int = 1) -> None:
+    def click(self, selector: str, button: int = 0, click_count: int = 1) -> None:
         self.wait_visible(selector)
+        self.bidi("script.evaluate", expression=f"window.ph_find({jsquote(selector)}).scrollIntoView()",
+                            awaitPromise=False, target={"context": self.driver.context})
+
+        # HACK: Chromium mis-clicks to wrong position with iframes; use our old "synthesize MouseEvent" approach
+        # TODO: file/find bug
+        if isinstance(self.driver, bidi.ChromiumBidi):
+            if click_count == 1:
+                _type = "click"
+            elif click_count == 2:
+                _type = "dblclick"
+            else:
+                raise bidi.Error("only click_count=1 or 2 are supported with Chromium")
+            self.bidi("script.evaluate",
+                      expression=f"window.ph_mouse({jsquote(selector)}, '{_type}', 0, 0, {button})",
+                      awaitPromise=False, target={"context": self.driver.context})
+            return
+
         element = self.bidi("script.evaluate", expression=f"window.ph_find({jsquote(selector)})",
                             awaitPromise=False, target={"context": self.driver.context})["result"]
 
@@ -138,15 +155,12 @@ class Browser:
 
         self.bidi("input.performActions", context=self.driver.context, actions=[
             {
-                "id": "pointer-0",
+                "id": f"pointer-{self.driver.last_id}",
                 "type": "pointer",
                 "parameters": {"pointerType": "mouse"},
                 "actions": actions,
             }
         ])
-
-    def click(self, selector: str) -> None:
-        return self.mouse(selector)
 
     def wait_text(self, selector: str, text: str) -> None:
         self.wait_visible(selector)
@@ -177,11 +191,17 @@ try:
     b.set_input_text("#login-user-input", "admin")
     b.set_input_text("#login-password-input", "foobar")
     # either works
-    # b.click("#login-button")
-    b.key(KEY_ENTER)
+    b.click("#login-button")
+    # b.key(KEY_ENTER)
     b.wait_text("#super-user-indicator", "Limited access")
 
     b.switch_to_frame("cockpit1:localhost/system")
     b.wait_in_text(".system-configuration", "Join domain")
+
+    b.switch_to_top()
+    b.click("#host-apps a[href='/system/services']")
+    b.switch_to_frame("cockpit1:localhost/system/services")
+    b.click("tr[data-goto-unit='virtqemud.service'] a")
+    b.wait_in_text("#service-details-unit", "Automatically starts")
 finally:
     b.close()

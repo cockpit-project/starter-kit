@@ -73,3 +73,59 @@ window.ph_wait_cond = function (cond, timeout, error_description) {
         step();
     });
 };
+
+// we only need this for Chromium, which mis-handles pointerMove with frames
+window.ph_mouse = function(sel, type, x, y, btn, ctrlKey, shiftKey, altKey, metaKey) {
+    const el = window.ph_find(sel);
+
+    /* The element has to be visible, and not collapsed */
+    if (el.offsetWidth <= 0 && el.offsetHeight <= 0 && el.tagName !== 'svg')
+        throw new Error(sel + " is not visible");
+
+    /* The event has to actually work */
+    let processed = false;
+    function handler() {
+        processed = true;
+    }
+
+    el.addEventListener(type, handler, true);
+
+    let elp = el;
+    let left = elp.offsetLeft || 0;
+    let top = elp.offsetTop || 0;
+    while (elp.offsetParent) {
+        elp = elp.offsetParent;
+        left += elp.offsetLeft;
+        top += elp.offsetTop;
+    }
+
+    let detail = 0;
+    if (["click", "mousedown", "mouseup"].indexOf(type) > -1)
+        detail = 1;
+    else if (type === "dblclick")
+        detail = 2;
+
+    const ev = new MouseEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+        detail,
+        screenX: left + x,
+        screenY: top + y,
+        clientX: left + x,
+        clientY: top + y,
+        button: btn,
+        ctrlKey: ctrlKey || false,
+        shiftKey: shiftKey || false,
+        altKey: altKey || false,
+        metaKey: metaKey || false
+    });
+
+    el.dispatchEvent(ev);
+
+    el.removeEventListener(type, handler, true);
+
+    /* It really had to work */
+    if (!processed)
+        throw new Error(sel + " is disabled or somehow doesn't process events");
+};
