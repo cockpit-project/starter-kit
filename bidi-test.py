@@ -5,6 +5,7 @@ import logging
 import os
 import threading
 import time
+from pathlib import Path
 from typing import Any
 
 import bidi
@@ -57,6 +58,18 @@ class Browser:
         self.bidi_thread.start()
 
         asyncio.run_coroutine_threadsafe(self.driver.start_session(), self.loop).result()
+
+        test_functions = Path("test-functions.js").read_text()
+        self.bidi("script.addPreloadScript", functionDeclaration=f"() => {{ {test_functions} }}")
+
+        try:
+            sizzle_js = (Path(__file__).parent / "node_modules/sizzle/dist/sizzle.js").read_text()
+            # HACK: sizzle tracks document and when we switch frames, it sees the old document
+            # although we execute it in different context.
+            sizzle_js = sizzle_js.replace('context = context || document;', 'context = context || window.document;')
+            self.bidi("script.addPreloadScript", functionDeclaration=f"() => {{ {sizzle_js} }}")
+        except FileNotFoundError:
+            pass
 
     def close(self):
         asyncio.run_coroutine_threadsafe(self.driver.close(), self.loop).result()
@@ -196,6 +209,7 @@ try:
     b.wait_text("#super-user-indicator", "Limited access")
 
     b.switch_to_frame("cockpit1:localhost/system")
+    b.wait_visible(".pf-v5-c-alert:contains('Web console is running in limited access mode.')")
     b.wait_in_text(".system-configuration", "Join domain")
 
     b.switch_to_top()

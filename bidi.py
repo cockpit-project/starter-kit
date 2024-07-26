@@ -127,9 +127,6 @@ class WebdriverBidi:
             "log.entryAdded", "browsingContext.domContentLoaded",
         ])
 
-        test_functions = Path("test-functions.js").read_text()
-        await self.bidi("script.addPreloadScript", functionDeclaration=f"() => {{ {test_functions} }}")
-
         # wait for browser to initialize default context
         for _ in range(10):
             realms = (await self.bidi("script.getRealms"))["realms"]
@@ -193,7 +190,8 @@ class WebdriverBidi:
         """Send a Webdriver BiDi command and return the JSON response"""
 
         payload = json.dumps({"id": self.last_id, "method": method, "params": params})
-        log_proto.debug("ws ← %r", payload)
+        # avoid log spam for preload scripts
+        log_proto.debug("ws ← %r", method if method == "script.addPreloadScript" else payload)
         await self.ws.send_str(payload)
         future = asyncio.get_event_loop().create_future()
         self.pending_commands[self.last_id] = future

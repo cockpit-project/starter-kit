@@ -1,8 +1,4 @@
 window.ph_select = function(sel) {
-    if (!window.Sizzle) {
-        return Array.from(document.querySelectorAll(sel));
-    }
-
     if (sel.includes(":contains(")) {
         if (!window.Sizzle) {
             throw new Error("Using ':contains' when window.Sizzle is not available.");
