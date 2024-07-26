@@ -15,6 +15,22 @@ def jsquote(js: object) -> str:
 
 JsonObject = dict[str, Any]
 
+# https://w3c.github.io/webdriver/#keyboard-actions for encoding key names
+KEY_BACKSPACE = "\uE003"
+KEY_TAB = "\uE004"
+KEY_RETURN = "\uE006"
+KEY_ENTER = "\uE007"
+KEY_SHIFT = "\uE008"
+KEY_CONTROL = "\uE009"
+KEY_ALT = "\uE00A"
+KEY_ESCAPE = "\uE00C"
+KEY_ARROW_LEFT = "\uE012"
+KEY_ARROW_UP = "\uE013"
+KEY_ARROW_RIGHT = "\uE014"
+KEY_ARROW_DOWN = "\uE015"
+KEY_INSERT = "\uE016"
+KEY_DELETE = "\uE017"
+
 
 # shape of our testlib.Browser, all sync
 class Browser:
@@ -87,6 +103,15 @@ class Browser:
         self.bidi("script.evaluate", expression=f"document.querySelector('{selector}').focus()",
                   awaitPromise=False, target={"context": self.driver.context})
 
+    # see https://w3c.github.io/webdriver/#keyboard-actions for encoding key names
+    # and the KEY_* constants for common ones
+    def key(self, value: str) -> None:
+        self.bidi("input.performActions", context=self.driver.context, actions=[
+            {"type": "key", "id": "key-0", "actions": [
+                {"type": "keyDown", "value": value},
+                {"type": "keyUp", "value": value},
+            ]}])
+
     def input_text(self, text: str) -> None:
         actions = []
         for c in text:
@@ -151,7 +176,9 @@ try:
 
     b.set_input_text("#login-user-input", "admin")
     b.set_input_text("#login-password-input", "foobar")
-    b.click("#login-button")
+    # either works
+    # b.click("#login-button")
+    b.key(KEY_ENTER)
     b.wait_text("#super-user-indicator", "Limited access")
 
     b.switch_to_frame("cockpit1:localhost/system")
