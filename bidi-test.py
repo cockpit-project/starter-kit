@@ -81,6 +81,14 @@ class Browser:
 
         return asyncio.run_coroutine_threadsafe(self.driver.bidi(method, **params), self.loop).result()
 
+    def cdp(self, method, **params) -> JsonObject:
+        """Send a Chrome DevTools Protocol command and return the JSON response"""
+
+        if isinstance(self.driver, bidi.ChromiumBidi):
+            return asyncio.run_coroutine_threadsafe(self.driver.cdp(method, **params), self.loop).result()
+        else:
+            raise bidi.WebdriverError("CDP is only supported in Chromium")
+
     def wait_js_cond(self, cond: str, error_description: str = "null") -> None:
         for _retry in range(5):
             try:
@@ -201,6 +209,11 @@ b = Browser()
 try:
     b.open("http://127.0.0.2:9091")
 
+    if isinstance(b.driver, bidi.ChromiumBidi):
+        b.cdp("Profiler.enable")
+        b.cdp("Profiler.startPreciseCoverage", callCount=False, detailed=True)
+        b.cdp("Profiler.takePreciseCoverage")
+
     b.set_input_text("#login-user-input", "admin")
     b.set_input_text("#login-password-input", "foobar")
     # either works
@@ -217,5 +230,8 @@ try:
     b.switch_to_frame("cockpit1:localhost/system/services")
     b.click("tr[data-goto-unit='virtqemud.service'] a")
     b.wait_in_text("#service-details-unit", "Automatically starts")
+
+    if isinstance(b.driver, bidi.ChromiumBidi):
+        b.cdp("Profiler.takePreciseCoverage")
 finally:
     b.close()

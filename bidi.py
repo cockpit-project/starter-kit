@@ -228,6 +228,10 @@ class WebdriverBidi:
 
 
 class ChromiumBidi(WebdriverBidi):
+    def __init__(self, headless=False) -> None:
+        super().__init__(headless)
+        self.cdp_ws: aiohttp.client.ClientWebSocketResponse | None = None
+
     async def start_bidi_session(self) -> None:
         assert self.bidi_session is None
 
@@ -259,14 +263,52 @@ class ChromiumBidi(WebdriverBidi):
         else:
             raise WebdriverError("could not connect to chromedriver")
 
+        self.cdp_address = session_info["capabilities"]["goog:chromeOptions"]["debuggerAddress"]
+        self.last_cdp_id = 0
+
         self.bidi_session = BidiSession(
             session_url=f"{wd_url}/session/{session_info['sessionId']}",
             ws_url=session_info["capabilities"]["webSocketUrl"],
             process=driver)
-        log_proto.debug("Established chromium session %r", self.bidi_session)
+        log_proto.debug("Established chromium session %r, CDP address %s", self.bidi_session, self.cdp_address)
+
+    async def close_cdp_session(self):
+        if self.cdp_ws is not None:
+            await self.cdp_ws.close()
+            self.cdp_ws = None
 
     async def close_bidi_session(self):
+        await self.close_cdp_session()
         await self.http_session.delete(self.bidi_session.session_url)
+
+    async def cdp(self, method, **params) -> dict[str, Any]:
+        """Send a Chrome DevTools command and return the JSON response
+
+        This is currently *not* safe for enabling events! These should be handled via BiDi,
+        this is only an escape hatch for CDP specific functionality such as Profiler.
+        """
+        if self.cdp_ws is None:
+            # unfortunately we have to hold on to the open ws after sending .enable() commands,
+            # otherwise they'll reset when closing and re-opening
+            self.cdp_ws = await self.http_session.ws_connect(f"ws://{self.cdp_address}/devtools/page/{self.top_context}")
+
+        reply = None
+        payload = json.dumps({"id": self.last_cdp_id, "method": method, "params": params})
+        log_proto.debug("CDP ← %r", payload)
+        await self.cdp_ws.send_str(payload)
+        async for msg in self.cdp_ws:
+            if msg.type == aiohttp.WSMsgType.TEXT:
+                reply = json.loads(msg.data)
+                if reply.get("id") == self.last_cdp_id:
+                    break
+                else:
+                    log_proto.debug("CDP message: %r", reply)
+            else:
+                log_proto.debug("CDP non-text message: %r", msg)
+        assert reply
+        log_proto.debug("CDP → %r", reply)
+        self.last_cdp_id += 1
+        return reply
 
 
 # We could do this with https://github.com/mozilla/geckodriver/releases with a similar protocol as ChromeBidi
