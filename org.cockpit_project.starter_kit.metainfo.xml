@@ -7,6 +7,9 @@
   <description>
     <p>
       Scaffolding for a cockpit module.
+
+      This is just a demo which does not do much. Please replace
+      this with a real description.
     </p>
   </description>
   <extends>org.cockpit_project.cockpit</extends>
@@ -14,4 +17,7 @@
   <url type="homepage">https://github.com/cockpit-project/starter-kit</url>
   <url type="bugtracker">https://github.com/cockpit-project/starter-kit/issues</url>
   <update_contact>cockpit-devel_AT_lists.fedorahosted.org</update_contact>
+  <developer id="org.cockpit-project">
+    <name>Cockpit Project</name>
+  </developer>
 </component>
