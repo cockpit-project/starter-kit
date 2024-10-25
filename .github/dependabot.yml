@@ -34,6 +34,10 @@ updates:
       - dependency-name: "sass"
         versions: ["1.80.x", "2.x"]
 
+      # needs to be done in Cockpit first
+      - dependency-name: "@patternfly/*"
+        update-types: ["major"]
+
   - package-ecosystem: "github-actions"
     directory: "/"
     open-pull-requests-limit: 3
