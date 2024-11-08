@@ -3,7 +3,6 @@
     "allowJs": true,
     "checkJs": true,
     "exactOptionalPropertyTypes": true,
-    "jsx": "react",
     "lib": [
       "dom",
       "es2020"
