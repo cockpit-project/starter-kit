@@ -1,7 +1,7 @@
 /*
  * This file is part of Cockpit.
  *
- * Copyright (C) 2017 Red Hat, Inc.
+ * Copyright (C) 2024 Red Hat, Inc.
  *
  * Cockpit is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -17,32 +17,36 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React, { useEffect, useState } from 'react';
-import { Alert } from "@patternfly/react-core/dist/esm/components/Alert/index.js";
-import { Card, CardBody, CardTitle } from "@patternfly/react-core/dist/esm/components/Card/index.js";
+import { css, html, LitElement } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+
+import '@patternfly/elements/pf-card/pf-card.js';
 
 import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-export const Application = () => {
-    const [hostname, setHostname] = useState(_("Unknown"));
+@customElement('ct-application')
+export class Application extends LitElement {
+    @state() private accessor hostname = _("Unknown");
 
-    useEffect(() => {
+    static readonly styles = css`
+        .running-on {
+            color: green;
+        }
+    `;
+
+    connectedCallback() {
+        super.connectedCallback();
         const hostname = cockpit.file('/etc/hostname');
-        hostname.watch(content => setHostname(content?.trim() ?? ""));
-        return hostname.close;
-    }, []);
+        hostname.watch(content => { this.hostname = content?.trim() ?? "" });
+    }
 
-    return (
-        <Card>
-            <CardTitle>Starter Kit</CardTitle>
-            <CardBody>
-                <Alert
-                    variant="info"
-                    title={ cockpit.format(_("Running on $0"), hostname) }
-                />
-            </CardBody>
-        </Card>
-    );
-};
+    render() {
+        return html`
+            <pf-card>
+                <h1 slot="header">Starter Kit</h1>
+                <p class="running-on">${cockpit.format(_("Running on $0"), this.hostname)}</p>
+            </pf-card>`;
+    }
+}

@@ -4,12 +4,11 @@
         "browser": true,
         "es6": true
     },
-    "extends": ["eslint:recommended", "standard", "standard-jsx", "standard-react"],
+    "extends": ["eslint:recommended", "standard"],
     "parserOptions": {
         "ecmaVersion": "2022",
         "sourceType": "module"
     },
-    "plugins": ["react", "react-hooks"],
     "rules": {
         "indent": ["error", 4,
             {
@@ -22,11 +21,7 @@
         "no-var": "error",
         "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
         "prefer-promise-reject-errors": ["error", { "allowEmptyReject": true }],
-        "react/jsx-indent": ["error", 4],
         "semi": ["error", "always", { "omitLastInOneLineBlock": true }],
-
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "error",
 
         "camelcase": "off",
         "comma-dangle": "off",
@@ -35,10 +30,6 @@
         "key-spacing": "off",
         "no-console": "off",
         "quotes": "off",
-        "react/jsx-curly-spacing": "off",
-        "react/jsx-indent-props": "off",
-        "react/jsx-no-useless-fragment": "error",
-        "react/prop-types": "off",
         "space-before-function-paren": "off",
         "standard/no-callback-literal": "off"
     },
