@@ -29,11 +29,10 @@ all: $(DIST_TEST)
 COCKPIT_REPO_FILES = \
 	pkg/lib \
 	test/common \
-	test/static-code \
 	$(NULL)
 
 COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
-COCKPIT_REPO_COMMIT = 7090fab7372ef7e87e508d207e6468ba76983f9f # 329 + 58 commits
+COCKPIT_REPO_COMMIT = b24e039abbdc70663de344d5a4a8d3803d8383ff # 330 + 7 commits
 
 $(COCKPIT_REPO_FILES): $(COCKPIT_REPO_STAMP)
 COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'
@@ -181,8 +180,8 @@ prepare-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
 check: prepare-check
 	test/common/run-tests ${RUN_TESTS_OPTIONS}
 
-codecheck: test/static-code $(NODE_MODULES_TEST)
-	test/static-code
+codecheck: test/common $(NODE_MODULES_TEST)
+	test/common/static-code
 
 # checkout Cockpit's bots for standard test VM images and API to launch them
 bots: $(COCKPIT_REPO_STAMP)
