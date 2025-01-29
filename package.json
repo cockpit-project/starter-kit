@@ -40,7 +40,7 @@
     "glob": "11.0.1",
     "htmlparser": "1.7.7",
     "jed": "1.1.1",
-    "qunit": "2.23.1",
+    "qunit": "2.24.1",
     "sass": "1.79.6",
     "stylelint": "16.13.2",
     "stylelint-config-recommended-scss": "14.0.0",
