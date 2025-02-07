@@ -23,12 +23,8 @@ actions:
 jobs:
   - job: copr_build
     trigger: pull_request
-    targets:
-    - fedora-all
-    - fedora-latest-aarch64
-    - centos-stream-9
-    - centos-stream-9-aarch64
-    - centos-stream-10
+    # only extra build-only targets; targets in "tests" are implicitly built
+    targets: []
 
   - job: tests
     trigger: pull_request
