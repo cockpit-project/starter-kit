@@ -24,7 +24,7 @@ import "cockpit-dark-theme";
 
 import { Application } from './app.jsx';
 
-import "patternfly/patternfly-5-cockpit.scss";
+import "patternfly/patternfly-6-cockpit.scss";
 import './app.scss';
 
 document.addEventListener("DOMContentLoaded", () => {
