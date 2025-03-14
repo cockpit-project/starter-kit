@@ -18,16 +18,16 @@ class TestApplication(testlib.MachineCase):
 
         self.login_and_go("/starter-kit")
         # verify expected heading
-        b.wait_text(".pf-v5-c-card__title", "Starter Kit")
+        b.wait_text(".pf-v6-c-card__title", "Starter Kit")
 
         # verify expected host name
         hostname = m.execute("cat /etc/hostname").strip()
-        b.wait_in_text(".pf-v5-c-alert__title", "Running on " + hostname)
+        b.wait_in_text(".pf-v6-c-alert__title", "Running on " + hostname)
 
         # change current hostname
         self.write_file("/etc/hostname", "new-" + hostname)
         # verify new hostname name
-        b.wait_in_text(".pf-v5-c-alert__title", "Running on new-" + hostname)
+        b.wait_in_text(".pf-v6-c-alert__title", "Running on new-" + hostname)
 
         # change language to German
         b.switch_to_top()
@@ -46,7 +46,7 @@ class TestApplication(testlib.MachineCase):
         b.go("/starter-kit")
         b.enter_page("/starter-kit")
         # page label (from js) should be translated
-        b.wait_in_text(".pf-v5-c-alert__title", "Läuft auf")
+        b.wait_in_text(".pf-v6-c-alert__title", "Läuft auf")
 
 
 if __name__ == '__main__':
