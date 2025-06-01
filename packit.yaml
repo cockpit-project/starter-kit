@@ -21,19 +21,18 @@ actions:
   get-current-version: make print-version
 
 jobs:
-  - job: copr_build
-    trigger: pull_request
-    # only extra build-only targets; targets in "tests" are implicitly built
-    targets: []
-
   - job: tests
     trigger: pull_request
-    targets:
+    targets: &test_targets
       - fedora-all
       - fedora-latest-aarch64
       - centos-stream-9
       - centos-stream-9-aarch64
       - centos-stream-10
+
+  - job: copr_build
+    trigger: pull_request
+    targets: *test_targets
 
   # Build releases in COPR: https://packit.dev/docs/configuration/#copr_build
   #- job: copr_build
