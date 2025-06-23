@@ -81,6 +81,9 @@ $(SPEC): packaging/$(SPEC).in $(NODE_MODULES_TEST)
 	provides=$$(npm ls --omit dev --package-lock-only --depth=Infinity | grep -Eo '[^[:space:]]+@[^[:space:]]+' | sort -u | sed 's/^/Provides: bundled(npm(/; s/\(.*\)@/\1)) = /'); \
 	awk -v p="$$provides" '{gsub(/%{VERSION}/, "$(VERSION)"); gsub(/%{NPM_PROVIDES}/, p)}1' $< > $@
 
+packaging/arch/PKGBUILD: packaging/arch/PKGBUILD.in
+	sed 's/VERSION/$(VERSION)/; s/SOURCE/$(TARFILE)/' $< > $@
+
 $(DIST_TEST): $(NODE_MODULES_TEST) $(COCKPIT_REPO_STAMP) $(shell find src/ -type f) package.json build.js
 	NODE_ENV=$(NODE_ENV) ./build.js
 
@@ -89,7 +92,7 @@ watch: $(NODE_MODULES_TEST) $(COCKPIT_REPO_STAMP)
 
 clean:
 	rm -rf dist/
-	rm -f $(SPEC)
+	rm -f $(SPEC) packaging/arch/PKGBUILD
 	rm -f po/LINGUAS
 
 install: $(DIST_TEST) po/LINGUAS
@@ -121,11 +124,12 @@ dist: $(TARFILE)
 # pre-built dist/ (so it's not necessary) and ship package-lock.json (so that
 # node_modules/ can be reconstructed if necessary)
 $(TARFILE): export NODE_ENV=production
-$(TARFILE): $(DIST_TEST) $(SPEC)
+$(TARFILE): $(DIST_TEST) $(SPEC) packaging/arch/PKGBUILD
 	if type appstream-util >/dev/null 2>&1; then appstream-util validate-relax --nonet *.metainfo.xml; fi
 	tar --xz $(TAR_ARGS) -cf $(TARFILE) --transform 's,^,$(RPM_NAME)/,' \
 		--exclude packaging/$(SPEC).in --exclude node_modules \
-		$$(git ls-files) $(COCKPIT_REPO_FILES) $(NODE_MODULES_TEST) $(SPEC) dist/
+		$$(git ls-files) $(COCKPIT_REPO_FILES) $(NODE_MODULES_TEST) \
+		$(SPEC) packaging/arch/PKGBUILD dist/
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
 	tar --xz $(TAR_ARGS) -cf $@ node_modules
