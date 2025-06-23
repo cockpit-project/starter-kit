@@ -1,0 +1,15 @@
+pkgname=cockpit-starter-kit
+pkgver=VERSION
+pkgrel=1
+pkgdesc='Cockpit Starter Kit Example Module'
+arch=('x86_64')
+url='https://github.com/cockpit-project/starter-kit'
+license=(LGPL)
+source=("SOURCE")
+sha256sums=('SKIP')
+
+package() {
+  depends=(cockpit)
+  cd $pkgname
+  make DESTDIR="$pkgdir" install PREFIX=/usr
+}
