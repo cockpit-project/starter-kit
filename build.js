@@ -5,12 +5,12 @@ import path from 'node:path';
 import process from 'node:process';
 import os from 'node:os';
 
+import { sassPlugin } from 'esbuild-sass-plugin';
 
 import { cleanPlugin } from './pkg/lib/esbuild-cleanup-plugin.js';
 import { cockpitCompressPlugin } from './pkg/lib/esbuild-compress-plugin.js';
 import { cockpitPoEsbuildPlugin } from './pkg/lib/cockpit-po-plugin.js';
 import { cockpitRsyncEsbuildPlugin } from './pkg/lib/cockpit-rsync-plugin.js';
-import { esbuildStylesPlugins } from './pkg/lib/esbuild-common.js';
 
 const production = process.env.NODE_ENV === 'production';
 const useWasm = os.arch() !== 'x64';
@@ -102,7 +102,12 @@ const context = await esbuild.context({
             }
         },
 
-        ...esbuildStylesPlugins,
+        sassPlugin({
+            loadPaths: [...nodePaths, 'node_modules'],
+            filter: /\.scss/,
+            quietDeps: true,
+        }),
+
         cockpitPoEsbuildPlugin(),
         ...production ? [cockpitCompressPlugin()] : [],
         cockpitRsyncEsbuildPlugin({ dest: packageJson.name }),
