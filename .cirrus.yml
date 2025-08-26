@@ -13,6 +13,8 @@ test_task:
       - TEST_OS: fedora-42
       - TEST_OS: centos-9-stream
 
+  fix_kvm_script: ls -l /dev/kvm
+
   # test PO template generation
   pot_build_script: make po/starter-kit.pot
 
