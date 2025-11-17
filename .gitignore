@@ -20,17 +20,19 @@
 /cockpit-*.tar.xz
 /cockpit-navigator.spec
 /dist/
+/metafile.json
 /package-lock.json
 /pkg/
 /node_modules/
+/runtime-npm-modules.txt
 /tmp/
 /tools/
- 
+
 # subdirs (/subdir/...)
 /packaging/arch/PKGBUILD
 /packaging/debian/changelog
 /po/*.pot
- /po/LINGUAS
+/po/LINGUAS
 /test/common/
 /test/images/
 /test/static-code
