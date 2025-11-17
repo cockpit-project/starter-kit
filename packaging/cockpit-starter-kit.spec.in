@@ -4,8 +4,16 @@ Release: 1%{?dist}
 Summary: Cockpit Starter Kit Example Module
 License: LGPL-2.1-or-later
 
+# distributions which ship nodejs-esbuild can rebuild the bundle during package build
+%if 0%{?fedora} >= 42
+%define rebuild_bundle 1
+%endif
+
 Source0: https://github.com/cockpit-project/starter-kit/releases/download/%{version}/%{name}-%{version}.tar.xz
+%if %{defined rebuild_bundle}
 Source1: https://github.com/cockpit-project/starter-kit/releases/download/%{version}/%{name}-node-%{version}.tar.xz
+%endif
+
 BuildArch: noarch
 %if ! 0%{?suse_version}
 ExclusiveArch: %{nodejs_arches} noarch
@@ -24,6 +32,10 @@ BuildRequires: gettext
 %if 0%{?rhel} && 0%{?rhel} <= 8
 BuildRequires: libappstream-glib-devel
 %endif
+%if %{defined rebuild_bundle}
+BuildRequires: nodejs
+BuildRequires: nodejs-esbuild
+%endif
 
 Requires: cockpit-bridge
 
@@ -33,15 +45,21 @@ Requires: cockpit-bridge
 Cockpit Starter Kit Example Module
 
 %prep
-%autosetup -n %{name} -a 1
-# ignore pre-built bundle in release tarball and rebuild it
-# but keep it in RHEL/CentOS-8/9, as that has a too old nodejs
-%if ! 0%{?rhel} || 0%{?rhel} >= 10
-rm -rf dist
+%autosetup -n %{name}
+%if %{defined rebuild_bundle}
+%setup -q -D -T -a 1 -n %{name}
 %endif
 
 %build
-NODE_ENV=production make
+%if %{defined rebuild_bundle}
+rm -rf dist
+# HACK: node module packaging is currently broken in Fedora, should be in
+# common location, not major version specific one
+NODE_ENV=production NODE_PATH=$(echo /usr/lib/node_modules_*) ./build.js
+%else
+# Use pre-built bundle on distributions without nodejs-esbuild
+%endif
+
 
 %install
 %make_install PREFIX=/usr

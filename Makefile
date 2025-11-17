@@ -29,6 +29,7 @@ all: $(DIST_TEST)
 COCKPIT_REPO_FILES = \
 	pkg/lib \
 	test/common \
+	tools/node-modules \
 	$(NULL)
 
 COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
@@ -133,7 +134,7 @@ $(TARFILE): $(DIST_TEST) $(SPEC) packaging/arch/PKGBUILD
 		$(SPEC) packaging/arch/PKGBUILD dist/
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
-	tar --xz $(TAR_ARGS) -cf $@ node_modules
+	tools/node-modules runtime-tar $(NODE_CACHE)
 
 node-cache: $(NODE_CACHE)
 
