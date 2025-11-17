@@ -2,9 +2,6 @@ set -eux
 
 cd "${0%/*}/../.."
 
-# HACK: https://bugzilla.redhat.com/show_bug.cgi?id=2033020
-dnf update -y pam || true
-
 # allow test to set up things on the machine
 mkdir -p /root/.ssh
 curl https://raw.githubusercontent.com/cockpit-project/bots/main/machine/identity.pub >> /root/.ssh/authorized_keys
@@ -29,10 +26,6 @@ sh test/vm.install
 
 # Run tests in the cockpit tasks container, as unprivileged user
 CONTAINER="$(cat .cockpit-ci/container)"
-if grep -q platform:el10 /etc/os-release; then
-    # HACK: https://bugzilla.redhat.com/show_bug.cgi?id=2273078
-    export NETAVARK_FW=nftables
-fi
 exec podman \
     run \
         --rm \
