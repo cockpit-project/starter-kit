@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import process from 'node:process';
 import os from 'node:os';
@@ -14,7 +15,22 @@ import { cockpitRsyncEsbuildPlugin } from './pkg/lib/cockpit-rsync-plugin.js';
 
 const production = process.env.NODE_ENV === 'production';
 const useWasm = os.arch() !== 'x64';
-const esbuild = (await import(useWasm ? 'esbuild-wasm' : 'esbuild')).default;
+
+const esbuild = await (async () => {
+    try {
+        // Try node_modules first for installs with devDependencies
+        return (await import(useWasm ? 'esbuild-wasm' : 'esbuild')).default;
+    } catch (e) {
+        if (e.code !== 'ERR_MODULE_NOT_FOUND')
+            throw e;
+
+        // Fall back to distro package (e.g. Debian's /usr/lib/*/nodejs/esbuild)
+        // Use createRequire to leverage Node's module resolution which searches system paths
+        // Use require.resolve to find esbuild in system paths, then import it
+        const require = createRequire(import.meta.url);
+        return (await import(require.resolve('esbuild'))).default;
+    }
+})();
 
 const parser = (await import('argparse')).default.ArgumentParser();
 parser.add_argument('-r', '--rsync', { help: "rsync bundles to ssh target after build", metavar: "HOST" });
