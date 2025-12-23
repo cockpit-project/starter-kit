@@ -12,6 +12,9 @@ On Fedora:
 
     sudo dnf install gettext nodejs npm make
 
+On openSUSE Tumbleweed and Leap:
+
+    sudo zypper in gettext-runtime nodejs npm make
 
 # Getting and building the source
 
