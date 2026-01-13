@@ -16,9 +16,6 @@ BuildArch: noarch
 %if ! 0%{?suse_version}
 ExclusiveArch: %{nodejs_arches} noarch
 %endif
-%if ! 0%{?rhel} || 0%{?rhel} >= 10
-BuildRequires: nodejs >= 18
-%endif
 BuildRequires: make
 %if 0%{?suse_version}
 # Suse's package has a different name
