@@ -43,7 +43,7 @@
     "@patternfly/patternfly": "6.1.0",
     "@patternfly/react-core": "6.1.0",
     "@patternfly/react-icons": "6.1.0",
-    "@patternfly/react-styles": "6.4.0",
+    "@patternfly/react-styles": "6.5.0",
     "argparse": "2.0.1",
     "esbuild": "0.28.0",
     "esbuild-sass-plugin": "3.7.0",
