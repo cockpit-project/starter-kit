@@ -3,6 +3,7 @@ Version: %{VERSION}
 Release: 1%{?dist}
 Summary: Cockpit Starter Kit Example Module
 License: LGPL-2.1-or-later
+URL:     https://github.com/cockpit-project/starter-kit
 
 # distributions which ship nodejs-esbuild can rebuild the bundle during package build
 %if 0%{?fedora} >= 42
