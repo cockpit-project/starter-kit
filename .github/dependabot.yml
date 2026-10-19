@@ -8,6 +8,9 @@ updates:
       time: "22:00"
       timezone: "Europe/Berlin"
     open-pull-requests-limit: 3
+    labels:
+      - "bot"
+      - "node_modules"
     groups:
       eslint:
         patterns:
@@ -55,6 +58,7 @@ updates:
     directory: "/"
     open-pull-requests-limit: 3
     labels:
+      - "bot"
       - "no-test"
     schedule:
       interval: "monthly"
