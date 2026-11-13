@@ -135,17 +135,6 @@ You can also run the test against a different Cockpit image, for example:
 
 # Running tests in CI
 
-These tests can be run in [Cirrus CI](https://cirrus-ci.org/), on their free
-[Linux Containers](https://cirrus-ci.org/guide/linux/) environment which
-explicitly supports `/dev/kvm`. Please see [Quick
-Start](https://cirrus-ci.org/guide/quick-start/) how to set up Cirrus CI for
-your project after forking from starter-kit.
-
-The included [.cirrus.yml](./.cirrus.yml) runs the integration tests for two
-operating systems (Fedora and CentOS 8). Note that if/once your project grows
-bigger, or gets frequent changes, you may need to move to a paid account, or
-different infrastructure with more capacity.
-
 Tests also run in [Packit](https://packit.dev/) for all currently supported
 Fedora releases; see the [packit.yaml](./packit.yaml) control file. You need to
 [enable Packit-as-a-service](https://packit.dev/docs/packit-service/) in your GitHub project to use this.
