@@ -1,4 +1,5 @@
 
+
 # Cockpit Starter Kit
 
 Scaffolding for a [Cockpit](https://cockpit-project.org/) module.
